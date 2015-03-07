@@ -4,17 +4,16 @@ inquirer = require("inquirer")
 colors = require('colors')
 fs = require('fs')
 helpers = require('./helpers')
+mfs = require('machinepack-fs')
 
 HELPTEXT = """
 
-              Quickshot Config
+              Quickshot New
               ==============================
               Create a new shopify theme project, and configures shopify sync.
 
               Usage:
-                quickshot config new              Create new config file
-                quickshot congig show             Show current config
-                quickshot config --help           Show this screen
+                quickshot new shop              Connect to shop and create project directory
 
             """
 
@@ -23,7 +22,7 @@ exports.run = (argv, done) ->
   argv['_'] = argv['_'].slice(1)
 
   switch command
-    when "edit"
+    when "shop"
       await
         inquirer.prompt([
           {
@@ -45,17 +44,29 @@ exports.run = (argv, done) ->
             default: null
           }
         ], defer(config))
-      await helpers.saveConfig(config, defer(err))
-      if err? then console.log colors.red(err)
-      console.log "CONFIGURATION FILE WRITTEN"
-      return done()
-    when "show"
-      await helpers.loadConfig(defer(err, config))
-      if err? then console.log colors.red(err)
-      console.log colors.cyan("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      console.log config
-      console.log colors.cyan("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      return done()
+
+      await
+        cb = defer()
+        mfs.mkdir(
+          destination: "./#{config.domain}"
+        ).exec(
+          error: done
+          success: ->
+            cb()
+        )
+
+      mfs.writeJson(
+        json: config
+        destination: "./#{config.domain}/quickshot.json"
+      ).exec(
+        error: (err) ->
+          console.log colors.red(err)
+          return done()
+        success: ->
+          console.log colors.green("Configuration saved!")
+          return done()
+      )
+
     else
       console.log HELPTEXT
       return done()

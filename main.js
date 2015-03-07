@@ -1,15 +1,17 @@
 (function() {
-  var HELPTEXT, iced, _, __iced_k, __iced_k_noop;
+  var HELPTEXT, colors, iced, _, __iced_k, __iced_k_noop;
 
   iced = require('iced-runtime');
   __iced_k = __iced_k_noop = function() {};
 
   _ = require('lodash');
 
-  HELPTEXT = "\nQuickshot " + VERSION + "\n==============================\n\nCommands:\n  quickshot config\n  quickshot download\n  quickshot --help        Show this screen.\n";
+  colors = require('colors');
+
+  HELPTEXT = "\nQuickshot " + VERSION + "\n==============================\n\nCommands:\n  quickshot new\n  quickshot download\n  quickshot list\n  quickshot --help        Show this screen.\n";
 
   exports.run = function(argv) {
-    var command, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+    var command, err, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
     command = _.first(argv['_']);
@@ -17,15 +19,20 @@
     (function(_this) {
       return (function(__iced_k) {
         switch (command) {
-          case "config":
+          case "new":
             (function(__iced_k) {
               __iced_deferrals = new iced.Deferrals(__iced_k, {
                 parent: ___iced_passed_deferral,
                 filename: "lib/main.iced",
                 funcname: "run"
               });
-              require('./config').run(argv, __iced_deferrals.defer({
-                lineno: 22
+              require('./new').run(argv, __iced_deferrals.defer({
+                assign_fn: (function() {
+                  return function() {
+                    return err = arguments[0];
+                  };
+                })(),
+                lineno: 24
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);
@@ -38,7 +45,30 @@
                 funcname: "run"
               });
               require('./download').run(argv, __iced_deferrals.defer({
-                lineno: 24
+                assign_fn: (function() {
+                  return function() {
+                    return err = arguments[0];
+                  };
+                })(),
+                lineno: 26
+              }));
+              __iced_deferrals._fulfill();
+            })(__iced_k);
+            break;
+          case "list":
+            (function(__iced_k) {
+              __iced_deferrals = new iced.Deferrals(__iced_k, {
+                parent: ___iced_passed_deferral,
+                filename: "lib/main.iced",
+                funcname: "run"
+              });
+              require('./list').run(argv, __iced_deferrals.defer({
+                assign_fn: (function() {
+                  return function() {
+                    return err = arguments[0];
+                  };
+                })(),
+                lineno: 28
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);
@@ -49,6 +79,9 @@
       });
     })(this)((function(_this) {
       return function() {
+        if (typeof err !== "undefined" && err !== null) {
+          console.log(colors.red(err));
+        }
         return process.exit();
       };
     })(this));

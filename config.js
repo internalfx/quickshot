@@ -14,7 +14,7 @@
 
   helpers = require('./helpers');
 
-  HELPTEXT = "\nQuickshot Config\n==============================\nCreate a new shopify theme project, and configures shopify sync.\n\nUsage:\n  quickshot config edit             Create/edit config file\n  quickshot congig show             Show current config\n  quickshot config --help           Show this screen\n";
+  HELPTEXT = "\nQuickshot Config\n==============================\nCreate a new shopify theme project, and configures shopify sync.\n\nUsage:\n  quickshot config new              Create new config file\n  quickshot congig show             Show current config\n  quickshot config --help           Show this screen\n";
 
   exports.run = function(argv, done) {
     var command, config, err, ___iced_passed_deferral, __iced_deferrals, __iced_k;
@@ -66,7 +66,7 @@
                 filename: "lib/config.iced",
                 funcname: "run"
               });
-              fs.writeFile('./config.json', JSON.stringify(config), __iced_deferrals.defer({
+              helpers.saveConfig(config, __iced_deferrals.defer({
                 assign_fn: (function() {
                   return function() {
                     return err = arguments[0];
