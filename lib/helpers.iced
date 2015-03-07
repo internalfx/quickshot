@@ -3,6 +3,48 @@ fs = require('fs')
 path = require('path')
 cwd = process.cwd()
 mfs = require('machinepack-fs')
+request = require('request')
+
+shopifyQueue = {
+  isRunning: false
+  throttle: 0
+  inFlight: 0
+  rate: 0
+  max: 10
+  queue: []
+
+  add: (item) ->
+    @queue.push(item)
+    unless @isRunning
+      @run()
+
+  run: ->
+    @isRunning = true
+    while @queue.length > 0
+      headroom = @max - (@rate + @inFlight)
+      exponent = ((headroom * headroom) / 16)
+      if exponent <= 0 then exponent = 1
+
+      @throttle = 500 / exponent
+
+      await setTimeout(defer(), @throttle)
+      @request(@queue.shift())
+    @isRunning = false
+
+  request: (item) ->
+    @inFlight += 1
+    await request(item.req, defer(err, res, body))
+    @inFlight -= 1
+    if err? then item.cb(err)
+
+    limit = res.headers['x-shopify-shop-api-call-limit']
+    limit = limit.split('/')
+    @rate = parseInt(_.first(limit))
+    @max = parseInt(_.last(limit))
+
+    body = JSON.parse(body)
+    item.cb(null, body)
+}
 
 module.exports = {
 
@@ -37,5 +79,8 @@ module.exports = {
     await fs.writeFile('./quickshot.json', JSON.stringify(config), defer(err))
     if err? then cb(err)
     cb(null)
+
+  shopifyRequest: (req, cb) ->
+    shopifyQueue.add({req: req, cb: cb})
 
 }

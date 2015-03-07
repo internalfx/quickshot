@@ -1,5 +1,4 @@
 
-_ = require('lodash')
 colors = require('colors')
 
 HELPTEXT = """
@@ -8,10 +7,9 @@ HELPTEXT = """
               ==============================
 
               Commands:
-                quickshot new
+                quickshot configure         Create new configuration file in current directory
                 quickshot download
-                quickshot list
-                quickshot --help        Show this screen.
+                quickshot --help            Show this screen.
 
             """
 
@@ -21,12 +19,10 @@ exports.run = (argv) ->
   command = _.first(argv['_'])
   argv['_'] = argv['_'].slice(1)
   switch command
-    when "new"
-      await require('./new').run(argv, defer(err))
+    when "configure"
+      await require('./configure').run(argv, defer(err))
     when "download"
       await require('./download').run(argv, defer(err))
-    when "list"
-      await require('./list').run(argv, defer(err))
     else
       console.log HELPTEXT
 

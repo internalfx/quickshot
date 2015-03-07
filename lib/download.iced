@@ -1,51 +1,60 @@
 
 helpers = require('./helpers')
 
-_ = require('lodash')
 inquirer = require("inquirer")
 colors = require('colors')
 fs = require('fs')
+path = require('path')
 request = require('request')
+mkdirp = require('mkdirp')
 
 HELPTEXT = """
 
-              Quickshot List
+              Quickshot Download
               ==============================
 
               Usage:
-                quickshot list themes         View available themes for the current shop
+                quickshot download [filter]      Download theme files, optionally only files/folders specified in the filter
 
             """
 
 exports.run = (argv, done) ->
-  command = _.first(argv['_'])
+  filter = _.first(argv['_'])
   argv['_'] = argv['_'].slice(1)
 
-  switch command
-    when "themes"
-      await helpers.loadConfig(defer(err, config))
-      if err? then done(err)
-      await request({
-        method: 'get'
-        url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes.json"
-      }, defer(err, res, body))
-      if err? then done(err)
-      output = """
+  await helpers.loadConfig(defer(err, config))
 
-        Currently Installed Themes
-        ==============================\n\n
-        Theme name  |  Theme ID  |  Theme role  |  Date last updated
-        ---------------------------------------------------------\n
-      """
-      themes = JSON.parse(body).themes
-      if _.isArray(themes)
-        for theme in themes
-          output += """
-            #{theme.name}  |  #{theme.id}  |  #{theme.role}  |  #{theme.updated_at}\n
-          """
-      output += "\n"
-      console.log output
+  await request({
+    method: 'get'
+    url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
+  }, defer(err, res, assetsBody))
+  if err? then done(err)
 
-    else
-      console.log HELPTEXT
-      return done()
+  assets = JSON.parse(assetsBody).assets
+  await
+    for asset in assets
+      ((cb, asset)->
+
+        await helpers.shopifyRequest({
+          method: 'get'
+          url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
+          qs: {
+            asset: {key: asset.key}
+          }
+        }, defer(err, data))
+
+        console.log colors.green("Downloaded #{asset.key}")
+        if data.asset.attachment
+          rawData = new Buffer(data.asset.attachment, 'base64')
+        else if data.asset.value
+          rawData = new Buffer(data.asset.value, 'utf8')
+
+        await mkdirp(path.dirname(data.asset.key), defer(err))
+        await fs.writeFile(data.asset.key, rawData, defer(err))
+        if err? then cb(err)
+      )(defer(err), asset)
+
+
+  console.log HELPTEXT
+
+  done()
