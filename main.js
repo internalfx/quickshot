@@ -1,14 +1,12 @@
 (function() {
-  var HELPTEXT, config, iced, _, __iced_k, __iced_k_noop;
+  var HELPTEXT, iced, _, __iced_k, __iced_k_noop;
 
   iced = require('iced-runtime');
   __iced_k = __iced_k_noop = function() {};
 
   _ = require('lodash');
 
-  config = require('config');
-
-  HELPTEXT = "\nQuickshot " + VERSION + "\n==============================\n\nCommands:\n  quickshot config\n  quickshot download\n  quickshot -h | --help     Show this screen.\n";
+  HELPTEXT = "\nQuickshot " + VERSION + "\n==============================\n\nCommands:\n  quickshot config\n  quickshot download\n  quickshot --help        Show this screen.\n";
 
   exports.run = function(argv) {
     var command, ___iced_passed_deferral, __iced_deferrals, __iced_k;
@@ -27,7 +25,7 @@
                 funcname: "run"
               });
               require('./config').run(argv, __iced_deferrals.defer({
-                lineno: 23
+                lineno: 22
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);
@@ -40,7 +38,7 @@
                 funcname: "run"
               });
               require('./download').run(argv, __iced_deferrals.defer({
-                lineno: 25
+                lineno: 24
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);

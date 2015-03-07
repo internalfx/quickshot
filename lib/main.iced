@@ -1,6 +1,5 @@
 
 _ = require('lodash')
-config = require('config')
 
 HELPTEXT = """
 

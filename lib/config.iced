@@ -2,8 +2,8 @@
 _ = require('lodash')
 inquirer = require("inquirer")
 colors = require('colors')
-config = require('config')
 fs = require('fs')
+helpers = require('./helpers')
 
 HELPTEXT = """
 
@@ -12,41 +12,50 @@ HELPTEXT = """
               Create a new shopify theme project, and configures shopify sync.
 
               Usage:
-                quickshot config new              Create new project.
-                quickshot config --help           Show this screen.
+                quickshot config edit             Create/edit config file
+                quickshot congig show             Show current config
+                quickshot config --help           Show this screen
 
             """
 
 exports.run = (argv, done) ->
+  command = _.first(argv['_'])
+  argv['_'] = argv['_'].slice(1)
 
-  if argv.help
-    console.log HELPTEXT
-    return done()
-
-  await
-    inquirer.prompt([
-      {
-        type: 'input'
-        name: 'api_key'
-        message: "Shopify Private APP API key?"
-        default: null
-      }
-      {
-        type: 'input'
-        name: 'password'
-        message: "Shopify Private APP Password?"
-        default: null
-      }
-      {
-        type: 'input'
-        name: 'domain'
-        message: "Shopify Domain? If your store is at 'https://your-domain.myshopify.com/' enter 'your-domain'."
-        default: null
-      }
-    ], defer(answers))
-
-  console.log answers
-
-  await fs.writeFile('./config.json', JSON.stringify(answers), defer(err))
-
-  return done()
+  switch command
+    when "edit"
+      await
+        inquirer.prompt([
+          {
+            type: 'input'
+            name: 'api_key'
+            message: "Shopify Private APP API key?"
+            default: null
+          }
+          {
+            type: 'input'
+            name: 'password'
+            message: "Shopify Private APP Password?"
+            default: null
+          }
+          {
+            type: 'input'
+            name: 'domain'
+            message: "Shopify Domain? If your store is at 'https://your-domain.myshopify.com/' enter 'your-domain'."
+            default: null
+          }
+        ], defer(config))
+      await helpers.saveConfig(config, defer(err))
+      if err? then console.log colors.red(err)
+      console.log "CONFIGURATION FILE WRITTEN"
+      return done()
+    when "show"
+      await helpers.loadConfig(defer(err, config))
+      if err? then console.log colors.red(err)
+      console.log colors.cyan("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+      console.log config
+      console.log colors.cyan("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+      return done()
+    else
+      console.log HELPTEXT
+      return done()
