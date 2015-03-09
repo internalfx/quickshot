@@ -15,8 +15,6 @@ HELPTEXT = """
 
             """
 
-# Some notes --> process.stdout.write(" RECORDS INSERTED: Total = #{records_processed} | Per Second = #{rps} | Percent Complete = %#{pc}          \r");
-
 exports.run = (argv) ->
   command = _.first(argv['_'])
   argv['_'] = argv['_'].slice(1)

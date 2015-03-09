@@ -26,7 +26,7 @@ exports.run = (argv, done) ->
     extension = path.extname(filepath).substr(1)
 
     next()
-    
+
     if filepath.match(/[\(\)]/)
       return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
 
@@ -59,37 +59,3 @@ exports.run = (argv, done) ->
 
     console.log colors.green("Uploaded #{filepath}")
   )
-
-  # await helpers.shopifyRequest({
-  #   method: 'get'
-  #   url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
-  # }, defer(err, res, assetsBody))
-  # if err? then done(err)
-  #
-  # assets = assetsBody.assets
-  # await
-  #   for asset in assets
-  #     if not filter? or asset.key.match(new RegExp("^#{filter}"))
-  #       ((cb, asset)->
-  #
-  #         await helpers.shopifyRequest({
-  #           method: 'put'
-  #           url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
-  #           qs: {
-  #             asset: {key: asset.key}
-  #           }
-  #         }, defer(err, res, data))
-  #
-  #         console.log colors.green("Downloaded #{asset.key}")
-  #         if data.asset.attachment
-  #           rawData = new Buffer(data.asset.attachment, 'base64')
-  #         else if data.asset.value
-  #           rawData = new Buffer(data.asset.value, 'utf8')
-  #
-  #         await mkdirp(path.dirname(data.asset.key), defer(err))
-  #         await fs.writeFile(data.asset.key, rawData, defer(err))
-  #         if err? then cb(err)
-  #
-  #       )(defer(err), asset)
-  #
-  # done()

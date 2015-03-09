@@ -79,5 +79,3 @@ exports.run = (argv, done) ->
         console.log colors.green("Deleted #{filepath}")
 
   )
-
-  # done()

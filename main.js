@@ -30,7 +30,7 @@
                     return err = arguments[0];
                   };
                 })(),
-                lineno: 24
+                lineno: 22
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);
@@ -48,7 +48,7 @@
                     return err = arguments[0];
                   };
                 })(),
-                lineno: 26
+                lineno: 24
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);
@@ -66,7 +66,7 @@
                     return err = arguments[0];
                   };
                 })(),
-                lineno: 28
+                lineno: 26
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);
@@ -84,7 +84,7 @@
                     return err = arguments[0];
                   };
                 })(),
-                lineno: 30
+                lineno: 28
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);
