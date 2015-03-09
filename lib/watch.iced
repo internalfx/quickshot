@@ -13,15 +13,23 @@ exports.run = (argv, done) ->
 
   await helpers.loadConfig(defer(err, config, projDir))
 
-  watcher = chokidar.watch('.', {
-    ignored: /[\/\\]\./
-    persistent: true
-    ignoreInitial: true
-    usePolling: true
-    interval: 500
-    binaryInterval: 500
-    cwd: projDir
-  })
+  if process.platform is "darwin"
+    watcher = chokidar.watch('.', {
+      ignored: /[\/\\]\./
+      persistent: true
+      ignoreInitial: true
+      cwd: projDir
+    })
+  else
+    watcher = chokidar.watch('.', {
+      ignored: /[\/\\]\./
+      persistent: true
+      ignoreInitial: true
+      usePolling: true
+      interval: 500
+      binaryInterval: 500
+      cwd: projDir
+    })
 
   watcher.on('all', (event, filepath) ->
     # console.log event, filepath
