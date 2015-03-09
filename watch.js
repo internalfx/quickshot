@@ -45,7 +45,7 @@
       });
     })(this)((function(_this) {
       return function() {
-        watcher = chokidar.watch('.', {
+        watcher = chokidar.watch('./', {
           ignored: /[\/\\]\./,
           persistent: true,
           ignoreInitial: true,
@@ -55,122 +55,66 @@
           cwd: projDir
         });
         return watcher.on('all', function(event, filepath) {
-          var assetsBody, data, err, extension, isBinary, res, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
+          var assetsBody, data, err, extension, res, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
           __iced_k = __iced_k_noop;
           ___iced_passed_deferral1 = iced.findDeferral(arguments);
           extension = path.extname(filepath).substr(1);
           switch (event) {
             case 'add':
             case 'change':
-              if (_.includes(['gif', 'png', 'jpg', 'mp4', 'm4v'], extension)) {
-                isBinary = true;
-              } else {
-                isBinary = false;
-              }
               if (filepath.match(/[\(\)]/)) {
                 return console.log(colors.red("Filename may not contain parentheses, please rename - \"" + filepath + "\""));
               }
               (function(_this) {
                 return (function(__iced_k) {
-                  if (isBinary) {
-                    (function(__iced_k) {
-                      __iced_deferrals = new iced.Deferrals(__iced_k, {
-                        parent: ___iced_passed_deferral1,
-                        filename: "lib/watch.iced"
-                      });
-                      fs.readFile(filepath, __iced_deferrals.defer({
-                        assign_fn: (function() {
-                          return function() {
-                            err = arguments[0];
-                            return data = arguments[1];
-                          };
-                        })(),
-                        lineno: 41
-                      }));
-                      __iced_deferrals._fulfill();
-                    })(function() {
-                      (function(__iced_k) {
-                        __iced_deferrals = new iced.Deferrals(__iced_k, {
-                          parent: ___iced_passed_deferral1,
-                          filename: "lib/watch.iced"
-                        });
-                        helpers.shopifyRequest({
-                          method: 'put',
-                          url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
-                          json: {
-                            asset: {
-                              key: filepath,
-                              attachment: data.toString('base64')
-                            }
-                          }
-                        }, __iced_deferrals.defer({
-                          assign_fn: (function() {
-                            return function() {
-                              err = arguments[0];
-                              res = arguments[1];
-                              return assetsBody = arguments[2];
-                            };
-                          })(),
-                          lineno: 51
-                        }));
-                        __iced_deferrals._fulfill();
-                      })(function() {
-                        return __iced_k(typeof err !== "undefined" && err !== null ? done(err) : void 0);
-                      });
-                    });
-                  } else {
-                    (function(__iced_k) {
-                      __iced_deferrals = new iced.Deferrals(__iced_k, {
-                        parent: ___iced_passed_deferral1,
-                        filename: "lib/watch.iced"
-                      });
-                      fs.readFile(filepath, {
-                        encoding: 'utf8'
-                      }, __iced_deferrals.defer({
-                        assign_fn: (function() {
-                          return function() {
-                            err = arguments[0];
-                            return data = arguments[1];
-                          };
-                        })(),
-                        lineno: 54
-                      }));
-                      __iced_deferrals._fulfill();
-                    })(function() {
-                      (function(__iced_k) {
-                        __iced_deferrals = new iced.Deferrals(__iced_k, {
-                          parent: ___iced_passed_deferral1,
-                          filename: "lib/watch.iced"
-                        });
-                        helpers.shopifyRequest({
-                          method: 'put',
-                          url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
-                          json: {
-                            asset: {
-                              key: filepath,
-                              value: data
-                            }
-                          }
-                        }, __iced_deferrals.defer({
-                          assign_fn: (function() {
-                            return function() {
-                              err = arguments[0];
-                              res = arguments[1];
-                              return assetsBody = arguments[2];
-                            };
-                          })(),
-                          lineno: 64
-                        }));
-                        __iced_deferrals._fulfill();
-                      })(function() {
-                        return __iced_k(err != null ? done(err) : void 0);
-                      });
-                    });
-                  }
+                  __iced_deferrals = new iced.Deferrals(__iced_k, {
+                    parent: ___iced_passed_deferral1,
+                    filename: "lib/watch.iced"
+                  });
+                  fs.readFile(filepath, __iced_deferrals.defer({
+                    assign_fn: (function() {
+                      return function() {
+                        err = arguments[0];
+                        return data = arguments[1];
+                      };
+                    })(),
+                    lineno: 42
+                  }));
+                  __iced_deferrals._fulfill();
                 });
               })(this)((function(_this) {
                 return function() {
-                  return __iced_k(console.log(colors.green("Added/Updated " + filepath)));
+                  (function(__iced_k) {
+                    __iced_deferrals = new iced.Deferrals(__iced_k, {
+                      parent: ___iced_passed_deferral1,
+                      filename: "lib/watch.iced"
+                    });
+                    helpers.shopifyRequest({
+                      method: 'put',
+                      url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
+                      json: {
+                        asset: {
+                          key: filepath,
+                          attachment: data.toString('base64')
+                        }
+                      }
+                    }, __iced_deferrals.defer({
+                      assign_fn: (function() {
+                        return function() {
+                          err = arguments[0];
+                          res = arguments[1];
+                          return assetsBody = arguments[2];
+                        };
+                      })(),
+                      lineno: 52
+                    }));
+                    __iced_deferrals._fulfill();
+                  })(function() {
+                    if (typeof err !== "undefined" && err !== null) {
+                      done(err);
+                    }
+                    return __iced_k(console.log(colors.green("Added/Updated " + filepath)));
+                  });
                 };
               })(this));
               break;
@@ -197,7 +141,7 @@
                         return assetsBody = arguments[2];
                       };
                     })(),
-                    lineno: 75
+                    lineno: 63
                   }));
                   __iced_deferrals._fulfill();
                 });

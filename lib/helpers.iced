@@ -95,7 +95,7 @@ module.exports = {
     shopifyQueue.add({req: req, cb: cb})
 
   isBinary: (extension) ->
-    if _.includes(['gif', 'png', 'jpg', 'mp4', 'm4v'], extension)
+    if _.includes(['gif', 'png', 'jpg', 'mp4', 'm4v', 'otf', 'eot', 'svg', 'ttf', 'woff', 'woff2'], extension)
       return true
     else
       return false

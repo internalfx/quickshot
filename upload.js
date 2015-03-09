@@ -67,105 +67,54 @@
           }
           (function(_this) {
             return (function(__iced_k) {
-              if (helpers.isBinary(extension)) {
-                (function(__iced_k) {
-                  __iced_deferrals = new iced.Deferrals(__iced_k, {
-                    parent: ___iced_passed_deferral1,
-                    filename: "lib/upload.iced"
-                  });
-                  fs.readFile(filepath, __iced_deferrals.defer({
-                    assign_fn: (function() {
-                      return function() {
-                        err = arguments[0];
-                        return data = arguments[1];
-                      };
-                    })(),
-                    lineno: 33
-                  }));
-                  __iced_deferrals._fulfill();
-                })(function() {
-                  (function(__iced_k) {
-                    __iced_deferrals = new iced.Deferrals(__iced_k, {
-                      parent: ___iced_passed_deferral1,
-                      filename: "lib/upload.iced"
-                    });
-                    helpers.shopifyRequest({
-                      method: 'put',
-                      url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
-                      json: {
-                        asset: {
-                          key: filepath,
-                          attachment: data.toString('base64')
-                        }
-                      }
-                    }, __iced_deferrals.defer({
-                      assign_fn: (function() {
-                        return function() {
-                          err = arguments[0];
-                          res = arguments[1];
-                          return assetsBody = arguments[2];
-                        };
-                      })(),
-                      lineno: 43
-                    }));
-                    __iced_deferrals._fulfill();
-                  })(function() {
-                    return __iced_k(typeof err !== "undefined" && err !== null ? done(err) : void 0);
-                  });
-                });
-              } else {
-                (function(__iced_k) {
-                  __iced_deferrals = new iced.Deferrals(__iced_k, {
-                    parent: ___iced_passed_deferral1,
-                    filename: "lib/upload.iced"
-                  });
-                  fs.readFile(filepath, {
-                    encoding: 'utf8'
-                  }, __iced_deferrals.defer({
-                    assign_fn: (function() {
-                      return function() {
-                        err = arguments[0];
-                        return data = arguments[1];
-                      };
-                    })(),
-                    lineno: 46
-                  }));
-                  __iced_deferrals._fulfill();
-                })(function() {
-                  (function(__iced_k) {
-                    __iced_deferrals = new iced.Deferrals(__iced_k, {
-                      parent: ___iced_passed_deferral1,
-                      filename: "lib/upload.iced"
-                    });
-                    helpers.shopifyRequest({
-                      method: 'put',
-                      url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
-                      json: {
-                        asset: {
-                          key: filepath,
-                          value: data
-                        }
-                      }
-                    }, __iced_deferrals.defer({
-                      assign_fn: (function() {
-                        return function() {
-                          err = arguments[0];
-                          res = arguments[1];
-                          return assetsBody = arguments[2];
-                        };
-                      })(),
-                      lineno: 56
-                    }));
-                    __iced_deferrals._fulfill();
-                  })(function() {
-                    return __iced_k(err != null ? done(err) : void 0);
-                  });
-                });
-              }
+              __iced_deferrals = new iced.Deferrals(__iced_k, {
+                parent: ___iced_passed_deferral1,
+                filename: "lib/upload.iced"
+              });
+              fs.readFile(filepath, __iced_deferrals.defer({
+                assign_fn: (function() {
+                  return function() {
+                    err = arguments[0];
+                    return data = arguments[1];
+                  };
+                })(),
+                lineno: 32
+              }));
+              __iced_deferrals._fulfill();
             });
           })(this)((function(_this) {
             return function() {
-              return console.log(colors.green("Uploaded " + filepath));
+              (function(__iced_k) {
+                __iced_deferrals = new iced.Deferrals(__iced_k, {
+                  parent: ___iced_passed_deferral1,
+                  filename: "lib/upload.iced"
+                });
+                helpers.shopifyRequest({
+                  method: 'put',
+                  url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
+                  json: {
+                    asset: {
+                      key: filepath,
+                      attachment: data.toString('base64')
+                    }
+                  }
+                }, __iced_deferrals.defer({
+                  assign_fn: (function() {
+                    return function() {
+                      err = arguments[0];
+                      res = arguments[1];
+                      return assetsBody = arguments[2];
+                    };
+                  })(),
+                  lineno: 42
+                }));
+                __iced_deferrals._fulfill();
+              })(function() {
+                if (typeof err !== "undefined" && err !== null) {
+                  done(err);
+                }
+                return console.log(colors.green("Uploaded " + filepath));
+              });
             };
           })(this));
         });
