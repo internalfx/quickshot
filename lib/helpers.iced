@@ -4,13 +4,14 @@ path = require('path')
 cwd = process.cwd()
 mfs = require('machinepack-fs')
 request = require('request')
+colors = require('colors')
 
 shopifyQueue = {
   isRunning: false
   throttle: 0
   inFlight: 0
   rate: 0
-  max: 10
+  max: 40
   queue: []
 
   add: (item) ->
@@ -18,14 +19,22 @@ shopifyQueue = {
     unless @isRunning
       @run()
 
+  retry: (item) ->
+    @queue.unshift(item)
+    unless @isRunning
+      @run()
+
   run: ->
     @isRunning = true
     while @queue.length > 0
       headroom = @max - (@rate + @inFlight)
-      exponent = ((headroom * headroom) / 16)
+      if headroom <= 0 then headroom = 0
+      exponent = ((headroom * headroom) / 8)
       if exponent <= 0 then exponent = 1
 
       @throttle = 500 / exponent
+
+      # console.log @throttle
 
       await setTimeout(defer(), @throttle)
       @request(@queue.shift())
@@ -36,14 +45,21 @@ shopifyQueue = {
     await request(item.req, defer(err, res, body))
     @inFlight -= 1
     if err? then item.cb(err)
+    if res.statusCode > 299
+      console.log res.headers.status
+    try
+      body = JSON.parse(body)
 
-    limit = res.headers['x-shopify-shop-api-call-limit']
-    limit = limit.split('/')
-    @rate = parseInt(_.first(limit))
-    @max = parseInt(_.last(limit))
+    if body.errors
+      console.log colors.red("Too fast...Retrying after short delay.")
+      @retry(item)
+    else
+      limit = res.headers['x-shopify-shop-api-call-limit']
+      limit = limit.split('/')
+      @rate = parseInt(_.first(limit))
+      @max = parseInt(_.last(limit))
 
-    body = JSON.parse(body)
-    item.cb(null, body)
+      item.cb(null, res, body)
 }
 
 module.exports = {
@@ -66,7 +82,7 @@ module.exports = {
             callback(null, data)
         )
       if config
-        cb(null, config)
+        cb(null, config, path.dirname(configpath))
       else
         pathArr = configpath.split(path.sep)
         if (pathArr.length - 2) >= 0
@@ -75,12 +91,13 @@ module.exports = {
           return cb(new Error("Shop configuration is missing, have you run 'quickshot new shop'?"))
         configpath = '/'+path.join.apply(@, pathArr)
 
-  saveConfig: (config, cb) ->
-    await fs.writeFile('./quickshot.json', JSON.stringify(config), defer(err))
-    if err? then cb(err)
-    cb(null)
-
   shopifyRequest: (req, cb) ->
     shopifyQueue.add({req: req, cb: cb})
+
+  isBinary: (extension) ->
+    if _.includes(['gif', 'png', 'jpg', 'mp4', 'm4v'], extension)
+      return true
+    else
+      return false
 
 }

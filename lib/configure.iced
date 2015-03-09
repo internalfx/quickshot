@@ -8,8 +8,6 @@ mfs = require('machinepack-fs')
 request = require('request')
 
 exports.run = (argv, done) ->
-  command = _.first(argv['_'])
-  argv['_'] = argv['_'].slice(1)
 
   await inquirer.prompt([
     {

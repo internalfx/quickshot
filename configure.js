@@ -17,11 +17,9 @@
   request = require('request');
 
   exports.run = function(argv, done) {
-    var body, command, config, err, res, theme, themeSelection, themes, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+    var body, config, err, res, theme, themeSelection, themes, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
-    command = _.first(argv['_']);
-    argv['_'] = argv['_'].slice(1);
     (function(_this) {
       return (function(__iced_k) {
         __iced_deferrals = new iced.Deferrals(__iced_k, {
@@ -52,7 +50,7 @@
               return config = arguments[0];
             };
           })(),
-          lineno: 32
+          lineno: 30
         }));
         __iced_deferrals._fulfill();
       });
@@ -76,7 +74,7 @@
                 return body = arguments[2];
               };
             })(),
-            lineno: 38
+            lineno: 36
           }));
           __iced_deferrals._fulfill();
         })(function() {
@@ -106,7 +104,7 @@
                   return themeSelection = arguments[0];
                 };
               })(),
-              lineno: 51
+              lineno: 49
             }));
             __iced_deferrals._fulfill();
           })(function() {

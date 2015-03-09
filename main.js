@@ -6,7 +6,7 @@
 
   colors = require('colors');
 
-  HELPTEXT = "\nQuickshot " + VERSION + "\n==============================\n\nCommands:\n  quickshot configure         Create new configuration file in current directory\n  quickshot download\n  quickshot --help            Show this screen.\n";
+  HELPTEXT = "\nQuickshot " + VERSION + "\n==============================\n\nCommands:\n  quickshot configure              Create a new configuration file in current directory\n  quickshot download [filter]      Download theme files, optionally providing a filter\n  quickshot upload [filter]        Upload theme files, optionally providing a filter\n  quickshot watch                  Watch project folder and synchronize changes automatically\n  quickshot --help                 Show this screen.\n";
 
   exports.run = function(argv) {
     var command, err, ___iced_passed_deferral, __iced_deferrals, __iced_k;
@@ -30,7 +30,7 @@
                     return err = arguments[0];
                   };
                 })(),
-                lineno: 22
+                lineno: 24
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);
@@ -48,7 +48,43 @@
                     return err = arguments[0];
                   };
                 })(),
-                lineno: 24
+                lineno: 26
+              }));
+              __iced_deferrals._fulfill();
+            })(__iced_k);
+            break;
+          case "upload":
+            (function(__iced_k) {
+              __iced_deferrals = new iced.Deferrals(__iced_k, {
+                parent: ___iced_passed_deferral,
+                filename: "lib/main.iced",
+                funcname: "run"
+              });
+              require('./upload').run(argv, __iced_deferrals.defer({
+                assign_fn: (function() {
+                  return function() {
+                    return err = arguments[0];
+                  };
+                })(),
+                lineno: 28
+              }));
+              __iced_deferrals._fulfill();
+            })(__iced_k);
+            break;
+          case "watch":
+            (function(__iced_k) {
+              __iced_deferrals = new iced.Deferrals(__iced_k, {
+                parent: ___iced_passed_deferral,
+                filename: "lib/main.iced",
+                funcname: "run"
+              });
+              require('./watch').run(argv, __iced_deferrals.defer({
+                assign_fn: (function() {
+                  return function() {
+                    return err = arguments[0];
+                  };
+                })(),
+                lineno: 30
               }));
               __iced_deferrals._fulfill();
             })(__iced_k);

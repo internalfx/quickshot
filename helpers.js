@@ -1,5 +1,5 @@
 (function() {
-  var cwd, fs, iced, mfs, path, request, shopifyQueue, __iced_k, __iced_k_noop;
+  var colors, cwd, fs, iced, mfs, path, request, shopifyQueue, __iced_k, __iced_k_noop;
 
   iced = require('iced-runtime');
   __iced_k = __iced_k_noop = function() {};
@@ -14,15 +14,23 @@
 
   request = require('request');
 
+  colors = require('colors');
+
   shopifyQueue = {
     isRunning: false,
     throttle: 0,
     inFlight: 0,
     rate: 0,
-    max: 10,
+    max: 40,
     queue: [],
     add: function(item) {
       this.queue.push(item);
+      if (!this.isRunning) {
+        return this.run();
+      }
+    },
+    retry: function(item) {
+      this.queue.unshift(item);
       if (!this.isRunning) {
         return this.run();
       }
@@ -54,7 +62,10 @@
               return _break();
             } else {
               headroom = _this.max - (_this.rate + _this.inFlight);
-              exponent = (headroom * headroom) / 16;
+              if (headroom <= 0) {
+                headroom = 0;
+              }
+              exponent = (headroom * headroom) / 8;
               if (exponent <= 0) {
                 exponent = 1;
               }
@@ -65,7 +76,7 @@
                   filename: "lib/helpers.iced"
                 });
                 setTimeout(__iced_deferrals.defer({
-                  lineno: 29
+                  lineno: 38
                 }), _this.throttle);
                 __iced_deferrals._fulfill();
               })(function() {
@@ -100,7 +111,7 @@
                 return body = arguments[2];
               };
             })(),
-            lineno: 35
+            lineno: 44
           }));
           __iced_deferrals._fulfill();
         });
@@ -110,12 +121,22 @@
           if (typeof err !== "undefined" && err !== null) {
             item.cb(err);
           }
-          limit = res.headers['x-shopify-shop-api-call-limit'];
-          limit = limit.split('/');
-          _this.rate = parseInt(_.first(limit));
-          _this.max = parseInt(_.last(limit));
-          body = JSON.parse(body);
-          return item.cb(null, body);
+          if (res.statusCode > 299) {
+            console.log(res.headers.status);
+          }
+          try {
+            body = JSON.parse(body);
+          } catch (_error) {}
+          if (body.errors) {
+            console.log(colors.red("Too fast...Retrying after short delay."));
+            return _this.retry(item);
+          } else {
+            limit = res.headers['x-shopify-shop-api-call-limit'];
+            limit = limit.split('/');
+            _this.rate = parseInt(_.first(limit));
+            _this.max = parseInt(_.last(limit));
+            return item.cb(null, res, body);
+          }
         };
       })(this));
     }
@@ -159,7 +180,7 @@
                     return config = arguments[1];
                   };
                 })(),
-                lineno: 54
+                lineno: 70
               });
               mfs.readJson({
                 source: configpath,
@@ -179,7 +200,7 @@
               __iced_deferrals._fulfill();
             })(function() {
               if (config) {
-                cb(null, config);
+                cb(null, config, path.dirname(configpath));
               } else {
                 pathArr = configpath.split(path.sep);
                 if ((pathArr.length - 2) >= 0) {
@@ -196,40 +217,18 @@
       })(this);
       _while(__iced_k);
     },
-    saveConfig: function(config, cb) {
-      var err, ___iced_passed_deferral, __iced_deferrals, __iced_k;
-      __iced_k = __iced_k_noop;
-      ___iced_passed_deferral = iced.findDeferral(arguments);
-      (function(_this) {
-        return (function(__iced_k) {
-          __iced_deferrals = new iced.Deferrals(__iced_k, {
-            parent: ___iced_passed_deferral,
-            filename: "lib/helpers.iced"
-          });
-          fs.writeFile('./quickshot.json', JSON.stringify(config), __iced_deferrals.defer({
-            assign_fn: (function() {
-              return function() {
-                return err = arguments[0];
-              };
-            })(),
-            lineno: 78
-          }));
-          __iced_deferrals._fulfill();
-        });
-      })(this)((function(_this) {
-        return function() {
-          if (typeof err !== "undefined" && err !== null) {
-            cb(err);
-          }
-          return cb(null);
-        };
-      })(this));
-    },
     shopifyRequest: function(req, cb) {
       return shopifyQueue.add({
         req: req,
         cb: cb
       });
+    },
+    isBinary: function(extension) {
+      if (_.includes(['gif', 'png', 'jpg', 'mp4', 'm4v'], extension)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   };
 

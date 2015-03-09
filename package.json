@@ -1,7 +1,7 @@
 {
   "name": "quickshot",
   "description": "A shopify theme synchronizer",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "homepage": "https://github.com/internalfx/quickshot",
   "author": {
     "name": "InternalFX",
@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "async": "^0.9.0",
+    "chokidar": "^1.0.0-rc4",
     "colors": "~1.0.3",
     "config": "^1.12.0",
     "iced-runtime": "~1.0.2",
@@ -46,7 +47,8 @@
     "minimist": "~1.1.0",
     "mkdirp": "^0.5.0",
     "request": "^2.53.0",
-    "verbalize": "~0.1.1"
+    "verbalize": "~0.1.1",
+    "walk": "^2.3.9"
   },
   "devDependencies": {
     "grunt-iced-coffee": "~0.7.0"
