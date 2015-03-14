@@ -1,5 +1,5 @@
 (function() {
-  var chokidar, colors, fs, helpers, iced, inquirer, mkdirp, path, request, __iced_k, __iced_k_noop;
+  var chokidar, colors, fs, helpers, iced, inquirer, mkdirp, path, request, sass, __iced_k, __iced_k_noop;
 
   iced = require('iced-runtime');
   __iced_k = __iced_k_noop = function() {};
@@ -20,6 +20,8 @@
 
   mkdirp = require('mkdirp');
 
+  sass = require('node-sass');
+
   exports.run = function(argv, done) {
     var config, err, projDir, watcher, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
@@ -39,7 +41,7 @@
               return projDir = arguments[2];
             };
           })(),
-          lineno: 13
+          lineno: 14
         }));
         __iced_deferrals._fulfill();
       });
@@ -50,12 +52,12 @@
           persistent: true,
           ignoreInitial: true,
           usePolling: true,
-          interval: 500,
-          binaryInterval: 500,
+          interval: 250,
+          binaryInterval: 250,
           cwd: projDir
         });
         return watcher.on('all', function(event, filepath) {
-          var assetsBody, data, err, extension, res, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
+          var assetsBody, data, err, extension, res, result, targetpath, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
           __iced_k = __iced_k_noop;
           ___iced_passed_deferral1 = iced.findDeferral(arguments);
           extension = path.extname(filepath).substr(1);
@@ -67,20 +69,47 @@
               }
               (function(_this) {
                 return (function(__iced_k) {
-                  __iced_deferrals = new iced.Deferrals(__iced_k, {
-                    parent: ___iced_passed_deferral1,
-                    filename: "lib/watch.iced"
-                  });
-                  fs.readFile(filepath, __iced_deferrals.defer({
-                    assign_fn: (function() {
-                      return function() {
-                        err = arguments[0];
-                        return data = arguments[1];
-                      };
-                    })(),
-                    lineno: 42
-                  }));
-                  __iced_deferrals._fulfill();
+                  if (filepath.match(/\.scss$/)) {
+                    targetpath = filepath.replace('.scss', '.css');
+                    console.log(colors.yellow("Compiling Sass: \"" + filepath + "\" -> \"" + targetpath + "\""));
+                    (function(__iced_k) {
+                      __iced_deferrals = new iced.Deferrals(__iced_k, {
+                        parent: ___iced_passed_deferral1,
+                        filename: "lib/watch.iced"
+                      });
+                      sass.render({
+                        file: filepath,
+                        outFile: targetpath
+                      }, __iced_deferrals.defer({
+                        assign_fn: (function() {
+                          return function() {
+                            err = arguments[0];
+                            return result = arguments[1];
+                          };
+                        })(),
+                        lineno: 38
+                      }));
+                      __iced_deferrals._fulfill();
+                    })(function() {
+                      (function(__iced_k) {
+                        __iced_deferrals = new iced.Deferrals(__iced_k, {
+                          parent: ___iced_passed_deferral1,
+                          filename: "lib/watch.iced"
+                        });
+                        fs.writeFile(targetpath, result.css, __iced_deferrals.defer({
+                          assign_fn: (function() {
+                            return function() {
+                              return err = arguments[0];
+                            };
+                          })(),
+                          lineno: 39
+                        }));
+                        __iced_deferrals._fulfill();
+                      })(__iced_k);
+                    });
+                  } else {
+                    return __iced_k();
+                  }
                 });
               })(this)((function(_this) {
                 return function() {
@@ -89,31 +118,48 @@
                       parent: ___iced_passed_deferral1,
                       filename: "lib/watch.iced"
                     });
-                    helpers.shopifyRequest({
-                      method: 'put',
-                      url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
-                      json: {
-                        asset: {
-                          key: filepath,
-                          attachment: data.toString('base64')
-                        }
-                      }
-                    }, __iced_deferrals.defer({
+                    fs.readFile(filepath, __iced_deferrals.defer({
                       assign_fn: (function() {
                         return function() {
                           err = arguments[0];
-                          res = arguments[1];
-                          return assetsBody = arguments[2];
+                          return data = arguments[1];
                         };
                       })(),
-                      lineno: 52
+                      lineno: 41
                     }));
                     __iced_deferrals._fulfill();
                   })(function() {
-                    if (typeof err !== "undefined" && err !== null) {
-                      done(err);
-                    }
-                    return __iced_k(console.log(colors.green("Added/Updated " + filepath)));
+                    (function(__iced_k) {
+                      __iced_deferrals = new iced.Deferrals(__iced_k, {
+                        parent: ___iced_passed_deferral1,
+                        filename: "lib/watch.iced"
+                      });
+                      helpers.shopifyRequest({
+                        method: 'put',
+                        url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
+                        json: {
+                          asset: {
+                            key: filepath,
+                            attachment: data.toString('base64')
+                          }
+                        }
+                      }, __iced_deferrals.defer({
+                        assign_fn: (function() {
+                          return function() {
+                            err = arguments[0];
+                            res = arguments[1];
+                            return assetsBody = arguments[2];
+                          };
+                        })(),
+                        lineno: 51
+                      }));
+                      __iced_deferrals._fulfill();
+                    })(function() {
+                      if (typeof err !== "undefined" && err !== null) {
+                        done(err);
+                      }
+                      return __iced_k(console.log(colors.green("Added/Updated " + filepath)));
+                    });
                   });
                 };
               })(this));
@@ -141,7 +187,7 @@
                         return assetsBody = arguments[2];
                       };
                     })(),
-                    lineno: 63
+                    lineno: 62
                   }));
                   __iced_deferrals._fulfill();
                 });

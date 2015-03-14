@@ -121,21 +121,26 @@
           if (typeof err !== "undefined" && err !== null) {
             item.cb(err);
           }
-          if (res.statusCode > 299) {
-            console.log(res.headers.status);
-          }
-          try {
-            body = JSON.parse(body);
-          } catch (_error) {}
-          if (body.errors) {
-            console.log(colors.red("Too fast...Retrying after short delay."));
-            return _this.retry(item);
-          } else {
-            limit = res.headers['x-shopify-shop-api-call-limit'];
-            limit = limit.split('/');
-            _this.rate = parseInt(_.first(limit));
-            _this.max = parseInt(_.last(limit));
-            return item.cb(null, res, body);
+          switch (res.statusCode) {
+            case 200:
+            case 201:
+              try {
+                body = JSON.parse(body);
+              } catch (_error) {}
+              if (body.errors) {
+                console.log(colors.red(body.errors));
+                return _this.retry(item);
+              } else {
+                limit = res.headers['x-shopify-shop-api-call-limit'];
+                limit = limit.split('/');
+                _this.rate = parseInt(_.first(limit));
+                _this.max = parseInt(_.last(limit));
+                return item.cb(null, res, body);
+              }
+              break;
+            default:
+              console.log(colors.red(res.statusCode));
+              return console.log(colors.red(res.body));
           }
         };
       })(this));
@@ -180,7 +185,7 @@
                     return config = arguments[1];
                   };
                 })(),
-                lineno: 70
+                lineno: 73
               });
               mfs.readJson({
                 source: configpath,

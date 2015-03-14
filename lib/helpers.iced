@@ -45,21 +45,24 @@ shopifyQueue = {
     await request(item.req, defer(err, res, body))
     @inFlight -= 1
     if err? then item.cb(err)
-    if res.statusCode > 299
-      console.log res.headers.status
-    try
-      body = JSON.parse(body)
+    switch res.statusCode
+      when 200, 201
+        try body = JSON.parse(body)
 
-    if body.errors
-      console.log colors.red("Too fast...Retrying after short delay.")
-      @retry(item)
-    else
-      limit = res.headers['x-shopify-shop-api-call-limit']
-      limit = limit.split('/')
-      @rate = parseInt(_.first(limit))
-      @max = parseInt(_.last(limit))
+        if body.errors
+          console.log colors.red(body.errors)
+          @retry(item)
+        else
+          limit = res.headers['x-shopify-shop-api-call-limit']
+          limit = limit.split('/')
+          @rate = parseInt(_.first(limit))
+          @max = parseInt(_.last(limit))
 
-      item.cb(null, res, body)
+          item.cb(null, res, body)
+      else
+        console.log colors.red(res.statusCode)
+        console.log colors.red(res.body)
+
 }
 
 module.exports = {

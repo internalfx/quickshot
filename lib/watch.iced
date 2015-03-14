@@ -8,26 +8,19 @@ fs = require('fs')
 path = require('path')
 request = require('request')
 mkdirp = require('mkdirp')
+sass = require('node-sass')
 
 exports.run = (argv, done) ->
 
   await helpers.loadConfig(defer(err, config, projDir))
 
-  # if process.platform is "darwin"
-  #   watcher = chokidar.watch('.', {
-  #     ignored: /[\/\\]\./
-  #     persistent: true
-  #     ignoreInitial: true
-  #     cwd: projDir
-  #   })
-  # else
   watcher = chokidar.watch('./', {
     ignored: /[\/\\]\./
     persistent: true
     ignoreInitial: true
     usePolling: true
-    interval: 500
-    binaryInterval: 500
+    interval: 250
+    binaryInterval: 250
     cwd: projDir
   })
 
@@ -39,6 +32,12 @@ exports.run = (argv, done) ->
 
         if filepath.match(/[\(\)]/)
           return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
+
+        if filepath.match(/\.scss$/)
+          targetpath = filepath.replace('.scss', '.css')
+          console.log colors.yellow("Compiling Sass: \"#{filepath}\" -> \"#{targetpath}\"")
+          await sass.render({file: filepath, outFile: targetpath}, defer(err, result))
+          await fs.writeFile(targetpath, result.css, defer(err))
 
         await fs.readFile(filepath, defer(err, data))
         await helpers.shopifyRequest({
@@ -65,5 +64,12 @@ exports.run = (argv, done) ->
         if err? then done(err)
 
         console.log colors.green("Deleted #{filepath}")
-
   )
+
+  # await helpers.shopifyRequest({
+  #   method: 'get'
+  #   url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
+  # }, defer(err, res, assetsBody))
+  # if err? then done(err)
+  #
+  # assets = assetsBody.assets

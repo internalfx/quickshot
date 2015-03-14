@@ -1,7 +1,7 @@
 {
   "name": "quickshot",
   "description": "A shopify theme synchronizer",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "homepage": "https://github.com/internalfx/quickshot",
   "author": {
     "name": "InternalFX",
@@ -46,6 +46,7 @@
     "machinepack-fs": "^2.2.0",
     "minimist": "~1.1.0",
     "mkdirp": "^0.5.0",
+    "node-sass": "^3.0.0-pre",
     "request": "^2.53.0",
     "verbalize": "~0.1.1",
     "walk": "^2.3.9"
