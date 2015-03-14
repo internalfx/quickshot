@@ -66,10 +66,4 @@ exports.run = (argv, done) ->
         console.log colors.green("Deleted #{filepath}")
   )
 
-  # await helpers.shopifyRequest({
-  #   method: 'get'
-  #   url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
-  # }, defer(err, res, assetsBody))
-  # if err? then done(err)
-  #
-  # assets = assetsBody.assets
+  console.log "Watching Files..."

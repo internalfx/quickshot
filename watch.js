@@ -56,7 +56,7 @@
           binaryInterval: 250,
           cwd: projDir
         });
-        return watcher.on('all', function(event, filepath) {
+        watcher.on('all', function(event, filepath) {
           var assetsBody, data, err, extension, res, result, targetpath, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
           __iced_k = __iced_k_noop;
           ___iced_passed_deferral1 = iced.findDeferral(arguments);
@@ -204,6 +204,7 @@
               return __iced_k();
           }
         });
+        return console.log("Watching Files...");
       };
     })(this));
   };
