@@ -1,7 +1,6 @@
-Quickshot
-=======
+#Quickshot
 
-###A Shopify theme development tool.
+####A Shopify theme development tool.
 
 ###How do I use it?
 

@@ -57,7 +57,7 @@
           cwd: projDir
         });
         watcher.on('all', function(event, filepath) {
-          var assetsBody, data, err, extension, res, result, targetpath, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
+          var assetsBody, data, err, extension, mainscss, res, result, targetscss, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
           __iced_k = __iced_k_noop;
           ___iced_passed_deferral1 = iced.findDeferral(arguments);
           extension = path.extname(filepath).substr(1);
@@ -70,16 +70,17 @@
               (function(_this) {
                 return (function(__iced_k) {
                   if (filepath.match(/\.scss$/)) {
-                    targetpath = filepath.replace('.scss', '.css');
-                    console.log(colors.yellow("Compiling Sass: \"" + filepath + "\" -> \"" + targetpath + "\""));
+                    mainscss = 'assets/main.scss';
+                    targetscss = 'assets/main.css';
+                    console.log(colors.yellow("Compiling Sass: \"" + mainscss + "\" -> \"" + targetscss + "\""));
                     (function(__iced_k) {
                       __iced_deferrals = new iced.Deferrals(__iced_k, {
                         parent: ___iced_passed_deferral1,
                         filename: "lib/watch.iced"
                       });
                       sass.render({
-                        file: filepath,
-                        outFile: targetpath
+                        file: mainscss,
+                        outFile: targetscss
                       }, __iced_deferrals.defer({
                         assign_fn: (function() {
                           return function() {
@@ -87,7 +88,7 @@
                             return result = arguments[1];
                           };
                         })(),
-                        lineno: 38
+                        lineno: 39
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -96,13 +97,13 @@
                           parent: ___iced_passed_deferral1,
                           filename: "lib/watch.iced"
                         });
-                        fs.writeFile(targetpath, result.css, __iced_deferrals.defer({
+                        fs.writeFile(targetscss, result.css, __iced_deferrals.defer({
                           assign_fn: (function() {
                             return function() {
                               return err = arguments[0];
                             };
                           })(),
-                          lineno: 39
+                          lineno: 40
                         }));
                         __iced_deferrals._fulfill();
                       })(__iced_k);
@@ -125,7 +126,7 @@
                           return data = arguments[1];
                         };
                       })(),
-                      lineno: 41
+                      lineno: 42
                     }));
                     __iced_deferrals._fulfill();
                   })(function() {
@@ -151,7 +152,7 @@
                             return assetsBody = arguments[2];
                           };
                         })(),
-                        lineno: 51
+                        lineno: 52
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -187,7 +188,7 @@
                         return assetsBody = arguments[2];
                       };
                     })(),
-                    lineno: 62
+                    lineno: 63
                   }));
                   __iced_deferrals._fulfill();
                 });
