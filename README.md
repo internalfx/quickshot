@@ -16,6 +16,8 @@ If you have neither of those installed visit https://nodejs.org/download/
 
 After installing one of the above, open a terminal and run `npm install -g quickshot`
 
+If you have errors, you may need to run the above command with `sudo`. Try `sudo npm install -g quickshot`
+
 ##Getting started
 
 ### Setting up Quickshot
