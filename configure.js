@@ -124,9 +124,9 @@
                   })
                 }, {
                   type: 'confirm',
-                  name: 'compile_sass',
+                  name: 'compile_scss',
                   message: "Would you like to enable automatic compiling for scss files?",
-                  "default": (typeof currConfig !== "undefined" && currConfig !== null ? currConfig.compile_sass : void 0) || false
+                  "default": (typeof currConfig !== "undefined" && currConfig !== null ? currConfig.compile_scss : void 0) || false
                 }
               ], __iced_deferrals.defer({
                 assign_fn: (function() {
@@ -142,10 +142,10 @@
                 name: choices.theme
               });
               config.theme_id = theme.id;
-              config.compile_sass = choices.compile_sass;
+              config.compile_scss = choices.compile_scss;
               scss_warning = "You have enabled scss compiling.\n\nThe filename entered below will be recompiled anytime ANY scss file changes while using 'quickshot watch'.\nThe file will be created for you if it does not exist.\nYou will want to put all your @import calls in that file.\nThen in your theme.liquid you will only need to include the compiled css file.\n\nSee docs at https://github.com/internalfx/quickshot#autocompiling-scss for more information.";
               (function(__iced_k) {
-                if (config.compile_sass) {
+                if (config.compile_scss) {
                   console.log(colors.yellow(scss_warning));
                   (function(__iced_k) {
                     __iced_deferrals = new iced.Deferrals(__iced_k, {

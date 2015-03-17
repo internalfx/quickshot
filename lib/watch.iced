@@ -33,7 +33,7 @@ exports.run = (argv, done) ->
         if filepath.match(/[\(\)]/)
           return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
 
-        if config.compile_sass and filepath.match(/\.scss$/)
+        if config.compile_scss and filepath.match(/\.scss$/)
           mainscss = config.primary_scss_file
           targetscss = mainscss.replace('.scss', '.css')
           console.log colors.yellow("Compiling Sass: \"#{mainscss}\" -> \"#{targetscss}\"")

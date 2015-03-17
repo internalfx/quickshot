@@ -45,7 +45,7 @@ The quickshot.json file contains the information needed for Shopify to authentic
   "password": "552338ce0d3aba7fc501dcf99bc57a81",
   "domain": "little-plastics.myshopify.com",
   "theme_id": 99999999,
-  "compile_sass": true,
+  "compile_scss": true,
   "primary_scss_file": "assets/application.scss"
 }
 ```
@@ -69,7 +69,7 @@ The address of your store (note there is no leading http:// or https://)
 
 The theme id of the theme that should be responding to commands.
 
-`compile_sass`
+`compile_scss`
 
 Do you want scss files to be compiled for you?
 
@@ -137,3 +137,5 @@ When compiled this will create one `application.css` file containing all your me
 
 </head>
 ```
+
+After that you can use all the benefits of scss! For more information on what you can do check out the [Sass documentation](http://sass-lang.com/documentation/file.SASS_REFERENCE)

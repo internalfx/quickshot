@@ -69,7 +69,7 @@
               }
               (function(_this) {
                 return (function(__iced_k) {
-                  if (config.compile_sass && filepath.match(/\.scss$/)) {
+                  if (config.compile_scss && filepath.match(/\.scss$/)) {
                     mainscss = config.primary_scss_file;
                     targetscss = mainscss.replace('.scss', '.css');
                     console.log(colors.yellow("Compiling Sass: \"" + mainscss + "\" -> \"" + targetscss + "\""));

@@ -56,15 +56,15 @@ exports.run = (argv, done) ->
     }
     {
       type: 'confirm'
-      name: 'compile_sass'
+      name: 'compile_scss'
       message: "Would you like to enable automatic compiling for scss files?"
-      default: currConfig?.compile_sass || false
+      default: currConfig?.compile_scss || false
     }
   ], defer(choices))
 
   theme = _.find(themes, {name: choices.theme})
   config.theme_id = theme.id
-  config.compile_sass = choices.compile_sass
+  config.compile_scss = choices.compile_scss
 
   scss_warning = """
     You have enabled scss compiling.\n
@@ -75,7 +75,7 @@ exports.run = (argv, done) ->
     See docs at https://github.com/internalfx/quickshot#autocompiling-scss for more information.
   """
 
-  if config.compile_sass
+  if config.compile_scss
     console.log colors.yellow(scss_warning)
     await inquirer.prompt([
       {
