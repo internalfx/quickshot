@@ -18,7 +18,7 @@ After installing one of the above, open a terminal and run `npm install -g quick
 
 ##Getting started
 
-#### Setting up Quickshot
+### Setting up Quickshot
 
 First, you will need to set up a new private app to generate an API key and password. Go to **your_store.com**/admin/apps/private in your web browser.
 
@@ -32,7 +32,7 @@ Navigate to the directory where you theme files live, or where you'd like them t
 
 The configuration wizard will guide you through creating your quickshot.json file. **You do not need to make or edit this file by hand!** (but you certainly can if you wish)
 
-`quickshot configure` can be run multiple times. If you have an existing configuration, it will remember all of your previous choices. 
+`quickshot configure` can be run multiple times. If you have an existing configuration, it will remember all of your previous choices.
 
 ### The quickshot.json File
 The quickshot.json file contains the information needed for Shopify to authenticate requests and edit/update the theme files in the manner specified. Here is an example of what the contents in a typical `quickshot.json` file would look like:
@@ -67,10 +67,71 @@ The address of your store (note there is no leading http:// or https://)
 
 The theme id of the theme that should be responding to commands.
 
+`compile_sass`
+
+Do you want scss files to be compiled for you?
+
+`primary_scss_file`
+
+The scss file that will be compiled anytime ANY scss file changes. You should put all of your `@import` statements in here.
+
 *Special Thanks to Shopify for letting me use some of their documentation*
 
-##Autocompiling Scss
+##Autocompiling scss
 
-Quickshot has the ability to compile scss before uploading to Shopify. This can make your workflow easier, and keep your pages loading fast by only needing to include one large css file in `theme.liquid`.
+Quickshot has the ability to compile scss before uploading to Shopify. This can make your workflow easier, and keep your pages loading fast by only needing to include one css file in `theme.liquid`.
 
-{{ 'application.css' | asset_url | stylesheet_tag }}
+####Enabling scss compiling
+
+Run `quickshot configure` from your project directory. When the configuration wizard asks `Would you like to enable automatic compiling for scss files?` press `y`. You will then be asked for the relative path to the file you wish to be compiled automatically. If you are unsure, accept the default.
+
+**The rest of the instructions will assume the default settings were used**
+
+####General Usage
+
+For this example lets assume you have 3 css files in your project.
+
+```
+main.css
+navigation.css
+typography.css
+```
+
+After running the `quickshot configure` we now have
+
+```
+application.scss
+main.css
+navigation.css
+typography.css
+```
+
+Rename all your css files to have a `.scss` extension
+
+```
+application.scss
+main.scss
+navigation.scss
+typography.scss
+```
+
+Then edit your `application.scss` similarly to below.
+
+```scss
+@import "main";
+@import "navigation";
+@import "typography";
+```
+
+When compiled this will create one `application.css` file containing all your merged css styles. Now we just need to include this in our `theme.liquid` file.
+
+```html
+<!doctype html>
+<head>
+    <!-- application.css is recompiled and uploaded anytime you change ANY .scss file in your project. -->
+    {{ 'application.css' | asset_url | stylesheet_tag }}
+
+    {{content_for_header}}
+
+</head>
+```

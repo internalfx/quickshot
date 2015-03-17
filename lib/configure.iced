@@ -68,9 +68,11 @@ exports.run = (argv, done) ->
 
   scss_warning = """
     You have enabled scss compiling.\n
-    The filename you enter below will be recompiled anytime ANY scss file changes while using 'quickshot watch'.
-    You will want to put all your @import calls in that file. Then in your theme.liquid you will only need to include the compiled css file.
-    See docs at https://github.com/internalfx/quickshot for more information.
+    The filename entered below will be recompiled anytime ANY scss file changes while using 'quickshot watch'.
+    The file will be created for you if it does not exist.
+    You will want to put all your @import calls in that file.
+    Then in your theme.liquid you will only need to include the compiled css file.\n
+    See docs at https://github.com/internalfx/quickshot#autocompiling-scss for more information.
   """
 
   if config.compile_sass
@@ -85,6 +87,32 @@ exports.run = (argv, done) ->
       }
     ], defer(choices))
     config.primary_scss_file = choices.primary_scss_file
+    await fs.readFile(config.primary_scss_file, defer(err, data))
+    if err?
+      notes = """
+        //  Sass extends the CSS @import rule to allow it to import SCSS and Sass files. All imported SCSS
+        //  and Sass files will be merged together into a single CSS output file.
+        //  In addition, any variables or mixins defined in imported files can be used in the main file.
+        //  Sass looks for other Sass files in the current directory, and the Sass file directory under Rack, Rails, or Merb.
+        //  Additional search directories may be specified using the :load_paths option, or the --load-path option on the command line.
+        //  @import takes a filename to import. By default, it looks for a Sass file to import directly,
+        //  but there are a few circumstances under which it will compile to a CSS @import rule:
+
+        //    If the file’s extension is .css.
+        //    If the filename begins with http://.
+        //    If the filename is a url().
+        //    If the @import has any media queries.
+
+        //  If none of the above conditions are met and the extension is .scss or .sass, then the named Sass or SCSS file will be imported.
+        //  If there is no extension, Sass will try to find a file with that name and the .scss or .sass extension and import it.
+
+        //  For example,
+        //    @import "foo.scss";
+
+        //  or
+        //    @import "foo";
+      """
+      await fs.writeFile(config.primary_scss_file, notes, defer(err))
 
   mfs.writeJson(
     json: config
