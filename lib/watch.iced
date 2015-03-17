@@ -33,12 +33,14 @@ exports.run = (argv, done) ->
         if filepath.match(/[\(\)]/)
           return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
 
-        if filepath.match(/\.scss$/)
-          mainscss = 'assets/main.scss'
-          targetscss = 'assets/main.css'
+        if config.compile_sass and filepath.match(/\.scss$/)
+          mainscss = config.primary_scss_file
+          targetscss = mainscss.replace('.scss', '.css')
           console.log colors.yellow("Compiling Sass: \"#{mainscss}\" -> \"#{targetscss}\"")
           await sass.render({file: mainscss, outFile: targetscss}, defer(err, result))
+          if err? then done(err)
           await fs.writeFile(targetscss, result.css, defer(err))
+          if err? then done(err)
 
         await fs.readFile(filepath, defer(err, data))
         await helpers.shopifyRequest({

@@ -85,14 +85,15 @@ module.exports = {
             callback(null, data)
         )
       if config
-        cb(null, config, path.dirname(configpath))
+        return cb(null, config, path.dirname(configpath))
       else
         pathArr = configpath.split(path.sep)
         if (pathArr.length - 2) >= 0
           _.pullAt(pathArr, pathArr.length - 2);
         else
-          return cb(new Error("Shop configuration is missing, have you run 'quickshot new shop'?"))
+          break
         configpath = '/'+path.join.apply(@, pathArr)
+    return cb(new Error("Shop configuration is missing, have you run 'quickshot configure'?"))
 
   shopifyRequest: (req, cb) ->
     shopifyQueue.add({req: req, cb: cb})

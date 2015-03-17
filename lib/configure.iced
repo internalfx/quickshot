@@ -9,26 +9,33 @@ request = require('request')
 
 exports.run = (argv, done) ->
 
+  await helpers.loadConfig(defer(err, currConfig, projDir))
+
   await inquirer.prompt([
     {
       type: 'input'
       name: 'api_key'
       message: "Shopify Private APP API key?"
-      default: null
+      default: currConfig?.api_key || null
     }
     {
       type: 'input'
       name: 'password'
       message: "Shopify Private APP Password?"
-      default: null
+      default: currConfig?.password || null
     }
     {
       type: 'input'
       name: 'domain'
-      message: "Shopify Domain? If your store is at 'https://your-domain.myshopify.com/' enter 'your-domain'."
-      default: null
+      message: "Store URL?"
+      default: currConfig?.domain || null
     }
   ], defer(config))
+
+  domain = config.domain
+  domain = domain.replace(new RegExp('^https?://'), '')
+  domain = domain.replace(new RegExp('\.myshopify\.com.*'), '')
+  config.domain = domain
 
   console.log colors.green("\nShop credentials set! Fetching themes...\n")
   await request({
@@ -44,13 +51,40 @@ exports.run = (argv, done) ->
       type: 'list'
       name: 'theme'
       message: "Select theme"
-      default: null
+      default: _.find(themes, {id: currConfig?.theme_id})?.name || null
       choices: _.map(themes, (theme) -> theme.name)
     }
-  ], defer(themeSelection))
+    {
+      type: 'confirm'
+      name: 'compile_sass'
+      message: "Would you like to enable automatic compiling for scss files?"
+      default: currConfig?.compile_sass || false
+    }
+  ], defer(choices))
 
-  theme = _.find(themes, {name: themeSelection.theme})
+  theme = _.find(themes, {name: choices.theme})
   config.theme_id = theme.id
+  config.compile_sass = choices.compile_sass
+
+  scss_warning = """
+    You have enabled scss compiling.\n
+    The filename you enter below will be recompiled anytime ANY scss file changes while using 'quickshot watch'.
+    You will want to put all your @import calls in that file. Then in your theme.liquid you will only need to include the compiled css file.
+    See docs at https://github.com/internalfx/quickshot for more information.
+  """
+
+  if config.compile_sass
+    console.log colors.yellow(scss_warning)
+    await inquirer.prompt([
+      {
+        type: 'input'
+        name: 'primary_scss_file'
+        message: "Enter relative path to primary scss file."
+        default: currConfig?.primary_scss_file || 'assets/application.scss'
+        choices: _.map(themes, (theme) -> theme.name)
+      }
+    ], defer(choices))
+    config.primary_scss_file = choices.primary_scss_file
 
   mfs.writeJson(
     json: config

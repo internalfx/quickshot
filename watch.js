@@ -69,9 +69,9 @@
               }
               (function(_this) {
                 return (function(__iced_k) {
-                  if (filepath.match(/\.scss$/)) {
-                    mainscss = 'assets/main.scss';
-                    targetscss = 'assets/main.css';
+                  if (config.compile_sass && filepath.match(/\.scss$/)) {
+                    mainscss = config.primary_scss_file;
+                    targetscss = mainscss.replace('.scss', '.css');
                     console.log(colors.yellow("Compiling Sass: \"" + mainscss + "\" -> \"" + targetscss + "\""));
                     (function(__iced_k) {
                       __iced_deferrals = new iced.Deferrals(__iced_k, {
@@ -92,6 +92,9 @@
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
+                      if (err != null) {
+                        done(err);
+                      }
                       (function(__iced_k) {
                         __iced_deferrals = new iced.Deferrals(__iced_k, {
                           parent: ___iced_passed_deferral1,
@@ -103,10 +106,12 @@
                               return err = arguments[0];
                             };
                           })(),
-                          lineno: 40
+                          lineno: 41
                         }));
                         __iced_deferrals._fulfill();
-                      })(__iced_k);
+                      })(function() {
+                        return __iced_k(err != null ? done(err) : void 0);
+                      });
                     });
                   } else {
                     return __iced_k();
@@ -126,7 +131,7 @@
                           return data = arguments[1];
                         };
                       })(),
-                      lineno: 42
+                      lineno: 44
                     }));
                     __iced_deferrals._fulfill();
                   })(function() {
@@ -152,7 +157,7 @@
                             return assetsBody = arguments[2];
                           };
                         })(),
-                        lineno: 52
+                        lineno: 54
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -188,7 +193,7 @@
                         return assetsBody = arguments[2];
                       };
                     })(),
-                    lineno: 63
+                    lineno: 65
                   }));
                   __iced_deferrals._fulfill();
                 });
