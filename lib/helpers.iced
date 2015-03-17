@@ -32,7 +32,7 @@ shopifyQueue = {
       exponent = ((headroom * headroom) / 8)
       if exponent <= 0 then exponent = 1
 
-      @throttle = 500 / exponent
+      @throttle = 550 / exponent
 
       # console.log @throttle
 
