@@ -26,7 +26,7 @@ Click on “Create a Private App” to generate the credentials for a new app. Y
 
 ![api-key-and-password](doc/API-key-and-password.jpg)
 
-Navigate to the directory where you theme files live, or where you'd like them to be, and execute the following command:
+Navigate to the directory where your theme files live, or where you'd like them to be, and execute the following command:
 
 `quickshot configure`
 
