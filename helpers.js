@@ -138,9 +138,10 @@
                 return item.cb(null, res, body);
               }
               break;
+            case 429:
+              return _this.retry(item);
             default:
-              console.log(colors.red(res.statusCode));
-              return console.log(colors.red(res.body));
+              return console.log(colors.red("Failed to transfer [" + res.statusCode + "] " + item.req.filepath));
           }
         };
       })(this));

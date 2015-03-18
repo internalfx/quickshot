@@ -27,6 +27,7 @@ exports.run = (argv, done) ->
         ((cb, asset)->
 
           await helpers.shopifyRequest({
+            filepath: asset.key
             method: 'get'
             url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
             qs: {

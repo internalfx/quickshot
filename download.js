@@ -92,6 +92,7 @@
                         filename: "lib/download.iced"
                       });
                       helpers.shopifyRequest({
+                        filepath: asset.key,
                         method: 'get',
                         url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
                         qs: {
@@ -107,7 +108,7 @@
                             return data = arguments[2];
                           };
                         })(),
-                        lineno: 34
+                        lineno: 35
                       }));
                       __iced_deferrals._fulfill();
                     });
@@ -130,7 +131,7 @@
                               return err = arguments[0];
                             };
                           })(),
-                          lineno: 42
+                          lineno: 43
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
@@ -145,7 +146,7 @@
                                 return err = arguments[0];
                               };
                             })(),
-                            lineno: 43
+                            lineno: 44
                           }));
                           __iced_deferrals._fulfill();
                         })(function() {
@@ -162,7 +163,7 @@
                       return err = arguments[0];
                     };
                   })(),
-                  lineno: 46
+                  lineno: 47
                 }), asset);
               }
             }

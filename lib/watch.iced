@@ -45,6 +45,7 @@ exports.run = (argv, done) ->
 
         await fs.readFile(filepath, defer(err, data))
         await helpers.shopifyRequest({
+          filepath: filepath
           method: 'put'
           url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
           json: {

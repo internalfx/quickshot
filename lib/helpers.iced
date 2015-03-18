@@ -57,9 +57,10 @@ shopifyQueue = {
           @max = parseInt(_.last(limit))
 
           item.cb(null, res, body)
+      when 429
+        @retry(item)
       else
-        console.log colors.red(res.statusCode)
-        console.log colors.red(res.body)
+        console.log colors.red("Failed to transfer [#{res.statusCode}] #{item.req.filepath}")
 
 }
 

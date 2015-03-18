@@ -92,6 +92,7 @@
                   filename: "lib/upload.iced"
                 });
                 helpers.shopifyRequest({
+                  filepath: filepath,
                   method: 'put',
                   url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
                   json: {
@@ -108,7 +109,7 @@
                       return assetsBody = arguments[2];
                     };
                   })(),
-                  lineno: 43
+                  lineno: 44
                 }));
                 __iced_deferrals._fulfill();
               })(function() {

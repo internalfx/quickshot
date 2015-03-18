@@ -143,6 +143,7 @@
                         filename: "lib/watch.iced"
                       });
                       helpers.shopifyRequest({
+                        filepath: filepath,
                         method: 'put',
                         url: "https://" + config.api_key + ":" + config.password + "@" + config.domain + ".myshopify.com/admin/themes/" + config.theme_id + "/assets.json",
                         json: {
@@ -159,7 +160,7 @@
                             return assetsBody = arguments[2];
                           };
                         })(),
-                        lineno: 55
+                        lineno: 56
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -195,7 +196,7 @@
                         return assetsBody = arguments[2];
                       };
                     })(),
-                    lineno: 66
+                    lineno: 67
                   }));
                   __iced_deferrals._fulfill();
                 });
