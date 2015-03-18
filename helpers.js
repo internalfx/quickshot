@@ -65,18 +65,18 @@
               if (headroom <= 0) {
                 headroom = 0;
               }
-              exponent = (headroom * headroom) / 8;
+              exponent = (headroom * headroom) / 9;
               if (exponent <= 0) {
                 exponent = 1;
               }
-              _this.throttle = 550 / exponent;
+              _this.throttle = 500 / exponent;
               (function(__iced_k) {
                 __iced_deferrals = new iced.Deferrals(__iced_k, {
                   parent: ___iced_passed_deferral,
                   filename: "lib/helpers.iced"
                 });
                 setTimeout(__iced_deferrals.defer({
-                  lineno: 38
+                  lineno: 36
                 }), _this.throttle);
                 __iced_deferrals._fulfill();
               })(function() {
@@ -111,7 +111,7 @@
                 return body = arguments[2];
               };
             })(),
-            lineno: 44
+            lineno: 42
           }));
           __iced_deferrals._fulfill();
         });

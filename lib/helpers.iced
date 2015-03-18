@@ -29,12 +29,10 @@ shopifyQueue = {
     while @queue.length > 0
       headroom = @max - (@rate + @inFlight)
       if headroom <= 0 then headroom = 0
-      exponent = ((headroom * headroom) / 8)
+      exponent = ((headroom * headroom) / 9)
       if exponent <= 0 then exponent = 1
 
-      @throttle = 550 / exponent
-
-      # console.log @throttle
+      @throttle = 500 / exponent
 
       await setTimeout(defer(), @throttle)
       @request(@queue.shift())
