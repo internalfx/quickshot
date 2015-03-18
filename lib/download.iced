@@ -12,6 +12,7 @@ exports.run = (argv, done) ->
   filter = _.first(argv['_'])
 
   await helpers.loadConfig(defer(err, config, projDir))
+  if err? then done(err)
 
   await helpers.shopifyRequest({
     method: 'get'

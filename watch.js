@@ -47,6 +47,9 @@
       });
     })(this)((function(_this) {
       return function() {
+        if (typeof err !== "undefined" && err !== null) {
+          done(err);
+        }
         watcher = chokidar.watch('./', {
           ignored: /[\/\\]\./,
           persistent: true,
@@ -88,7 +91,7 @@
                             return result = arguments[1];
                           };
                         })(),
-                        lineno: 39
+                        lineno: 40
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -106,7 +109,7 @@
                               return err = arguments[0];
                             };
                           })(),
-                          lineno: 41
+                          lineno: 42
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
@@ -131,7 +134,7 @@
                           return data = arguments[1];
                         };
                       })(),
-                      lineno: 44
+                      lineno: 45
                     }));
                     __iced_deferrals._fulfill();
                   })(function() {
@@ -157,7 +160,7 @@
                             return assetsBody = arguments[2];
                           };
                         })(),
-                        lineno: 54
+                        lineno: 55
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -193,7 +196,7 @@
                         return assetsBody = arguments[2];
                       };
                     })(),
-                    lineno: 65
+                    lineno: 66
                   }));
                   __iced_deferrals._fulfill();
                 });

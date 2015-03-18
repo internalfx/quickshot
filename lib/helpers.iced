@@ -68,32 +68,18 @@ shopifyQueue = {
 module.exports = {
 
   loadConfig: (cb) ->
-    configpath = path.join(cwd, 'quickshot.json')
-    until config? or err?
-      await
-        callback = defer(err, config)
-        mfs.readJson(
-          source: configpath
-          schema: {}
-        ).exec(
-          error: callback
-          doesNotExist: ->
-            callback()
-          couldNotParse: ->
-            callback(new Error("Shop configuration is corrupt, you may need to recreate your configuration"))
-          success: (data) ->
-            callback(null, data)
-        )
-      if config
-        return cb(null, config, path.dirname(configpath))
-      else
-        pathArr = configpath.split(path.sep)
-        if (pathArr.length - 2) >= 0
-          _.pullAt(pathArr, pathArr.length - 2);
-        else
-          break
-        configpath = '/'+path.join.apply(@, pathArr)
-    return cb(new Error("Shop configuration is missing, have you run 'quickshot configure'?"))
+    mfs.readJson(
+      source: 'quickshot.json'
+      schema: {}
+    ).exec(
+      error: cb
+      doesNotExist: ->
+        cb(new Error("Shop configuration is missing, have you run 'quickshot configure'?"))
+      couldNotParse: ->
+        cb(new Error("Shop configuration is corrupt, you may need to delete 'quickshot.json', and run 'quickshot configure' again."))
+      success: (data) ->
+        cb(null, data)
+    )
 
   shopifyRequest: (req, cb) ->
     shopifyQueue.add({req: req, cb: cb})

@@ -46,6 +46,9 @@
       });
     })(this)((function(_this) {
       return function() {
+        if (typeof err !== "undefined" && err !== null) {
+          done(err);
+        }
         walker = walk.walk(projDir, {
           followLinks: false
         });
@@ -78,7 +81,7 @@
                     return data = arguments[1];
                   };
                 })(),
-                lineno: 32
+                lineno: 33
               }));
               __iced_deferrals._fulfill();
             });
@@ -106,7 +109,7 @@
                       return assetsBody = arguments[2];
                     };
                   })(),
-                  lineno: 42
+                  lineno: 43
                 }));
                 __iced_deferrals._fulfill();
               })(function() {

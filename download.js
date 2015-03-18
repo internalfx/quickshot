@@ -44,6 +44,9 @@
       });
     })(this)((function(_this) {
       return function() {
+        if (typeof err !== "undefined" && err !== null) {
+          done(err);
+        }
         (function(__iced_k) {
           __iced_deferrals = new iced.Deferrals(__iced_k, {
             parent: ___iced_passed_deferral,
@@ -61,7 +64,7 @@
                 return assetsBody = arguments[2];
               };
             })(),
-            lineno: 18
+            lineno: 19
           }));
           __iced_deferrals._fulfill();
         })(function() {
@@ -105,7 +108,7 @@
                             return data = arguments[2];
                           };
                         })(),
-                        lineno: 33
+                        lineno: 34
                       }));
                       __iced_deferrals._fulfill();
                     });
@@ -128,7 +131,7 @@
                               return err = arguments[0];
                             };
                           })(),
-                          lineno: 41
+                          lineno: 42
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
@@ -143,7 +146,7 @@
                                 return err = arguments[0];
                               };
                             })(),
-                            lineno: 42
+                            lineno: 43
                           }));
                           __iced_deferrals._fulfill();
                         })(function() {
@@ -160,7 +163,7 @@
                       return err = arguments[0];
                     };
                   })(),
-                  lineno: 45
+                  lineno: 46
                 }), asset);
               }
             }

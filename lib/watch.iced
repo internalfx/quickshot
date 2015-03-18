@@ -13,6 +13,7 @@ sass = require('node-sass')
 exports.run = (argv, done) ->
 
   await helpers.loadConfig(defer(err, config, projDir))
+  if err? then done(err)
 
   watcher = chokidar.watch('./', {
     ignored: /[\/\\]\./
