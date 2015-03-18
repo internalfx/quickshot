@@ -2,6 +2,12 @@
 
 A Shopify theme development tool.
 
+## Features
+
+- Easy to use configuration wizard
+- Uploads/downloads in parallel greatly reducing transfer times
+- Supports autocompiling scss locally before uploading to shopify
+
 ##Installation
 
 #####TL;DR;
