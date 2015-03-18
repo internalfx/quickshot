@@ -9,51 +9,132 @@ request = require('request')
 
 exports.run = (argv, done) ->
 
-  await helpers.loadConfig(defer(err, currConfig, projDir))
+  await helpers.loadConfig(defer(err, currConfig))
+  config = currConfig or {}
+
+  until targetAction?.action is 'Done Managing Targets'
+    targetOpts = ['Create Target']
+    if _.any(config.targets)
+      targetOpts.push('Edit Target')
+      targetOpts.push('Delete Target')
+      targetOpts.push('List Targets')
+      targetOpts.push('Done Managing Targets')
+
+    await inquirer.prompt([
+      {
+        type: 'list'
+        name: 'action'
+        message: "Manage Targets"
+        # default: 'Create Target'
+        choices: targetOpts
+      }
+    ], defer(targetAction))
+
+    targetChoices = _.map(config.targets, (target) -> "[#{target.target_name}] - '#{target.theme_name}' at #{target.domain}.myshopify.com")
+
+    switch targetAction.action
+      when 'Create Target', 'Edit Target'
+
+        currTarget = {}
+        editIndex = null
+
+        if targetAction.action is 'Edit Target'
+          await inquirer.prompt([
+            {
+              type: 'list'
+              name: 'target'
+              message: "Select target to edit"
+              default: null
+              choices: targetChoices
+            }
+          ], defer(editTarget))
+          editIndex = _.indexOf(targetChoices, editTarget.target)
+          currTarget = config.targets[editIndex]
+
+        await inquirer.prompt([
+          {
+            type: 'input'
+            name: 'target_name'
+            message: "Enter a name for this target"
+            default: (currTarget.target_name or null)
+          }
+          {
+            type: 'input'
+            name: 'api_key'
+            message: "Shopify Private APP API key?"
+            default: (currTarget.api_key or null)
+          }
+          {
+            type: 'input'
+            name: 'password'
+            message: "Shopify Private APP Password?"
+            default: (currTarget.password or null)
+          }
+          {
+            type: 'input'
+            name: 'domain'
+            message: "Store URL?"
+            default: (currTarget.domain or null)
+          }
+        ], defer(choices))
+
+        currTarget.target_name = choices.target_name
+        currTarget.api_key = choices.api_key
+        currTarget.password = choices.password
+        currTarget.domain = choices.domain.replace(new RegExp('^https?://'), '').replace(new RegExp('\.myshopify\.com.*'), '')
+
+        await helpers.shopifyRequest({
+          method: 'get'
+          url: "https://#{currTarget.api_key}:#{currTarget.password}@#{currTarget.domain}.myshopify.com/admin/themes.json"
+        }, defer(err, res, reqResult))
+
+        themes = reqResult.themes
+
+        await inquirer.prompt([
+          {
+            type: 'list'
+            name: 'theme'
+            message: "Select theme"
+            default: currTarget.theme_name || null
+            choices: _.map(themes, (theme) -> theme.name)
+          }
+        ], defer(themeChoices))
+
+        theme = _.find(themes, {name: themeChoices.theme})
+        currTarget.theme_name = theme.name
+        currTarget.theme_id = theme.id
+
+        if editIndex? and editIndex isnt -1
+          config.targets[editIndex] = currTarget
+          console.log colors.yellow("Target Modified!\n\n")
+        else
+          if _.isArray(config.targets)
+            config.targets.push(currTarget)
+          else
+            config.targets = [currTarget]
+          console.log colors.yellow("Target Created!\n\n")
+
+      when 'Delete Target'
+        await inquirer.prompt([
+          {
+            type: 'list'
+            name: 'target'
+            message: "Select target to delete"
+            default: null
+            choices: targetChoices
+          }
+        ], defer(deleteTarget))
+        editIndex = _.indexOf(targetChoices, deleteTarget.target)
+        _.pullAt(config.targets, editIndex)
+
+      when 'List Targets'
+        console.log ""
+        for item in targetChoices
+          console.log colors.cyan(item)
+        console.log ""
+
 
   await inquirer.prompt([
-    {
-      type: 'input'
-      name: 'api_key'
-      message: "Shopify Private APP API key?"
-      default: currConfig?.api_key || null
-    }
-    {
-      type: 'input'
-      name: 'password'
-      message: "Shopify Private APP Password?"
-      default: currConfig?.password || null
-    }
-    {
-      type: 'input'
-      name: 'domain'
-      message: "Store URL?"
-      default: currConfig?.domain || null
-    }
-  ], defer(config))
-
-  domain = config.domain
-  domain = domain.replace(new RegExp('^https?://'), '')
-  domain = domain.replace(new RegExp('\.myshopify\.com.*'), '')
-  config.domain = domain
-
-  console.log colors.green("\nShop credentials set! Fetching themes...\n")
-  await request({
-    method: 'get'
-    url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes.json"
-  }, defer(err, res, body))
-  if err? then done(err)
-
-  themes = JSON.parse(body).themes
-
-  await inquirer.prompt([
-    {
-      type: 'list'
-      name: 'theme'
-      message: "Select theme"
-      default: _.find(themes, {id: currConfig?.theme_id})?.name || null
-      choices: _.map(themes, (theme) -> theme.name)
-    }
     {
       type: 'confirm'
       name: 'compile_scss'
@@ -62,8 +143,6 @@ exports.run = (argv, done) ->
     }
   ], defer(choices))
 
-  theme = _.find(themes, {name: choices.theme})
-  config.theme_id = theme.id
   config.compile_scss = choices.compile_scss
 
   scss_warning = """
@@ -113,6 +192,8 @@ exports.run = (argv, done) ->
         //    @import "foo";
       """
       await fs.writeFile(config.primary_scss_file, notes, defer(err))
+
+  config.configVersion = CONFIGVERSION
 
   mfs.writeJson(
     json: config

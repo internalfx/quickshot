@@ -77,6 +77,8 @@ module.exports = {
       couldNotParse: ->
         cb(new Error("Shop configuration is corrupt, you may need to delete 'quickshot.json', and run 'quickshot configure' again."))
       success: (data) ->
+        if !data.configVersion? or data.configVersion < CONFIGVERSION
+          cb(new Error("Shop configuration is from an older incompatible version of quickshot. You need to rename or delete your existing quickshot.json file and run 'quickshot configure' again."))
         cb(null, data)
     )
 
