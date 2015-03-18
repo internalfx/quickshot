@@ -51,7 +51,7 @@ The quickshot.json file contains the information needed for Shopify to authentic
 {
   "api_key":  "7a8da86d3dd730b67a357dedabaac5d6",
   "password": "552338ce0d3aba7fc501dcf99bc57a81",
-  "domain": "little-plastics.myshopify.com",
+  "domain": "little-plastics",
   "theme_id": 99999999,
   "compile_scss": true,
   "primary_scss_file": "assets/application.scss"
@@ -71,7 +71,7 @@ The password generated in your private app.
 
 `domain`
 
-The address of your store (note there is no leading http:// or https://)
+The address of your store (note that only the name before '.myshopify.com' is needed. If you use the configuration wizard, it will be trimmed for you.)
 
 `theme_id`
 
