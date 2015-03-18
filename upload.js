@@ -21,7 +21,7 @@
   walk = require('walk');
 
   exports.run = function(argv, done) {
-    var config, err, filter, projDir, walker, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+    var config, err, filter, walker, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
     filter = _.first(argv['_']);
@@ -36,8 +36,7 @@
           assign_fn: (function() {
             return function() {
               err = arguments[0];
-              config = arguments[1];
-              return projDir = arguments[2];
+              return config = arguments[1];
             };
           })(),
           lineno: 14
@@ -49,14 +48,14 @@
         if (typeof err !== "undefined" && err !== null) {
           done(err);
         }
-        walker = walk.walk(projDir, {
+        walker = walk.walk(process.cwd(), {
           followLinks: false
         });
         return walker.on("file", function(root, fileStat, next) {
           var assetsBody, data, err, extension, filepath, res, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
           __iced_k = __iced_k_noop;
           ___iced_passed_deferral1 = iced.findDeferral(arguments);
-          filepath = path.join(root, fileStat.name).replace(projDir + "/", "");
+          filepath = path.join(root, fileStat.name).replace(process.cwd() + "/", "");
           if (filepath.match(new RegExp('^quickshot.json$'))) {
             return next();
           }

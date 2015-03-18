@@ -19,7 +19,7 @@
   mkdirp = require('mkdirp');
 
   exports.run = function(argv, done) {
-    var asset, assets, assetsBody, config, err, filter, projDir, res, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+    var asset, assets, assetsBody, config, err, filter, res, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
     filter = _.first(argv['_']);
@@ -34,8 +34,7 @@
           assign_fn: (function() {
             return function() {
               err = arguments[0];
-              config = arguments[1];
-              return projDir = arguments[2];
+              return config = arguments[1];
             };
           })(),
           lineno: 13

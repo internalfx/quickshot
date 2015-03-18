@@ -23,7 +23,7 @@
   sass = require('node-sass');
 
   exports.run = function(argv, done) {
-    var config, err, projDir, watcher, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+    var config, err, watcher, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
     (function(_this) {
@@ -37,8 +37,7 @@
           assign_fn: (function() {
             return function() {
               err = arguments[0];
-              config = arguments[1];
-              return projDir = arguments[2];
+              return config = arguments[1];
             };
           })(),
           lineno: 14
@@ -57,7 +56,7 @@
           usePolling: true,
           interval: 250,
           binaryInterval: 250,
-          cwd: projDir
+          cwd: process.cwd()
         });
         watcher.on('all', function(event, filepath) {
           var assetsBody, data, err, extension, mainscss, res, result, targetscss, ___iced_passed_deferral1, __iced_deferrals, __iced_k;

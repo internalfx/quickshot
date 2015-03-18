@@ -12,13 +12,13 @@ walk = require('walk')
 exports.run = (argv, done) ->
   filter = _.first(argv['_'])
 
-  await helpers.loadConfig(defer(err, config, projDir))
+  await helpers.loadConfig(defer(err, config))
   if err? then done(err)
 
-  walker = walk.walk(projDir, { followLinks: false })
+  walker = walk.walk(process.cwd(), { followLinks: false })
 
   walker.on("file", (root, fileStat, next) ->
-    filepath = path.join(root, fileStat.name).replace(projDir+"/", "")
+    filepath = path.join(root, fileStat.name).replace(process.cwd()+"/", "")
 
     if filepath.match(new RegExp('^quickshot.json$')) then return next()
 

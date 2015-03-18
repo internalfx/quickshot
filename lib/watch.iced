@@ -12,7 +12,7 @@ sass = require('node-sass')
 
 exports.run = (argv, done) ->
 
-  await helpers.loadConfig(defer(err, config, projDir))
+  await helpers.loadConfig(defer(err, config))
   if err? then done(err)
 
   watcher = chokidar.watch('./', {
@@ -22,7 +22,7 @@ exports.run = (argv, done) ->
     usePolling: true
     interval: 250
     binaryInterval: 250
-    cwd: projDir
+    cwd: process.cwd()
   })
 
   watcher.on('all', (event, filepath) ->

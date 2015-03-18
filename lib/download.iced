@@ -11,7 +11,7 @@ mkdirp = require('mkdirp')
 exports.run = (argv, done) ->
   filter = _.first(argv['_'])
 
-  await helpers.loadConfig(defer(err, config, projDir))
+  await helpers.loadConfig(defer(err, config))
   if err? then done(err)
 
   await helpers.shopifyRequest({
