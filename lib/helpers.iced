@@ -1,10 +1,10 @@
 
 fs = require('fs')
 path = require('path')
-cwd = process.cwd()
 mfs = require('machinepack-fs')
 request = require('request')
 colors = require('colors')
+inquirer = require("inquirer")
 
 shopifyQueue = {
   isRunning: false
@@ -84,5 +84,29 @@ module.exports = {
 
   shopifyRequest: (req, cb) ->
     shopifyQueue.add({req: req, cb: cb})
+
+  getTarget: (config, cb) ->
+    target = null
+    if _.isArray(config.targets)
+      targetChoices = _.map(config.targets, (target) -> "[#{target.target_name}] - '#{target.theme_name}' at #{target.domain}.myshopify.com")
+      if config.targets.length > 1
+        await inquirer.prompt([
+          {
+            type: 'list'
+            name: 'target'
+            message: "Select target"
+            default: null
+            choices: targetChoices
+          }
+        ], defer(choice))
+        target = config.targets[_.indexOf(targetChoices, choice.target)]
+      else if config.targets.length is 1
+        target = _.first(config.targets)
+
+    if target
+      return cb(null, target)
+    else
+      return cb(new Error("No targets configured! Run 'quickshot configure' and create a new target."))
+
 
 }

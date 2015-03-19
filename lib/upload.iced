@@ -15,12 +15,16 @@ exports.run = (argv, done) ->
   await helpers.loadConfig(defer(err, config))
   if err? then done(err)
 
+  await helpers.getTarget(config, defer(err, target))
+  if err? then done(err)
+
   walker = walk.walk(process.cwd(), { followLinks: false })
 
   walker.on("file", (root, fileStat, next) ->
     filepath = path.join(root, fileStat.name).replace(process.cwd()+"/", "")
 
-    if filepath.match(new RegExp('^quickshot.json$')) then return next()
+    if filepath.match(/^quickshot.json$/) then return next()
+    if filepath.match(/^\..*$/) then return next()
 
     if filter? and not filepath.match(new RegExp("^#{filter}")) then return next()
 
@@ -35,7 +39,7 @@ exports.run = (argv, done) ->
     await helpers.shopifyRequest({
       filepath: filepath
       method: 'put'
-      url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
+      url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
       json: {
         asset: {
           key: filepath

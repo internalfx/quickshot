@@ -14,9 +14,12 @@ exports.run = (argv, done) ->
   await helpers.loadConfig(defer(err, config))
   if err? then done(err)
 
+  await helpers.getTarget(config, defer(err, target))
+  if err? then done(err)
+
   await helpers.shopifyRequest({
     method: 'get'
-    url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
+    url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
   }, defer(err, res, assetsBody))
   if err? then done(err)
 
@@ -29,7 +32,7 @@ exports.run = (argv, done) ->
           await helpers.shopifyRequest({
             filepath: asset.key
             method: 'get'
-            url: "https://#{config.api_key}:#{config.password}@#{config.domain}.myshopify.com/admin/themes/#{config.theme_id}/assets.json"
+            url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
             qs: {
               asset: {key: asset.key}
             }
