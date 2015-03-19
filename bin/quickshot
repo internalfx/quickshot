@@ -2,7 +2,7 @@
 _ = require('lodash');
 VERSION = "0.3.3";
 CONFIGVERSION = 1
-require('iced-coffee-script/register')
+require('iced-coffee-script/register');
 var main = require("../lib/main");
 var argv = require('minimist')(process.argv.slice(2));
 main.run(argv);
