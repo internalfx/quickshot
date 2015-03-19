@@ -7,11 +7,11 @@ HELPTEXT = """
               ==============================
 
               Commands:
-                quickshot configure              Create a new configuration file in current directory
+                quickshot configure              Creates/Updates the configuration file in current directory
                 quickshot download [filter]      Download theme files, optionally providing a filter
                 quickshot upload [filter]        Upload theme files, optionally providing a filter
                 quickshot watch                  Watch project folder and synchronize changes automatically
-                quickshot --help                 Show this screen.
+                quickshot                        Show this screen.
 
             """
 
