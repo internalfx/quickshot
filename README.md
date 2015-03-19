@@ -55,9 +55,9 @@ After the wizard starts you will be shown options for managing `targets`
 
 A `target` is a specific theme at a specific shop. Here are some examples of different targets you could make.
 
-- a theme called 'shoe store test' at `dev-shoe-store.myshopify.com`
-- a theme called 'staging shoe store' at `shoe-store.myshopify.com`
-- a theme called 'production store' at `shoe-store.myshopify.com`
+- a theme called `shoe store test` at `dev-shoe-store.myshopify.com`
+- a theme called `staging shoe store` at `shoe-store.myshopify.com`
+- a theme called `production store` at `shoe-store.myshopify.com`
 
 ####Creating your first target
 
