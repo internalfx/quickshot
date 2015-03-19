@@ -6,9 +6,10 @@ A Shopify theme development tool.
 
 ## Features
 
+- Supports uploading to multiple Shopify stores and themes
 - Easy to use configuration wizard
 - Uploads/downloads in parallel greatly reducing transfer times
-- Supports autocompiling scss locally before uploading to shopify
+- Supports autocompiling scss locally before uploading to Shopify
 
 ##Installation
 
@@ -18,7 +19,7 @@ A Shopify theme development tool.
 
 #####Verbose
 
-Quickshot is written in coffeescript (sort of) and runs on node.js and io.js.
+Quickshot is written in Iced CoffeeScript and runs on node.js and io.js.
 
 If you have neither of those installed visit https://nodejs.org/download/
 
@@ -28,7 +29,7 @@ If you have errors, you may need to run the above command with `sudo`. Try `sudo
 
 ##Getting started
 
-### Setting up Quickshot
+###Getting an API key
 
 First, you will need to set up a new private app to generate an API key and password. Go to **your_store.com**/admin/apps/private in your web browser.
 
@@ -36,56 +37,50 @@ Click on “Create a Private App” to generate the credentials for a new app. Y
 
 ![api-key-and-password](doc/API-key-and-password.jpg)
 
+*Special Thanks to Shopify for letting me use some of their documentation*
+
+###The configuration wizard
+
+The configuration wizard will guide you through creating your quickshot.json file. **You do not need to make or edit this file by hand!** (but you certainly can if you wish).
+
+*Also note the configuration wizard is designed be run multiple times. If you want to change your configuration, just run it again!*
+
 Navigate to the directory where your theme files live, or where you'd like them to be, and execute the following command:
 
 `quickshot configure`
 
-The configuration wizard will guide you through creating your quickshot.json file. **You do not need to make or edit this file by hand!** (but you certainly can if you wish)
+After the wizard starts you will be shown options for managing `targets`
 
-`quickshot configure` can be run multiple times. If you have an existing configuration, it will remember all of your previous choices.
+#####Whats a target?
 
-### The quickshot.json File
-The quickshot.json file contains the information needed for Shopify to authenticate requests and edit/update the theme files in the manner specified. Here is an example of what the contents in a typical `quickshot.json` file would look like:
+A `target` is a specific theme at a specific shop. Here are some examples of different targets you could make.
 
-```json
-{
-  "api_key":  "7a8da86d3dd730b67a357dedabaac5d6",
-  "password": "552338ce0d3aba7fc501dcf99bc57a81",
-  "domain": "little-plastics",
-  "theme_id": 99999999,
-  "compile_scss": true,
-  "primary_scss_file": "assets/application.scss"
-}
+- a theme called 'shoe store test' at `dev-shoe-store.myshopify.com`
+- a theme called 'staging shoe store' at `shoe-store.myshopify.com`
+- a theme called 'production store' at `shoe-store.myshopify.com`
+
+####Creating your first target
+
+```
+? Manage Targets: (Use arrow keys)
+❯ Create Target
+  Edit Target
+  Delete Target
+  List Targets
+  Done Managing Targets
 ```
 
+Select `Create Target` from the menu using the arrow keys.
 
-#### Here is a Breakdown of the Fields:
+You will then be asked for all of the following information:
 
-`api_key`
+- **Target Name** *Staging, Development or whatever you wish*
+- **API Key** *Copied from the private app settings page on Shopify*
+- **Password** *Copied from the private app settings page on Shopify*
+- **Store URL** *URL to the shopify store you want to connect to*
+- **Theme** *quickshot will display all the available themes from your shop, use your arrow keys to select which one you want to connect to*
 
-The API key generated in your private app.
-
-`password`
-
-The password generated in your private app.
-
-`domain`
-
-The address of your store (note that only the name before '.myshopify.com' is needed. If you use the configuration wizard, it will be trimmed for you.)
-
-`theme_id`
-
-The theme id of the theme that should be responding to commands.
-
-`compile_scss`
-
-Do you want scss files to be compiled for you?
-
-`primary_scss_file`
-
-The scss file that will be compiled anytime ANY scss file changes. You should put all of your `@import` statements in here.
-
-*Special Thanks to Shopify for letting me use some of their documentation*
+After configuring a target, you are returned to the main menu. From there you can edit, delete, and display a list of all configured targets. If you are finished adding targets select `Done Managing Targets` to continue.
 
 ##Autocompiling scss
 
