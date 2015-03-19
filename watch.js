@@ -83,6 +83,9 @@
             __iced_k = __iced_k_noop;
             ___iced_passed_deferral1 = iced.findDeferral(arguments);
             extension = path.extname(filepath).substr(1);
+            if (filepath.match(/^quickshot.json$/)) {
+              return;
+            }
             switch (event) {
               case 'add':
               case 'change':
@@ -110,7 +113,7 @@
                               return result = arguments[1];
                             };
                           })(),
-                          lineno: 43
+                          lineno: 45
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
@@ -128,7 +131,7 @@
                                 return err = arguments[0];
                               };
                             })(),
-                            lineno: 45
+                            lineno: 47
                           }));
                           __iced_deferrals._fulfill();
                         })(function() {
@@ -153,7 +156,7 @@
                             return data = arguments[1];
                           };
                         })(),
-                        lineno: 48
+                        lineno: 50
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -180,7 +183,7 @@
                               return assetsBody = arguments[2];
                             };
                           })(),
-                          lineno: 59
+                          lineno: 61
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
@@ -216,7 +219,7 @@
                           return assetsBody = arguments[2];
                         };
                       })(),
-                      lineno: 70
+                      lineno: 72
                     }));
                     __iced_deferrals._fulfill();
                   });

@@ -31,6 +31,8 @@ exports.run = (argv, done) ->
   watcher.on('all', (event, filepath) ->
     extension = path.extname(filepath).substr(1)
 
+    if filepath.match(/^quickshot.json$/) then return
+
     switch event
       when 'add', 'change'
 
