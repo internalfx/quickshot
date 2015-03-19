@@ -17,7 +17,7 @@
   request = require('request');
 
   exports.run = function(argv, done) {
-    var choices, config, currConfig, currTarget, data, deleteTarget, editIndex, editTarget, err, item, notes, reqResult, res, scss_warning, targetAction, targetChoices, targetOpts, theme, themeChoices, themes, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+    var choices, config, currConfig, currTarget, data, defaultTheme, deleteTarget, editIndex, editTarget, err, item, notes, reqResult, res, scss_warning, targetAction, targetChoices, targetOpts, theme, themeChoices, themes, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
     (function(_this) {
@@ -198,6 +198,15 @@
                             __iced_deferrals._fulfill();
                           })(function() {
                             themes = reqResult.themes;
+                            defaultTheme = _.find(themes, {
+                              id: currTarget.theme_id
+                            });
+                            if (defaultTheme) {
+                              defaultTheme = "" + defaultTheme.name + " (" + defaultTheme.role + ")";
+                            }
+                            themeChoices = _.map(themes, function(theme) {
+                              return "" + theme.name + " (" + theme.role + ")";
+                            });
                             (function(__iced_k) {
                               __iced_deferrals = new iced.Deferrals(__iced_k, {
                                 parent: ___iced_passed_deferral,
@@ -209,24 +218,20 @@
                                   type: 'list',
                                   name: 'theme',
                                   message: "Select theme",
-                                  "default": currTarget.theme_name || null,
-                                  choices: _.map(themes, function(theme) {
-                                    return theme.name;
-                                  })
+                                  "default": defaultTheme || null,
+                                  choices: themeChoices
                                 }
                               ], __iced_deferrals.defer({
                                 assign_fn: (function() {
                                   return function() {
-                                    return themeChoices = arguments[0];
+                                    return choices = arguments[0];
                                   };
                                 })(),
-                                lineno: 100
+                                lineno: 103
                               }));
                               __iced_deferrals._fulfill();
                             })(function() {
-                              theme = _.find(themes, {
-                                name: themeChoices.theme
-                              });
+                              theme = themes[_.indexOf(themeChoices, choices.theme)];
                               currTarget.theme_name = theme.name;
                               currTarget.theme_id = theme.id;
                               return __iced_k((editIndex != null) && editIndex !== -1 ? (config.targets[editIndex] = currTarget, console.log(colors.yellow("Target Modified!\n\n"))) : (_.isArray(config.targets) ? config.targets.push(currTarget) : config.targets = [currTarget], console.log(colors.yellow("Target Created!\n\n"))));
@@ -256,7 +261,7 @@
                               return deleteTarget = arguments[0];
                             };
                           })(),
-                          lineno: 125
+                          lineno: 128
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
@@ -299,7 +304,7 @@
                   return choices = arguments[0];
                 };
               })(),
-              lineno: 143
+              lineno: 146
             }));
             __iced_deferrals._fulfill();
           })(function() {
@@ -330,7 +335,7 @@
                         return choices = arguments[0];
                       };
                     })(),
-                    lineno: 166
+                    lineno: 169
                   }));
                   __iced_deferrals._fulfill();
                 })(function() {
@@ -348,7 +353,7 @@
                           return data = arguments[1];
                         };
                       })(),
-                      lineno: 168
+                      lineno: 171
                     }));
                     __iced_deferrals._fulfill();
                   })(function() {
@@ -367,7 +372,7 @@
                                 return err = arguments[0];
                               };
                             })(),
-                            lineno: 193
+                            lineno: 196
                           }));
                           __iced_deferrals._fulfill();
                         })(__iced_k);

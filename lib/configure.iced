@@ -89,18 +89,21 @@ exports.run = (argv, done) ->
         }, defer(err, res, reqResult))
 
         themes = reqResult.themes
+        defaultTheme = _.find(themes, {id: currTarget.theme_id})
+        if defaultTheme then defaultTheme = "#{defaultTheme.name} (#{defaultTheme.role})"
+        themeChoices = _.map(themes, (theme) -> "#{theme.name} (#{theme.role})")
 
         await inquirer.prompt([
           {
             type: 'list'
             name: 'theme'
             message: "Select theme"
-            default: currTarget.theme_name || null
-            choices: _.map(themes, (theme) -> theme.name)
+            default: defaultTheme || null
+            choices: themeChoices
           }
-        ], defer(themeChoices))
+        ], defer(choices))
 
-        theme = _.find(themes, {name: themeChoices.theme})
+        theme = themes[_.indexOf(themeChoices, choices.theme)]
         currTarget.theme_name = theme.name
         currTarget.theme_id = theme.id
 
