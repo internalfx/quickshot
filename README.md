@@ -92,7 +92,7 @@ After configuring a target, you are returned to the main menu. From there you ca
 Executing `quickshot help` at any time will provide an overview of the available commands:
 
 ```
-  quickshot configure              Create a new configuration file in current directory
+  quickshot configure              Creates/Updates the configuration file in current directory
   quickshot download [filter]      Download theme files, optionally providing a filter
   quickshot upload [filter]        Upload theme files, optionally providing a filter
   quickshot watch                  Watch project folder and synchronize changes automatically
@@ -101,7 +101,7 @@ Executing `quickshot help` at any time will provide an overview of the available
 
 # Autocompiling scss
 
-Quickshot has the ability to compile scss before uploading to Shopify. This can make your workflow easier, and keep your pages loading fast by only needing to include one css file in `theme.liquid`. 
+Quickshot has the ability to compile scss before uploading to Shopify. This can make your workflow easier, and keep your pages loading fast by only needing to include one css file in `theme.liquid`.
 
 ## General Usage
 
