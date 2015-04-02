@@ -12,6 +12,41 @@ exports.run = (argv, done) ->
   await helpers.loadConfig(defer(err, currConfig))
   config = currConfig or {}
 
+  until configAction?.action is 'Save configuration and exit'
+
+    await inquirer.prompt([
+      {
+        type: 'list'
+        name: 'action'
+        message: 'Main Menu'
+        choices: ['Configure targets', 'Configure sass', 'Save configuration and exit']
+      }
+    ], defer(configAction))
+
+    switch configAction?.action
+      when 'Configure targets'
+        await configureTargets(config, defer(err, config))
+      when 'Configure sass'
+        await configureSass(config, defer(err, config))
+
+  config.configVersion = CONFIGVERSION
+
+  mfs.writeJson(
+    json: config
+    destination: "quickshot.json"
+    force: true
+  ).exec(
+    error: (err) ->
+      console.log colors.red(err)
+      return done()
+    success: ->
+      console.log colors.green("\nConfiguration saved!\n")
+      return done()
+  )
+
+
+
+configureTargets = (config, cb) ->
   until targetAction?.action is 'Done Managing Targets'
     targetOpts = ['Create Target']
     if _.any(config.targets)
@@ -136,13 +171,15 @@ exports.run = (argv, done) ->
           console.log colors.cyan(item)
         console.log ""
 
+  return cb(null, config)
 
+configureSass = (config, cb) ->
   await inquirer.prompt([
     {
       type: 'confirm'
       name: 'compile_scss'
       message: "Would you like to enable automatic compiling for scss files?"
-      default: currConfig?.compile_scss || false
+      default: config?.compile_scss || false
     }
   ], defer(choices))
 
@@ -164,8 +201,7 @@ exports.run = (argv, done) ->
         type: 'input'
         name: 'primary_scss_file'
         message: "Enter relative path to primary scss file."
-        default: currConfig?.primary_scss_file || 'assets/application.scss'
-        choices: _.map(themes, (theme) -> theme.name)
+        default: config?.primary_scss_file || 'assets/application.scss'
       }
     ], defer(choices))
     config.primary_scss_file = choices.primary_scss_file
@@ -196,17 +232,4 @@ exports.run = (argv, done) ->
       """
       await fs.writeFile(config.primary_scss_file, notes, defer(err))
 
-  config.configVersion = CONFIGVERSION
-
-  mfs.writeJson(
-    json: config
-    destination: "quickshot.json"
-    force: true
-  ).exec(
-    error: (err) ->
-      console.log colors.red(err)
-      return done()
-    success: ->
-      console.log colors.green("\nConfiguration saved!\n")
-      return done()
-  )
+  return cb(null, config)

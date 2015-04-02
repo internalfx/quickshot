@@ -6,7 +6,7 @@
 
   colors = require('colors');
 
-  HELPTEXT = "\nQuickshot " + VERSION + "\n==============================\n\nCommands:\n  quickshot configure              Create a new configuration file in current directory\n  quickshot download [filter]      Download theme files, optionally providing a filter\n  quickshot upload [filter]        Upload theme files, optionally providing a filter\n  quickshot watch                  Watch project folder and synchronize changes automatically\n  quickshot --help                 Show this screen.\n";
+  HELPTEXT = "\nQuickshot " + VERSION + "\n==============================\n\nCommands:\n  quickshot configure              Creates/Updates the configuration file in current directory\n  quickshot download [filter]      Download theme files, optionally providing a filter\n  quickshot upload [filter]        Upload theme files, optionally providing a filter\n  quickshot watch                  Watch project folder and synchronize changes automatically\n  quickshot                        Show this screen.\n";
 
   exports.run = function(argv) {
     var command, err, ___iced_passed_deferral, __iced_deferrals, __iced_k;
