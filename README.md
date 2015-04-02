@@ -65,6 +65,15 @@ Go to **your-store.myshopify.com**/admin/apps/private in your web browser. Click
 After executing `quickshot configure` you will be presented with the following menu:
 
 ```
+? Main Menu: (Use arrow keys)
+❯ Configure targets
+  Configure sass
+  Save configuration and exit
+```
+
+To configure your targets select "Configure targets" using your arrow keys and press enter. You will then see the following menu.
+
+```
 ? Manage Targets: (Use arrow keys)
 ❯ Create Target
   Edit Target
