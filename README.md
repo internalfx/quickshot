@@ -11,13 +11,13 @@ A Shopify theme development tool.
 - Uploads/downloads in parallel greatly reducing transfer times
 - Supports autocompiling scss locally before uploading to Shopify
 
-##Installation
+## Installation
 
-#####TL;DR;
+##### TL;DR;
 
 `npm install -g quickshot`
 
-#####Verbose
+##### Verbose
 
 Quickshot is written in Iced CoffeeScript and runs on node.js and io.js.
 
@@ -27,19 +27,9 @@ After installing one of the above, open a terminal and run `npm install -g quick
 
 If you have errors, you may need to run the above command with `sudo`. Try `sudo npm install -g quickshot`
 
-##Getting started
+# Getting started
 
-###Getting an API key
-
-First, you will need to set up a new private app to generate an API key and password. Go to **your_store.com**/admin/apps/private in your web browser.
-
-Click on “Create a Private App” to generate the credentials for a new app. You will need the API key and the password of this newly generated app:
-
-![api-key-and-password](doc/API-key-and-password.jpg)
-
-*Special Thanks to Shopify for letting me use some of their documentation*
-
-###The configuration wizard
+## The configuration wizard
 
 The configuration wizard will guide you through creating your quickshot.json file. **You do not need to make or edit this file by hand!** (but you certainly can if you wish).
 
@@ -51,7 +41,7 @@ Navigate to the directory where your theme files live, or where you'd like them 
 
 After the wizard starts you will be shown options for managing `targets`
 
-#####Whats a target?
+#### Whats a target?
 
 A `target` is a specific theme at a specific shop. Here are some examples of different targets you could make.
 
@@ -59,7 +49,20 @@ A `target` is a specific theme at a specific shop. Here are some examples of dif
 - a theme called `staging shoe store` at `shoe-store.myshopify.com`
 - a theme called `production store` at `shoe-store.myshopify.com`
 
-####Creating your first target
+You will need to get Shopify Private App Credentials for each store you want to target.
+
+#### Getting Private App Credentials
+
+Go to **your-store.myshopify.com**/admin/apps/private in your web browser. Click on “Create a Private App” to generate the credentials for a new app. You will need the API Key and Password of this newly generated app:
+
+![api-key-and-password](doc/API-key-and-password.jpg)
+
+<sup><sub>*Special Thanks to Shopify for letting me use some of their documentation*</sup></sub>
+
+
+### Creating targets
+
+After executing `quickshot configure` you will be presented with the following menu:
 
 ```
 ? Manage Targets: (Use arrow keys)
@@ -80,19 +83,29 @@ You will then be asked for all of the following information:
 - **Store URL** *URL to the shopify store you want to connect to*
 - **Theme** *quickshot will display all the available themes from your shop, use your arrow keys to select which one you want to connect to*
 
+When the configuration wizard asks `Would you like to enable automatic compiling for scss files?` press `y`. You will then be asked for the relative path to the file you wish to be compiled automatically. If you are unsure, accept the default. **Further information on scss autocompiling is detailed below.**
+
 After configuring a target, you are returned to the main menu. From there you can edit, delete, and display a list of all configured targets. If you are finished adding targets select `Done Managing Targets` to continue.
 
-##Autocompiling scss
+## Commands
 
-Quickshot has the ability to compile scss before uploading to Shopify. This can make your workflow easier, and keep your pages loading fast by only needing to include one css file in `theme.liquid`.
+Executing `quickshot help` at any time will provide an overview of the available commands:
 
-####Enabling scss compiling
+```
+  quickshot configure              Create a new configuration file in current directory
+  quickshot download [filter]      Download theme files, optionally providing a filter
+  quickshot upload [filter]        Upload theme files, optionally providing a filter
+  quickshot watch                  Watch project folder and synchronize changes automatically
+  quickshot --help                 Show this screen.
+```
 
-Run `quickshot configure` from your project directory. When the configuration wizard asks `Would you like to enable automatic compiling for scss files?` press `y`. You will then be asked for the relative path to the file you wish to be compiled automatically. If you are unsure, accept the default.
+# Autocompiling scss
 
-**The rest of the instructions will assume the default settings were used**
+Quickshot has the ability to compile scss before uploading to Shopify. This can make your workflow easier, and keep your pages loading fast by only needing to include one css file in `theme.liquid`. 
 
-####General Usage
+## General Usage
+
+**These instructions assume the default settings were used**
 
 For this example lets assume you have 3 css files in your project.
 
