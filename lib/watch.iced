@@ -9,11 +9,14 @@ path = require('path')
 request = require('request')
 mkdirp = require('mkdirp')
 sass = require('node-sass')
+parser = require('gitignore-parser')
 
 exports.run = (argv, done) ->
 
   await helpers.loadConfig(defer(err, config))
   if err? then done(err)
+
+  ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
 
   await helpers.getTarget(config, defer(err, target))
   if err? then done(err)
@@ -31,7 +34,13 @@ exports.run = (argv, done) ->
   watcher.on('all', (event, filepath) ->
     extension = path.extname(filepath).substr(1)
 
+    # Ignore quickshot.json
     if filepath.match(/^quickshot.json$/) then return
+    # Ignore hidden files
+    if filepath.match(/^\..*$/) then return
+
+    # Ignore paths configured in ignore file
+    if ignore.denies(filepath) then return
 
     switch event
       when 'add', 'change'
