@@ -19,7 +19,12 @@ exports.run = (argv, done) ->
         type: 'list'
         name: 'action'
         message: 'Main Menu'
-        choices: ['Configure targets', 'Configure sass', 'Save configuration and exit']
+        choices: [
+          'Configure targets',
+          'Configure sass',
+          'Configure ignore file',
+          'Save configuration and exit'
+        ]
       }
     ], defer(configAction))
 
@@ -28,6 +33,8 @@ exports.run = (argv, done) ->
         await configureTargets(config, defer(err, config))
       when 'Configure sass'
         await configureSass(config, defer(err, config))
+      when 'Configure ignore file'
+        await configureIgnoreFile(config, defer(err, config))
 
   config.configVersion = CONFIGVERSION
 
@@ -231,5 +238,43 @@ configureSass = (config, cb) ->
         //    @import "foo";
       """
       await fs.writeFile(config.primary_scss_file, notes, defer(err))
+
+  return cb(null, config)
+
+
+configureIgnoreFile = (config, cb) ->
+  notes = """
+
+    You have two options for ignoring files in quickshot.
+    You can use a '.gitignore' file which allows you to have all your ignores in one place.
+    Or you can use a '.quickshotignore'. Which allows git and quickshot to ignore different files.
+
+  """
+  console.log colors.yellow(notes)
+  await inquirer.prompt([
+    {
+      type: 'list'
+      name: 'ignore_file'
+      message: "What would you like to use as the quickshot ignore file?"
+      default: config?.ignore_file || '.gitignore'
+      choices: [
+        '.gitignore'
+        '.quickshotignore'
+      ]
+    }
+  ], defer(choice))
+  config.ignore_file = choice.ignore_file
+  await fs.readFile(config.ignore_file, defer(err, data))
+  if err?
+    if config.ignore_file is '.gitignore'
+      notes = """
+        # This your '#{config.ignore_file}' file. Anything you put in here will be ignored by quickshot and git.
+      """
+    else
+      notes = """
+        # This your '#{config.ignore_file}' file. Anything you put in here will be ignored by quickshot.
+        # This file uses the same format as a '.gitignore' file.
+      """
+    await fs.writeFile(config.ignore_file, notes, defer(err))
 
   return cb(null, config)

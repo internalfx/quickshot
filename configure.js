@@ -1,5 +1,5 @@
 (function() {
-  var colors, configureSass, configureTargets, fs, helpers, iced, inquirer, mfs, request, __iced_k, __iced_k_noop;
+  var colors, configureIgnoreFile, configureSass, configureTargets, fs, helpers, iced, inquirer, mfs, request, __iced_k, __iced_k_noop;
 
   iced = require('iced-runtime');
   __iced_k = __iced_k_noop = function() {};
@@ -72,7 +72,7 @@
                     type: 'list',
                     name: 'action',
                     message: 'Main Menu',
-                    choices: ['Configure targets', 'Configure sass', 'Save configuration and exit']
+                    choices: ['Configure targets', 'Configure sass', 'Configure ignore file', 'Save configuration and exit']
                   }
                 ], __iced_deferrals.defer({
                   assign_fn: (function() {
@@ -80,7 +80,7 @@
                       return configAction = arguments[0];
                     };
                   })(),
-                  lineno: 23
+                  lineno: 28
                 }));
                 __iced_deferrals._fulfill();
               })(function() {
@@ -100,7 +100,7 @@
                               return config = arguments[1];
                             };
                           })(),
-                          lineno: 27
+                          lineno: 32
                         }));
                         __iced_deferrals._fulfill();
                       })(__iced_k);
@@ -119,7 +119,26 @@
                               return config = arguments[1];
                             };
                           })(),
-                          lineno: 29
+                          lineno: 34
+                        }));
+                        __iced_deferrals._fulfill();
+                      })(__iced_k);
+                      break;
+                    case 'Configure ignore file':
+                      (function(__iced_k) {
+                        __iced_deferrals = new iced.Deferrals(__iced_k, {
+                          parent: ___iced_passed_deferral,
+                          filename: "lib/configure.iced",
+                          funcname: "run"
+                        });
+                        configureIgnoreFile(config, __iced_deferrals.defer({
+                          assign_fn: (function() {
+                            return function() {
+                              err = arguments[0];
+                              return config = arguments[1];
+                            };
+                          })(),
+                          lineno: 36
                         }));
                         __iced_deferrals._fulfill();
                       })(__iced_k);
@@ -203,7 +222,7 @@
                     return targetAction = arguments[0];
                   };
                 })(),
-                lineno: 65
+                lineno: 72
               }));
               __iced_deferrals._fulfill();
             })(function() {
@@ -238,7 +257,7 @@
                                 return editTarget = arguments[0];
                               };
                             })(),
-                            lineno: 84
+                            lineno: 91
                           }));
                           __iced_deferrals._fulfill();
                         })(function() {
@@ -282,7 +301,7 @@
                               return choices = arguments[0];
                             };
                           })(),
-                          lineno: 113
+                          lineno: 120
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
@@ -306,7 +325,7 @@
                                 return reqResult = arguments[2];
                               };
                             })(),
-                            lineno: 123
+                            lineno: 130
                           }));
                           __iced_deferrals._fulfill();
                         })(function() {
@@ -339,7 +358,7 @@
                                   return choices = arguments[0];
                                 };
                               })(),
-                              lineno: 138
+                              lineno: 145
                             }));
                             __iced_deferrals._fulfill();
                           })(function() {
@@ -372,7 +391,7 @@
                             return deleteTarget = arguments[0];
                           };
                         })(),
-                        lineno: 163
+                        lineno: 170
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -426,7 +445,7 @@
               return choices = arguments[0];
             };
           })(),
-          lineno: 183
+          lineno: 190
         }));
         __iced_deferrals._fulfill();
       });
@@ -455,7 +474,7 @@
                     return choices = arguments[0];
                   };
                 })(),
-                lineno: 205
+                lineno: 212
               }));
               __iced_deferrals._fulfill();
             })(function() {
@@ -472,7 +491,7 @@
                       return data = arguments[1];
                     };
                   })(),
-                  lineno: 207
+                  lineno: 214
                 }));
                 __iced_deferrals._fulfill();
               })(function() {
@@ -490,7 +509,7 @@
                             return err = arguments[0];
                           };
                         })(),
-                        lineno: 232
+                        lineno: 239
                       }));
                       __iced_deferrals._fulfill();
                     })(__iced_k);
@@ -505,6 +524,88 @@
           }
         })(function() {
           return cb(null, config);
+        });
+      };
+    })(this));
+  };
+
+  configureIgnoreFile = function(config, cb) {
+    var choice, data, err, notes, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+    __iced_k = __iced_k_noop;
+    ___iced_passed_deferral = iced.findDeferral(arguments);
+    notes = "\nYou have two options for ignoring files in quickshot.\nYou can use a '.gitignore' file which allows you to have all your ignores in one place.\nOr you can use a '.quickshotignore'. Which allows git and quickshot to ignore different files.\n";
+    console.log(colors.yellow(notes));
+    (function(_this) {
+      return (function(__iced_k) {
+        __iced_deferrals = new iced.Deferrals(__iced_k, {
+          parent: ___iced_passed_deferral,
+          filename: "lib/configure.iced"
+        });
+        inquirer.prompt([
+          {
+            type: 'list',
+            name: 'ignore_file',
+            message: "What would you like to use as the quickshot ignore file?",
+            "default": (config != null ? config.ignore_file : void 0) || '.gitignore',
+            choices: ['.gitignore', '.quickshotignore']
+          }
+        ], __iced_deferrals.defer({
+          assign_fn: (function() {
+            return function() {
+              return choice = arguments[0];
+            };
+          })(),
+          lineno: 264
+        }));
+        __iced_deferrals._fulfill();
+      });
+    })(this)((function(_this) {
+      return function() {
+        config.ignore_file = choice.ignore_file;
+        (function(__iced_k) {
+          __iced_deferrals = new iced.Deferrals(__iced_k, {
+            parent: ___iced_passed_deferral,
+            filename: "lib/configure.iced"
+          });
+          fs.readFile(config.ignore_file, __iced_deferrals.defer({
+            assign_fn: (function() {
+              return function() {
+                err = arguments[0];
+                return data = arguments[1];
+              };
+            })(),
+            lineno: 266
+          }));
+          __iced_deferrals._fulfill();
+        })(function() {
+          (function(__iced_k) {
+            if (typeof err !== "undefined" && err !== null) {
+              if (config.ignore_file === '.gitignore') {
+                notes = "# This your '" + config.ignore_file + "' file. Anything you put in here will be ignored by quickshot and git.";
+              } else {
+                notes = "# This your '" + config.ignore_file + "' file. Anything you put in here will be ignored by quickshot.\n# This file uses the same format as a '.gitignore' file.";
+              }
+              (function(__iced_k) {
+                __iced_deferrals = new iced.Deferrals(__iced_k, {
+                  parent: ___iced_passed_deferral,
+                  filename: "lib/configure.iced"
+                });
+                fs.writeFile(config.ignore_file, notes, __iced_deferrals.defer({
+                  assign_fn: (function() {
+                    return function() {
+                      return err = arguments[0];
+                    };
+                  })(),
+                  lineno: 277
+                }));
+                __iced_deferrals._fulfill();
+              })(__iced_k);
+            } else {
+              return __iced_k();
+            }
+          })(function() {
+            return cb(null, config);
+          });
         });
       };
     })(this));
