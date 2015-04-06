@@ -1,5 +1,5 @@
 (function() {
-  var chokidar, colors, fs, helpers, iced, inquirer, mkdirp, path, request, sass, __iced_k, __iced_k_noop;
+  var chokidar, colors, fs, helpers, iced, inquirer, mkdirp, parser, path, request, sass, __iced_k, __iced_k_noop;
 
   iced = require('iced-runtime');
   __iced_k = __iced_k_noop = function() {};
@@ -22,8 +22,10 @@
 
   sass = require('node-sass');
 
+  parser = require('gitignore-parser');
+
   exports.run = function(argv, done) {
-    var config, err, target, watcher, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+    var config, err, ignore, target, watcher, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
     (function(_this) {
@@ -40,7 +42,7 @@
               return config = arguments[1];
             };
           })(),
-          lineno: 14
+          lineno: 15
         }));
         __iced_deferrals._fulfill();
       });
@@ -49,6 +51,7 @@
         if (typeof err !== "undefined" && err !== null) {
           done(err);
         }
+        ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'));
         (function(__iced_k) {
           __iced_deferrals = new iced.Deferrals(__iced_k, {
             parent: ___iced_passed_deferral,
@@ -62,7 +65,7 @@
                 return target = arguments[1];
               };
             })(),
-            lineno: 17
+            lineno: 20
           }));
           __iced_deferrals._fulfill();
         })(function() {
@@ -84,6 +87,12 @@
             ___iced_passed_deferral1 = iced.findDeferral(arguments);
             extension = path.extname(filepath).substr(1);
             if (filepath.match(/^quickshot.json$/)) {
+              return;
+            }
+            if (filepath.match(/^\..*$/)) {
+              return;
+            }
+            if (ignore.denies(filepath)) {
               return;
             }
             switch (event) {
@@ -113,7 +122,7 @@
                               return result = arguments[1];
                             };
                           })(),
-                          lineno: 45
+                          lineno: 54
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
@@ -131,7 +140,7 @@
                                 return err = arguments[0];
                               };
                             })(),
-                            lineno: 47
+                            lineno: 56
                           }));
                           __iced_deferrals._fulfill();
                         })(function() {
@@ -156,7 +165,7 @@
                             return data = arguments[1];
                           };
                         })(),
-                        lineno: 50
+                        lineno: 59
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -183,7 +192,7 @@
                               return assetsBody = arguments[2];
                             };
                           })(),
-                          lineno: 61
+                          lineno: 70
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
@@ -219,7 +228,7 @@
                           return assetsBody = arguments[2];
                         };
                       })(),
-                      lineno: 72
+                      lineno: 81
                     }));
                     __iced_deferrals._fulfill();
                   });
