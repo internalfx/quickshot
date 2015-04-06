@@ -38,7 +38,7 @@
   "dependencies": {
     "chokidar": "^1.0.0-rc4",
     "colors": "~1.0.3",
-    "gitignore-parser": "codemix/gitignore-parser",
+    "gitignore-parser": "internalfx/gitignore-parser",
     "iced-runtime": "^1.0.2",
     "inquirer": "~0.8.0",
     "lodash": ">=3.0.0",
