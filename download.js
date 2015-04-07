@@ -134,6 +134,10 @@
                       });
                     })(this)((function(_this) {
                       return function() {
+                        if (err != null) {
+                          console.log(colors.red(err));
+                          cb(err);
+                        }
                         console.log(colors.green("Downloaded " + asset.key));
                         if (data.asset.attachment) {
                           rawData = new Buffer(data.asset.attachment, 'base64');
@@ -151,7 +155,7 @@
                                 return err = arguments[0];
                               };
                             })(),
-                            lineno: 46
+                            lineno: 49
                           }));
                           __iced_deferrals._fulfill();
                         })(function() {
@@ -166,11 +170,12 @@
                                   return err = arguments[0];
                                 };
                               })(),
-                              lineno: 47
+                              lineno: 50
                             }));
                             __iced_deferrals._fulfill();
                           })(function() {
                             if (err != null) {
+                              console.log(colors.red(err));
                               return cb(err);
                             }
                           });
@@ -183,7 +188,7 @@
                         return err = arguments[0];
                       };
                     })(),
-                    lineno: 50
+                    lineno: 55
                   }), asset);
                 }
               }
