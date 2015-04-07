@@ -50,7 +50,9 @@
         if (typeof err !== "undefined" && err !== null) {
           done(err);
         }
-        ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'));
+        if (config.ignore_file) {
+          ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'));
+        }
         (function(__iced_k) {
           __iced_deferrals = new iced.Deferrals(__iced_k, {
             parent: ___iced_passed_deferral,
@@ -64,7 +66,7 @@
                 return target = arguments[1];
               };
             })(),
-            lineno: 20
+            lineno: 21
           }));
           __iced_deferrals._fulfill();
         })(function() {
@@ -85,8 +87,10 @@
             if (filepath.match(/^\..*$/)) {
               return next();
             }
-            if (ignore.denies(filepath)) {
-              return next();
+            if (config.ignore_file) {
+              if (ignore.denies(filepath)) {
+                return next();
+              }
             }
             if ((filter != null) && !filepath.match(new RegExp("^" + filter))) {
               return next();
@@ -109,7 +113,7 @@
                       return data = arguments[1];
                     };
                   })(),
-                  lineno: 45
+                  lineno: 47
                 }));
                 __iced_deferrals._fulfill();
               });
@@ -138,7 +142,7 @@
                         return assetsBody = arguments[2];
                       };
                     })(),
-                    lineno: 56
+                    lineno: 58
                   }));
                   __iced_deferrals._fulfill();
                 })(function() {

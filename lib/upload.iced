@@ -16,7 +16,8 @@ exports.run = (argv, done) ->
   await helpers.loadConfig(defer(err, config))
   if err? then done(err)
 
-  ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
+  if config.ignore_file
+    ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
 
   await helpers.getTarget(config, defer(err, target))
   if err? then done(err)
@@ -32,7 +33,8 @@ exports.run = (argv, done) ->
     if filepath.match(/^\..*$/) then return next()
 
     # Ignore paths configured in ignore file
-    if ignore.denies(filepath) then return next()
+    if config.ignore_file
+      if ignore.denies(filepath) then return next()
 
     if filter? and not filepath.match(new RegExp("^#{filter}")) then return next()
 
