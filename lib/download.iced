@@ -37,6 +37,9 @@ exports.run = (argv, done) ->
               asset: {key: asset.key}
             }
           }, defer(err, res, data))
+          if err?
+            console.log colors.red(err)
+            cb(err)
 
           console.log colors.green("Downloaded #{asset.key}")
           if data.asset.attachment
@@ -46,7 +49,9 @@ exports.run = (argv, done) ->
 
           await mkdirp(path.dirname(data.asset.key), defer(err))
           await fs.writeFile(data.asset.key, rawData, defer(err))
-          if err? then cb(err)
+          if err?
+            console.log colors.red(err)
+            cb(err)
 
         )(defer(err), asset)
 
