@@ -7,12 +7,16 @@ fs = require('fs')
 path = require('path')
 request = require('request')
 mkdirp = require('mkdirp')
+parser = require('gitignore-parser')
 
 exports.run = (argv, done) ->
   filter = _.first(argv['_'])
 
   await helpers.loadConfig(defer(err, config))
   if err? then done(err)
+
+  if config.ignore_file
+    ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
 
   await helpers.getTarget(config, defer(err, target))
   if err? then done(err)
@@ -26,6 +30,10 @@ exports.run = (argv, done) ->
   assets = assetsBody.assets
   await
     for asset in assets
+      # Ignore paths configured in ignore file
+      if ignore and ignore.denies(asset.key)
+        continue
+
       if not filter? or asset.key.match(new RegExp("^#{filter}"))
         ((cb, asset)->
 
