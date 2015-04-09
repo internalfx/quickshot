@@ -13,39 +13,34 @@ exports.run = (argv, done) ->
   filter = _.first(argv['_'])
 
   await helpers.loadConfig(defer(err, config))
-  if err? then done(err)
+  if err? then return done(err)
 
   if config.ignore_file
     ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
 
   await helpers.getTarget(config, defer(err, target))
-  if err? then done(err)
+  if err? then return done(err)
 
-  await helpers.shopifyRequest({
-    method: 'get'
-    url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/pages.json?limit=250"
-  }, defer(err, res, pagesBody))
-  if err? then done(err)
+  await helpers.getShopPages(target, defer(err, pages))
+  if err? then return done(err)
 
-  pages = pagesBody.pages
-  await
-    for page in pages
-      key = "pages/#{page.handle}.html"
-      # Ignore paths configured in ignore file
-      if ignore and ignore.denies(key)
-        continue
+  for page in pages
+    key = "pages/#{page.handle}.html"
+    # Ignore paths configured in ignore file
+    if ignore and ignore.denies(key)
+      continue
 
-      if not filter? or key.match(new RegExp("^#{filter}"))
-        await mkdirp(path.dirname(key), defer(err))
-        await fs.writeFile(key, page.body_html, defer(err))
-        console.log colors.green("Downloaded #{key}")
+    if not filter? or key.match(new RegExp("^#{filter}"))
+      await mkdirp(path.dirname(key), defer(err))
+      await fs.writeFile(key, page.body_html, defer(err))
+      console.log colors.green("Downloaded #{key}")
 
 
   await helpers.shopifyRequest({
     method: 'get'
     url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
   }, defer(err, res, assetsBody))
-  if err? then done(err)
+  if err? then return done(err)
 
   assets = assetsBody.assets
   await
@@ -56,7 +51,7 @@ exports.run = (argv, done) ->
         continue
 
       if not filter? or key.match(new RegExp("^#{filter}"))
-        ((cb, asset)->
+        ((cb, asset, key)->
 
           await helpers.shopifyRequest({
             filepath: key
@@ -82,6 +77,6 @@ exports.run = (argv, done) ->
             console.log colors.red(err)
             cb(err)
 
-        )(defer(err), asset)
+        )(defer(err), asset, key)
 
   done()

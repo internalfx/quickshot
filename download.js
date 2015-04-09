@@ -21,7 +21,7 @@
   parser = require('gitignore-parser');
 
   exports.run = function(argv, done) {
-    var asset, assets, assetsBody, config, err, filter, ignore, key, page, pages, pagesBody, res, target, ___iced_passed_deferral, __iced_deferrals, __iced_k, _next;
+    var asset, assets, assetsBody, config, err, filter, ignore, key, page, pages, res, target, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
     filter = _.first(argv['_']);
@@ -46,7 +46,7 @@
     })(this)((function(_this) {
       return function() {
         if (typeof err !== "undefined" && err !== null) {
-          done(err);
+          return done(err);
         }
         if (config.ignore_file) {
           ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'));
@@ -69,7 +69,7 @@
           __iced_deferrals._fulfill();
         })(function() {
           if (typeof err !== "undefined" && err !== null) {
-            done(err);
+            return done(err);
           }
           (function(__iced_k) {
             __iced_deferrals = new iced.Deferrals(__iced_k, {
@@ -77,45 +77,41 @@
               filename: "lib/download.iced",
               funcname: "run"
             });
-            helpers.shopifyRequest({
-              method: 'get',
-              url: "https://" + target.api_key + ":" + target.password + "@" + target.domain + ".myshopify.com/admin/pages.json?limit=250"
-            }, __iced_deferrals.defer({
+            helpers.getShopPages(target, __iced_deferrals.defer({
               assign_fn: (function() {
                 return function() {
                   err = arguments[0];
-                  res = arguments[1];
-                  return pagesBody = arguments[2];
+                  return pages = arguments[1];
                 };
               })(),
-              lineno: 26
+              lineno: 23
             }));
             __iced_deferrals._fulfill();
           })(function() {
             if (typeof err !== "undefined" && err !== null) {
-              done(err);
+              return done(err);
             }
-            pages = pagesBody.pages;
             (function(__iced_k) {
-              var _i, _len, _ref, _while;
-              __iced_deferrals = new iced.Deferrals(__iced_k, {
-                parent: ___iced_passed_deferral,
-                filename: "lib/download.iced",
-                funcname: "run"
-              });
+              var _i, _len, _ref, _results, _while;
               _ref = pages;
               _len = _ref.length;
               _i = 0;
+              _results = [];
               _while = function(__iced_k) {
-                var _break, _continue;
-                _break = __iced_k;
+                var _break, _continue, _next;
+                _break = function() {
+                  return __iced_k(_results);
+                };
                 _continue = function() {
                   return iced.trampoline(function() {
                     ++_i;
                     return _while(__iced_k);
                   });
                 };
-                _next = _continue;
+                _next = function(__iced_next_arg) {
+                  _results.push(__iced_next_arg);
+                  return _continue();
+                };
                 if (!(_i < _len)) {
                   return _break();
                 } else {
@@ -144,7 +140,7 @@ _continue()
                                 return err = arguments[0];
                               };
                             })(),
-                            lineno: 38
+                            lineno: 33
                           }));
                           __iced_deferrals._fulfill();
                         })(function() {
@@ -160,7 +156,7 @@ _continue()
                                   return err = arguments[0];
                                 };
                               })(),
-                              lineno: 39
+                              lineno: 34
                             }));
                             __iced_deferrals._fulfill();
                           })(function() {
@@ -175,7 +171,6 @@ _continue()
                 }
               };
               _while(__iced_k);
-              __iced_deferrals._fulfill();
             })(function() {
               (function(__iced_k) {
                 __iced_deferrals = new iced.Deferrals(__iced_k, {
@@ -194,12 +189,12 @@ _continue()
                       return assetsBody = arguments[2];
                     };
                   })(),
-                  lineno: 46
+                  lineno: 41
                 }));
                 __iced_deferrals._fulfill();
               })(function() {
                 if (typeof err !== "undefined" && err !== null) {
-                  done(err);
+                  return done(err);
                 }
                 assets = assetsBody.assets;
                 (function(__iced_k) {
@@ -216,7 +211,7 @@ _continue()
                       continue;
                     }
                     if ((filter == null) || key.match(new RegExp("^" + filter))) {
-                      (function(cb, asset) {
+                      (function(cb, asset, key) {
                         var data, err, rawData, res, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
                         __iced_k = __iced_k_noop;
                         ___iced_passed_deferral1 = iced.findDeferral(arguments);
@@ -243,7 +238,7 @@ _continue()
                                   return data = arguments[2];
                                 };
                               })(),
-                              lineno: 67
+                              lineno: 62
                             }));
                             __iced_deferrals._fulfill();
                           });
@@ -270,7 +265,7 @@ _continue()
                                     return err = arguments[0];
                                   };
                                 })(),
-                                lineno: 78
+                                lineno: 73
                               }));
                               __iced_deferrals._fulfill();
                             })(function() {
@@ -285,7 +280,7 @@ _continue()
                                       return err = arguments[0];
                                     };
                                   })(),
-                                  lineno: 79
+                                  lineno: 74
                                 }));
                                 __iced_deferrals._fulfill();
                               })(function() {
@@ -303,8 +298,8 @@ _continue()
                             return err = arguments[0];
                           };
                         })(),
-                        lineno: 84
-                      }), asset);
+                        lineno: 79
+                      }), asset, key);
                     }
                   }
                   __iced_deferrals._fulfill();

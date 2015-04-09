@@ -230,6 +230,73 @@
           }
         };
       })(this));
+    },
+    getShopPages: function(target, cb) {
+      var chunkSize, err, page, pages, pagesBody, res, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+      __iced_k = __iced_k_noop;
+      ___iced_passed_deferral = iced.findDeferral(arguments);
+      chunkSize = 250;
+      page = 1;
+      pages = [];
+      pagesBody = {
+        pages: [0]
+      };
+      (function(_this) {
+        return (function(__iced_k) {
+          var _results, _while;
+          _results = [];
+          _while = function(__iced_k) {
+            var _break, _continue, _next;
+            _break = function() {
+              return __iced_k(_results);
+            };
+            _continue = function() {
+              return iced.trampoline(function() {
+                return _while(__iced_k);
+              });
+            };
+            _next = function(__iced_next_arg) {
+              _results.push(__iced_next_arg);
+              return _continue();
+            };
+            if (pagesBody.pages.length === 0) {
+              return _break();
+            } else {
+              (function(__iced_k) {
+                __iced_deferrals = new iced.Deferrals(__iced_k, {
+                  parent: ___iced_passed_deferral,
+                  filename: "lib/helpers.iced"
+                });
+                _this.shopifyRequest({
+                  method: 'get',
+                  url: "https://" + target.api_key + ":" + target.password + "@" + target.domain + ".myshopify.com/admin/pages.json?limit=" + chunkSize + "&page=" + page
+                }, __iced_deferrals.defer({
+                  assign_fn: (function() {
+                    return function() {
+                      err = arguments[0];
+                      res = arguments[1];
+                      return pagesBody = arguments[2];
+                    };
+                  })(),
+                  lineno: 122
+                }));
+                __iced_deferrals._fulfill();
+              })(function() {
+                if (typeof err !== "undefined" && err !== null) {
+                  return cb(err);
+                }
+                pages = pages.concat(pagesBody.pages);
+                return _next(page += 1);
+              });
+            }
+          };
+          _while(__iced_k);
+        });
+      })(this)((function(_this) {
+        return function() {
+          return cb(null, pages);
+        };
+      })(this));
     }
   };
 

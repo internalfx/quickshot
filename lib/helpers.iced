@@ -108,5 +108,25 @@ module.exports = {
     else
       return cb(new Error("No targets configured! Run 'quickshot configure' and create a new target."))
 
+  getShopPages: (target, cb) ->
+    chunkSize = 250
+    page = 1
+    pages = []
+    pagesBody = {
+      pages: [0]
+    }
+
+    while pagesBody.pages.length isnt 0
+      await @shopifyRequest({
+        method: 'get'
+        url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/pages.json?limit=#{chunkSize}&page=#{page}"
+      }, defer(err, res, pagesBody))
+      if err? then return cb(err)
+
+      pages = pages.concat(pagesBody.pages)
+      page += 1
+
+    return cb(null, pages)
+
 
 }
