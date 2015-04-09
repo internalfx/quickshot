@@ -119,7 +119,7 @@ After executing `quickshot configure` and selecting `Configure ignore file` you 
   .quickshotignore
 ```  
 
-You would be wise to have `quickshot.json` in your `.gitignore` file but you may also want to ignore other files such as `settings_data.json` which contain data that could have been edited via Shopify's web admin panel that you don't want to overwrite using commands like `quickshot watch` (especially when working in multiple stores). 
+You may want to ignore files such as `settings_data.json` which contain data that could have been edited via Shopify's web admin panel that you don't want to overwrite using commands like `quickshot watch` (especially when working in multiple stores). 
 
 # Autocompiling scss
 
