@@ -23,6 +23,26 @@ exports.run = (argv, done) ->
 
   await helpers.shopifyRequest({
     method: 'get'
+    url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/pages.json?limit=250"
+  }, defer(err, res, pagesBody))
+  if err? then done(err)
+
+  pages = pagesBody.pages
+  await
+    for page in pages
+      key = "pages/#{page.handle}.html"
+      # Ignore paths configured in ignore file
+      if ignore and ignore.denies(key)
+        continue
+
+      if not filter? or key.match(new RegExp("^#{filter}"))
+        await mkdirp(path.dirname(key), defer(err))
+        await fs.writeFile(key, page.body_html, defer(err))
+        console.log colors.green("Downloaded #{key}")
+
+
+  await helpers.shopifyRequest({
+    method: 'get'
     url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
   }, defer(err, res, assetsBody))
   if err? then done(err)
@@ -30,26 +50,27 @@ exports.run = (argv, done) ->
   assets = assetsBody.assets
   await
     for asset in assets
+      key = asset.key
       # Ignore paths configured in ignore file
-      if ignore and ignore.denies(asset.key)
+      if ignore and ignore.denies(key)
         continue
 
-      if not filter? or asset.key.match(new RegExp("^#{filter}"))
+      if not filter? or key.match(new RegExp("^#{filter}"))
         ((cb, asset)->
 
           await helpers.shopifyRequest({
-            filepath: asset.key
+            filepath: key
             method: 'get'
             url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
             qs: {
-              asset: {key: asset.key}
+              asset: {key: key}
             }
           }, defer(err, res, data))
           if err?
             console.log colors.red(err)
             cb(err)
 
-          console.log colors.green("Downloaded #{asset.key}")
+          console.log colors.green("Downloaded #{key}")
           if data.asset.attachment
             rawData = new Buffer(data.asset.attachment, 'base64')
           else if data.asset.value
