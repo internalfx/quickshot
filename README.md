@@ -10,6 +10,8 @@ A Shopify theme development tool.
 - Easy to use configuration wizard
 - Uploads/downloads in parallel greatly reducing transfer times
 - Supports autocompiling scss locally before uploading to Shopify
+- Can use with `.gitignore` files or a custom `.quickshotignore` file.
+- Can `download/upload/watch` any Shopify Page. Allowing you to edit your pages locally in your favorite editor.
 
 ## Installation
 
@@ -29,7 +31,7 @@ If you have errors, you may need to run the above command with `sudo`. Try `sudo
 
 # Getting started
 
-## The configuration wizard
+### The configuration wizard
 
 The configuration wizard will guide you through creating your quickshot.json file. **You do not need to make or edit this file by hand!** (but you certainly can if you wish).
 
@@ -39,28 +41,9 @@ Navigate to the directory where your theme files live, or where you'd like them 
 
 `quickshot configure`
 
-After the wizard starts you will be shown options for managing `targets`
+#Targets
 
-#### Whats a target?
-
-A `target` is a specific theme at a specific shop. Here are some examples of different targets you could make.
-
-- a theme called `shoe store test` at `dev-shoe-store.myshopify.com`
-- a theme called `staging shoe store` at `shoe-store.myshopify.com`
-- a theme called `production store` at `shoe-store.myshopify.com`
-
-You will need to get Shopify Private App Credentials for each store you want to target.
-
-#### Getting Private App Credentials
-
-Go to **your-store.myshopify.com**/admin/apps/private in your web browser. Click on “Create a Private App” to generate the credentials for a new app. You will need the API Key and Password of this newly generated app:
-
-![api-key-and-password](doc/API-key-and-password.jpg)
-
-<sup><sub>*Special Thanks to Shopify for letting me use some of their documentation*</sup></sub>
-
-
-### Creating targets
+> A `target` is a specific theme at a specific shop.
 
 After executing `quickshot configure` you will be presented with the following menu:
 
@@ -93,39 +76,51 @@ You will then be asked for all of the following information:
 - **Store URL** *URL to the shopify store you want to connect to*
 - **Theme** *quickshot will display all the available themes from your shop, use your arrow keys to select which one you want to connect to*
 
-When the configuration wizard asks `Would you like to enable automatic compiling for scss files?` press `y`. You will then be asked for the relative path to the file you wish to be compiled automatically. If you are unsure, accept the default. **Further information on scss autocompiling is detailed below.**
+#### Getting Private App Credentials
 
-After configuring a target, you are returned to the main menu. From there you can edit, delete, and display a list of all configured targets. If you are finished adding targets select `Done Managing Targets` to continue.
+Go to **your-store.myshopify.com**/admin/apps/private in your web browser. Click on “Create a Private App” to generate the credentials for a new app. You will need the API Key and Password of this newly generated app:
 
-## Commands
+![api-key-and-password](doc/API-key-and-password.jpg)
 
-Executing `quickshot help` at any time will provide an overview of the available commands:
+<sup><sub>*Special Thanks to Shopify for letting me use some of their documentation*</sup></sub>
 
-```
-  quickshot configure              Creates/Updates the configuration file in current directory
-  quickshot download [filter]      Download theme files, optionally providing a filter
-  quickshot upload [filter]        Upload theme files, optionally providing a filter
-  quickshot watch                  Watch project folder and synchronize changes automatically
-  quickshot --help                 Show this screen.
-```
-
-## Ignore file(s)
-
-After executing `quickshot configure` and selecting `Configure ignore file` you will be presented with the following menu:
-
-```
-? What would you like to use as the quickshot ignore file? (Use arrow keys)
-❯ .gitignore
-  .quickshotignore
-```  
-
-You may want to ignore files such as `settings_data.json` which contain data that could have been edited via Shopify's web admin panel that you don't want to overwrite using commands like `quickshot watch` (especially when working in multiple stores). 
+After configuring a target, you are returned `Manage Targets` menu. From there you can edit, delete, and display a list of all configured targets. If you are finished adding targets select `Done Managing Targets` to continue.
 
 # Autocompiling scss
 
 Quickshot has the ability to compile scss before uploading to Shopify. This can make your workflow easier, and keep your pages loading fast by only needing to include one css file in `theme.liquid`.
 
-## General Usage
+Execute `quickshot configure` and select `Configure sass` from the main menu.
+
+```
+? Main Menu:
+  Configure targets
+❯ Configure sass
+  Configure ignore file
+  Save configuration and exit
+```
+
+You will then be asked if you want to enable sass compilation.
+
+```
+? Would you like to enable automatic compiling for scss files? (Y/n)
+```
+
+Press `y`. Then you will be asked what file to use for your primary scss file. If unsure accept the default.
+
+```
+You have enabled scss compiling.
+
+The filename entered below will be recompiled anytime ANY scss file changes while using 'quickshot watch'.
+The file will be created for you if it does not exist.
+You will want to put all your @import calls in that file.
+Then in your theme.liquid you will only need to include the compiled css file.
+
+See docs at https://github.com/internalfx/quickshot#autocompiling-scss for more information.
+? Enter relative path to primary scss file. (assets/application.scss)
+```
+
+### General Scss Usage
 
 **These instructions assume the default settings were used**
 
@@ -177,3 +172,27 @@ When compiled this will create one `application.css` file containing all your me
 ```
 
 After that you can use all the benefits of scss! For more information on what you can do check out the [Sass documentation](http://sass-lang.com/documentation/file.SASS_REFERENCE)
+
+# Quickshot Commands
+
+Executing `quickshot help` at any time will provide an overview of the available commands:
+
+```
+  quickshot configure              Creates/Updates the configuration file in current directory
+  quickshot download [filter]      Download theme files, optionally providing a filter
+  quickshot upload [filter]        Upload theme files, optionally providing a filter
+  quickshot watch                  Watch project folder and synchronize changes automatically
+  quickshot --help                 Show this screen.
+```
+
+## Ignore file(s)
+
+After executing `quickshot configure` and selecting `Configure ignore file` you will be presented with the following menu:
+
+```
+? What would you like to use as the quickshot ignore file? (Use arrow keys)
+❯ .gitignore
+  .quickshotignore
+```  
+
+You may want to ignore files such as `settings_data.json` which contain data that could have been edited via Shopify's web admin panel that you don't want to overwrite using commands like `quickshot watch` (especially when working in multiple stores).
