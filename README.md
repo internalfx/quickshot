@@ -68,6 +68,7 @@ After executing `quickshot configure` you will be presented with the following m
 ? Main Menu: (Use arrow keys)
 ❯ Configure targets
   Configure sass
+  Configure ignore file
   Save configuration and exit
 ```
 
@@ -107,6 +108,18 @@ Executing `quickshot help` at any time will provide an overview of the available
   quickshot watch                  Watch project folder and synchronize changes automatically
   quickshot --help                 Show this screen.
 ```
+
+## Ignore file(s)
+
+After executing `quickshot configure` and selecting `Configure ignore file` you will be presented with the following menu:
+
+```
+? What would you like to use as the quickshot ignore file? (Use arrow keys)
+❯ .gitignore
+  .quickshotignore
+```  
+
+You may want to ignore files such as `settings_data.json` which contain data that could have been edited via Shopify's web admin panel that you don't want to overwrite using commands like `quickshot watch` (especially when working in multiple stores). 
 
 # Autocompiling scss
 
