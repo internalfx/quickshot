@@ -20,7 +20,10 @@ exports.run = (argv, done) ->
     ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
 
   await helpers.getTarget(config, defer(err, target))
-  if err? then done(err)
+  if err? then return done(err)
+
+  await helpers.getShopPages(target, defer(err, pages))
+  if err? then return done(err)
 
   walker = walk.walk(process.cwd(), { followLinks: false })
 
@@ -45,19 +48,43 @@ exports.run = (argv, done) ->
     if filepath.match(/[\(\)]/)
       return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
 
-    await fs.readFile(filepath, defer(err, data))
-    await helpers.shopifyRequest({
-      filepath: filepath
-      method: 'put'
-      url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
-      json: {
-        asset: {
-          key: filepath
-          attachment: data.toString('base64')
-        }
-      }
-    }, defer(err, res, assetsBody))
-    if err? then done(err)
+    if filepath.match(/^pages/)
 
-    console.log colors.green("Uploaded #{filepath}")
+      fileHandle = path.basename(filepath, '.html')
+
+      page = _.find(pages, {handle: fileHandle})
+
+      if page
+        await fs.readFile(filepath, defer(err, data))
+        await helpers.shopifyRequest({
+          filepath: filepath
+          method: 'put'
+          url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/pages/#{page.id}.json"
+          json: {
+            page: {
+              id: page.id
+              body_html: data.toString('utf8')
+            }
+          }
+        }, defer(err, res, assetsBody))
+      else
+        console.log colors.red("Page with handle #{fileHandle} was not found in shop for #{filepath}")
+
+    else
+
+      await fs.readFile(filepath, defer(err, data))
+      await helpers.shopifyRequest({
+        filepath: filepath
+        method: 'put'
+        url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
+        json: {
+          asset: {
+            key: filepath
+            attachment: data.toString('base64')
+          }
+        }
+      }, defer(err, res, assetsBody))
+      if err? then console.log(err)
+
+    unless err? then console.log colors.green("Uploaded #{filepath}")
   )

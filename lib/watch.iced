@@ -20,7 +20,10 @@ exports.run = (argv, done) ->
     ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
 
   await helpers.getTarget(config, defer(err, target))
-  if err? then done(err)
+  if err? then return done(err)
+
+  await helpers.getShopPages(target, defer(err, pages))
+  if err? then return done(err)
 
   watcher = chokidar.watch('./', {
     ignored: /[\/\\]\./
@@ -50,30 +53,54 @@ exports.run = (argv, done) ->
         if filepath.match(/[\(\)]/)
           return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
 
-        if config.compile_scss and filepath.match(/\.scss$/)
-          mainscss = config.primary_scss_file
-          targetscss = mainscss.replace('.scss', '.css')
-          console.log colors.yellow("Compiling Sass: \"#{mainscss}\" -> \"#{targetscss}\"")
-          await sass.render({file: mainscss, outFile: targetscss}, defer(err, result))
-          if err? then done(err)
-          await fs.writeFile(targetscss, result.css, defer(err))
-          if err? then done(err)
+        if filepath.match(/^pages/)
 
-        await fs.readFile(filepath, defer(err, data))
-        await helpers.shopifyRequest({
-          filepath: filepath
-          method: 'put'
-          url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
-          json: {
-            asset: {
-              key: filepath
-              attachment: data.toString('base64')
+          fileHandle = path.basename(filepath, '.html')
+
+          page = _.find(pages, {handle: fileHandle})
+
+          unless page then return console.log colors.red("Page with handle #{fileHandle} was not found in shop for #{filepath}")
+
+          await fs.readFile(filepath, defer(err, data))
+          await helpers.shopifyRequest({
+            filepath: filepath
+            method: 'put'
+            url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/pages/#{page.id}.json"
+            json: {
+              page: {
+                id: page.id
+                body_html: data.toString('utf8')
+              }
             }
-          }
-        }, defer(err, res, assetsBody))
-        if err? then done(err)
+          }, defer(err, res, assetsBody))
 
-        console.log colors.green("Added/Updated #{filepath}")
+        else
+
+          if config.compile_scss and filepath.match(/\.scss$/)
+            mainscss = config.primary_scss_file
+            targetscss = mainscss.replace('.scss', '.css')
+            console.log colors.yellow("Compiling Sass: \"#{mainscss}\" -> \"#{targetscss}\"")
+            await sass.render({file: mainscss, outFile: targetscss}, defer(err, result))
+            if err? then done(err)
+            await fs.writeFile(targetscss, result.css, defer(err))
+            if err? then done(err)
+
+          await fs.readFile(filepath, defer(err, data))
+          await helpers.shopifyRequest({
+            filepath: filepath
+            method: 'put'
+            url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
+            json: {
+              asset: {
+                key: filepath
+                attachment: data.toString('base64')
+              }
+            }
+          }, defer(err, res, assetsBody))
+          if err? then console.log colors.red(err)
+
+        unless err? then console.log colors.green("Added/Updated #{filepath}")
+
       when 'unlink'
         await helpers.shopifyRequest({
           method: 'delete'
@@ -82,7 +109,7 @@ exports.run = (argv, done) ->
             asset: {key: filepath}
           }
         }, defer(err, res, assetsBody))
-        if err? then done(err)
+        if err? then console.log colors.red(err)
 
         console.log colors.green("Deleted #{filepath}")
   )

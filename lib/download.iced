@@ -20,7 +20,7 @@ exports.run = (argv, done) ->
 
   await helpers.getTarget(config, defer(err, target))
   if err? then return done(err)
-  
+
   await
 
     # PAGES

@@ -94,7 +94,7 @@
                         return pages = arguments[1];
                       };
                     })(),
-                    lineno: 26
+                    lineno: 28
                   }));
                   __iced_deferrals._fulfill();
                 });
@@ -151,7 +151,7 @@ _continue()
                                       return err = arguments[0];
                                     };
                                   })(),
-                                  lineno: 36
+                                  lineno: 38
                                 }));
                                 __iced_deferrals._fulfill();
                               })(function() {
@@ -166,7 +166,7 @@ _continue()
                                         return err = arguments[0];
                                       };
                                     })(),
-                                    lineno: 37
+                                    lineno: 39
                                   }));
                                   __iced_deferrals._fulfill();
                                 })(function() {
@@ -192,7 +192,7 @@ _continue()
                   return err = arguments[0];
                 };
               })(),
-              lineno: 42
+              lineno: 44
             }));
             (function(cb) {
               var asset, assets, assetsBody, err, key, res, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
@@ -215,7 +215,7 @@ _continue()
                         return assetsBody = arguments[2];
                       };
                     })(),
-                    lineno: 49
+                    lineno: 52
                   }));
                   __iced_deferrals._fulfill();
                 });
@@ -265,7 +265,7 @@ _continue()
                                     return data = arguments[2];
                                   };
                                 })(),
-                                lineno: 70
+                                lineno: 73
                               }));
                               __iced_deferrals._fulfill();
                             });
@@ -292,7 +292,7 @@ _continue()
                                       return err = arguments[0];
                                     };
                                   })(),
-                                  lineno: 81
+                                  lineno: 84
                                 }));
                                 __iced_deferrals._fulfill();
                               })(function() {
@@ -307,7 +307,7 @@ _continue()
                                         return err = arguments[0];
                                       };
                                     })(),
-                                    lineno: 82
+                                    lineno: 85
                                   }));
                                   __iced_deferrals._fulfill();
                                 })(function() {
@@ -325,7 +325,7 @@ _continue()
                               return err = arguments[0];
                             };
                           })(),
-                          lineno: 87
+                          lineno: 90
                         }), asset, key);
                       }
                     }
@@ -344,7 +344,7 @@ _continue()
                   return err = arguments[0];
                 };
               })(),
-              lineno: 93
+              lineno: 96
             }));
             __iced_deferrals._fulfill();
           })(function() {
