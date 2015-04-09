@@ -26,7 +26,8 @@
   ],
   "preferGlobal": true,
   "bin": {
-    "quickshot": "./bin/quickshot"
+    "quickshot": "./bin/quickshot",
+    "qs": "./bin/quickshot"
   },
   "main": "index.js",
   "engines": {
