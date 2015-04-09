@@ -163,7 +163,7 @@
         },
         success: function(data) {
           if ((data.configVersion == null) || data.configVersion < CONFIGVERSION) {
-            cb(new Error("Shop configuration is from an older incompatible version of quickshot. You need to rename or delete your existing quickshot.json file and run 'quickshot configure' again."));
+            cb(new Error("Shop configuration is from an older incompatible version of quickshot. You need to run 'quickshot configure' again."));
           }
           return cb(null, data);
         }
