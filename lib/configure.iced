@@ -21,7 +21,7 @@ exports.run = (argv, done) ->
         message: 'Main Menu'
         choices: [
           'Configure targets',
-          'Configure sass',
+          'Configure scss',
           'Configure ignore file',
           'Save configuration and exit'
         ]
@@ -31,8 +31,8 @@ exports.run = (argv, done) ->
     switch configAction?.action
       when 'Configure targets'
         await configureTargets(config, defer(err, config))
-      when 'Configure sass'
-        await configureSass(config, defer(err, config))
+      when 'Configure scss'
+        await configureScss(config, defer(err, config))
       when 'Configure ignore file'
         await configureIgnoreFile(config, defer(err, config))
 
@@ -180,7 +180,7 @@ configureTargets = (config, cb) ->
 
   return cb(null, config)
 
-configureSass = (config, cb) ->
+configureScss = (config, cb) ->
   await inquirer.prompt([
     {
       type: 'confirm'
