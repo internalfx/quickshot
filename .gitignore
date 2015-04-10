@@ -41,6 +41,7 @@
 
 config/local.js
 logs*
+_site
 
 
 
