@@ -4,7 +4,7 @@
 
 A Shopify theme development tool.
 
-[![NPM](https://nodei.co/npm/quickshot.png)](https://npmjs.org/package/quickshot)
+[![NPM](https://nodei.co/npm/quickshot.png?downloads=true)](https://npmjs.org/package/quickshot)
 
 ## Features
 
