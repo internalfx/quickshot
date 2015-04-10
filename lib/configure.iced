@@ -243,14 +243,13 @@ configureScss = (config, cb) ->
 
 
 configureIgnoreFile = (config, cb) ->
-  notes = """
+  console.log colors.yellow("""
 
     You have two options for ignoring files in quickshot.
     You can use a '.gitignore' file which allows you to have all your ignores in one place.
     Or you can use a '.quickshotignore'. Which allows git and quickshot to ignore different files.
 
-  """
-  console.log colors.yellow(notes)
+  """)
   await inquirer.prompt([
     {
       type: 'list'
@@ -265,7 +264,7 @@ configureIgnoreFile = (config, cb) ->
   ], defer(choice))
   config.ignore_file = choice.ignore_file
   await fs.readFile(config.ignore_file, defer(err, data))
-  if err?
+  if err?.code is 'ENOENT'
     if config.ignore_file is '.gitignore'
       notes = """
         # This your '#{config.ignore_file}' file. Anything you put in here will be ignored by quickshot and git.

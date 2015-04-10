@@ -533,8 +533,7 @@
     var choice, data, err, notes, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
-    notes = "\nYou have two options for ignoring files in quickshot.\nYou can use a '.gitignore' file which allows you to have all your ignores in one place.\nOr you can use a '.quickshotignore'. Which allows git and quickshot to ignore different files.\n";
-    console.log(colors.yellow(notes));
+    console.log(colors.yellow("\nYou have two options for ignoring files in quickshot.\nYou can use a '.gitignore' file which allows you to have all your ignores in one place.\nOr you can use a '.quickshotignore'. Which allows git and quickshot to ignore different files.\n"));
     (function(_this) {
       return (function(__iced_k) {
         __iced_deferrals = new iced.Deferrals(__iced_k, {
@@ -555,7 +554,7 @@
               return choice = arguments[0];
             };
           })(),
-          lineno: 264
+          lineno: 263
         }));
         __iced_deferrals._fulfill();
       });
@@ -574,12 +573,12 @@
                 return data = arguments[1];
               };
             })(),
-            lineno: 266
+            lineno: 265
           }));
           __iced_deferrals._fulfill();
         })(function() {
           (function(__iced_k) {
-            if (typeof err !== "undefined" && err !== null) {
+            if ((typeof err !== "undefined" && err !== null ? err.code : void 0) === 'ENOENT') {
               if (config.ignore_file === '.gitignore') {
                 notes = "# This your '" + config.ignore_file + "' file. Anything you put in here will be ignored by quickshot and git.";
               } else {
@@ -596,7 +595,7 @@
                       return err = arguments[0];
                     };
                   })(),
-                  lineno: 277
+                  lineno: 276
                 }));
                 __iced_deferrals._fulfill();
               })(__iced_k);
