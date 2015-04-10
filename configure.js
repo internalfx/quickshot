@@ -1,5 +1,5 @@
 (function() {
-  var colors, configureIgnoreFile, configureSass, configureTargets, fs, helpers, iced, inquirer, mfs, request, __iced_k, __iced_k_noop;
+  var colors, configureIgnoreFile, configureScss, configureTargets, fs, helpers, iced, inquirer, mfs, request, __iced_k, __iced_k_noop;
 
   iced = require('iced-runtime');
   __iced_k = __iced_k_noop = function() {};
@@ -72,7 +72,7 @@
                     type: 'list',
                     name: 'action',
                     message: 'Main Menu',
-                    choices: ['Configure targets', 'Configure sass', 'Configure ignore file', 'Save configuration and exit']
+                    choices: ['Configure targets', 'Configure scss', 'Configure ignore file', 'Save configuration and exit']
                   }
                 ], __iced_deferrals.defer({
                   assign_fn: (function() {
@@ -105,14 +105,14 @@
                         __iced_deferrals._fulfill();
                       })(__iced_k);
                       break;
-                    case 'Configure sass':
+                    case 'Configure scss':
                       (function(__iced_k) {
                         __iced_deferrals = new iced.Deferrals(__iced_k, {
                           parent: ___iced_passed_deferral,
                           filename: "lib/configure.iced",
                           funcname: "run"
                         });
-                        configureSass(config, __iced_deferrals.defer({
+                        configureScss(config, __iced_deferrals.defer({
                           assign_fn: (function() {
                             return function() {
                               err = arguments[0];
@@ -422,7 +422,7 @@
     })(this));
   };
 
-  configureSass = function(config, cb) {
+  configureScss = function(config, cb) {
     var choices, data, err, notes, scss_warning, ___iced_passed_deferral, __iced_deferrals, __iced_k;
     __iced_k = __iced_k_noop;
     ___iced_passed_deferral = iced.findDeferral(arguments);
