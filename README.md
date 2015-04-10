@@ -18,5 +18,5 @@ A Shopify theme development tool.
 http://quickshot.io/
 
 ###Repos
-Main Project: https://github.com/internalfx/quickshot
-Documentation: https://github.com/internalfx/quickshot-docs
+- Main Project: https://github.com/internalfx/quickshot
+- Documentation: https://github.com/internalfx/quickshot-docs
