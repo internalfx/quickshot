@@ -15,4 +15,4 @@ A Shopify theme development tool.
 - Can use with `.gitignore` files or a custom `.quickshotignore` file.
 - Can `download/upload/watch` any Shopify Page. Allowing you to edit your pages locally in your favorite editor.
 
-https://quickshot.io/
+http://quickshot.io/
