@@ -4,6 +4,8 @@
 
 A Shopify theme development tool.
 
+[![NPM](https://nodei.co/npm/quickshot.png)](https://npmjs.org/package/quickshot)
+
 ## Features
 
 - Supports uploading to multiple Shopify stores and themes
