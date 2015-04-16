@@ -93,7 +93,7 @@
       })(this));
     },
     request: function(item) {
-      var body, err, limit, res, ___iced_passed_deferral, __iced_deferrals, __iced_k;
+      var body, err, error, limit, res, ___iced_passed_deferral, __iced_deferrals, __iced_k;
       __iced_k = __iced_k_noop;
       ___iced_passed_deferral = iced.findDeferral(arguments);
       this.inFlight += 1;
@@ -117,6 +117,7 @@
         });
       })(this)((function(_this) {
         return function() {
+          var _i, _len, _ref, _ref1, _results;
           _this.inFlight -= 1;
           if (typeof err !== "undefined" && err !== null) {
             item.cb(err);
@@ -140,6 +141,20 @@
               break;
             case 429:
               return _this.retry(item);
+            case 422:
+              try {
+                body = JSON.parse(body);
+              } catch (_error) {}
+              if (_.isArray(body != null ? (_ref = body.errors) != null ? _ref.asset : void 0 : void 0)) {
+                _ref1 = body.errors.asset;
+                _results = [];
+                for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                  error = _ref1[_i];
+                  _results.push(console.log(colors.red("Error in " + item.req.filepath + " - " + error)));
+                }
+                return _results;
+              }
+              break;
             default:
               return console.log(colors.red("Failed to transfer [" + res.statusCode + "] " + item.req.filepath));
           }
@@ -207,7 +222,7 @@
                         return choice = arguments[0];
                       };
                     })(),
-                    lineno: 100
+                    lineno: 105
                   }));
                   __iced_deferrals._fulfill();
                 })(function() {
@@ -278,7 +293,7 @@
                       return pagesBody = arguments[2];
                     };
                   })(),
-                  lineno: 122
+                  lineno: 127
                 }));
                 __iced_deferrals._fulfill();
               })(function() {

@@ -59,6 +59,11 @@ shopifyQueue = {
           item.cb(null, res, body)
       when 429
         @retry(item)
+      when 422
+        try body = JSON.parse(body)
+        if _.isArray(body?.errors?.asset)
+          for error in body.errors.asset
+            console.log colors.red("Error in #{item.req.filepath} - #{error}")
       else
         console.log colors.red("Failed to transfer [#{res.statusCode}] #{item.req.filepath}")
 
