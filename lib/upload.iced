@@ -54,8 +54,9 @@ exports.run = (argv, done) ->
 
       page = _.find(pages, {handle: fileHandle})
 
+      await fs.readFile(filepath, defer(err, fileContent))
+
       if page
-        await fs.readFile(filepath, defer(err, data))
         await helpers.shopifyRequest({
           filepath: filepath
           method: 'put'
@@ -63,12 +64,24 @@ exports.run = (argv, done) ->
           json: {
             page: {
               id: page.id
-              body_html: data.toString('utf8')
+              body_html: fileContent.toString('utf8')
             }
           }
         }, defer(err, res, assetsBody))
       else
-        console.log colors.red("Page with handle #{fileHandle} was not found in shop for #{filepath}")
+        await helpers.shopifyRequest({
+          filepath: filepath
+          method: 'post'
+          url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/pages.json"
+          json: {
+            page: {
+              title: _.startCase(fileHandle)
+              body_html: fileContent.toString('utf8')
+              handle: fileHandle
+            }
+          }
+        }, defer(err, res, assetsBody))
+        console.log colors.yellow("Created new Page with handle #{fileHandle}...")
 
     else
 

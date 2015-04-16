@@ -97,7 +97,7 @@
               followLinks: false
             });
             return walker.on("file", function(root, fileStat, next) {
-              var assetsBody, data, err, extension, fileHandle, filepath, page, res, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
+              var assetsBody, data, err, extension, fileContent, fileHandle, filepath, page, res, ___iced_passed_deferral1, __iced_deferrals, __iced_k;
               __iced_k = __iced_k_noop;
               ___iced_passed_deferral1 = iced.findDeferral(arguments);
               filepath = path.join(root, fileStat.name).replace(process.cwd() + "/", "");
@@ -128,23 +128,23 @@
                       handle: fileHandle
                     });
                     (function(__iced_k) {
-                      if (page) {
-                        (function(__iced_k) {
-                          __iced_deferrals = new iced.Deferrals(__iced_k, {
-                            parent: ___iced_passed_deferral1,
-                            filename: "lib/upload.iced"
-                          });
-                          fs.readFile(filepath, __iced_deferrals.defer({
-                            assign_fn: (function() {
-                              return function() {
-                                err = arguments[0];
-                                return data = arguments[1];
-                              };
-                            })(),
-                            lineno: 57
-                          }));
-                          __iced_deferrals._fulfill();
-                        })(function() {
+                      __iced_deferrals = new iced.Deferrals(__iced_k, {
+                        parent: ___iced_passed_deferral1,
+                        filename: "lib/upload.iced"
+                      });
+                      fs.readFile(filepath, __iced_deferrals.defer({
+                        assign_fn: (function() {
+                          return function() {
+                            err = arguments[0];
+                            return fileContent = arguments[1];
+                          };
+                        })(),
+                        lineno: 56
+                      }));
+                      __iced_deferrals._fulfill();
+                    })(function() {
+                      (function(__iced_k) {
+                        if (page) {
                           (function(__iced_k) {
                             __iced_deferrals = new iced.Deferrals(__iced_k, {
                               parent: ___iced_passed_deferral1,
@@ -157,7 +157,7 @@
                               json: {
                                 page: {
                                   id: page.id,
-                                  body_html: data.toString('utf8')
+                                  body_html: fileContent.toString('utf8')
                                 }
                               }
                             }, __iced_deferrals.defer({
@@ -168,15 +168,44 @@
                                   return assetsBody = arguments[2];
                                 };
                               })(),
-                              lineno: 68
+                              lineno: 69
                             }));
                             __iced_deferrals._fulfill();
                           })(__iced_k);
-                        });
-                      } else {
-                        return __iced_k(console.log(colors.red("Page with handle " + fileHandle + " was not found in shop for " + filepath)));
-                      }
-                    })(__iced_k);
+                        } else {
+                          (function(__iced_k) {
+                            __iced_deferrals = new iced.Deferrals(__iced_k, {
+                              parent: ___iced_passed_deferral1,
+                              filename: "lib/upload.iced"
+                            });
+                            helpers.shopifyRequest({
+                              filepath: filepath,
+                              method: 'post',
+                              url: "https://" + target.api_key + ":" + target.password + "@" + target.domain + ".myshopify.com/admin/pages.json",
+                              json: {
+                                page: {
+                                  title: _.startCase(fileHandle),
+                                  body_html: fileContent.toString('utf8'),
+                                  handle: fileHandle
+                                }
+                              }
+                            }, __iced_deferrals.defer({
+                              assign_fn: (function() {
+                                return function() {
+                                  err = arguments[0];
+                                  res = arguments[1];
+                                  return assetsBody = arguments[2];
+                                };
+                              })(),
+                              lineno: 82
+                            }));
+                            __iced_deferrals._fulfill();
+                          })(function() {
+                            return __iced_k(console.log(colors.yellow("Created new Page with handle " + fileHandle + "...")));
+                          });
+                        }
+                      })(__iced_k);
+                    });
                   } else {
                     (function(__iced_k) {
                       __iced_deferrals = new iced.Deferrals(__iced_k, {
@@ -190,7 +219,7 @@
                             return data = arguments[1];
                           };
                         })(),
-                        lineno: 74
+                        lineno: 87
                       }));
                       __iced_deferrals._fulfill();
                     })(function() {
@@ -217,7 +246,7 @@
                               return assetsBody = arguments[2];
                             };
                           })(),
-                          lineno: 85
+                          lineno: 98
                         }));
                         __iced_deferrals._fulfill();
                       })(function() {
