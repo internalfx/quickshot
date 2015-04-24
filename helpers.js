@@ -120,7 +120,7 @@
           var _i, _len, _ref, _ref1, _results;
           _this.inFlight -= 1;
           if (typeof err !== "undefined" && err !== null) {
-            item.cb(err);
+            return item.cb(err);
           }
           switch (res.statusCode) {
             case 200:
