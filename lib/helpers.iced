@@ -42,7 +42,7 @@ shopifyQueue = {
     @inFlight += 1
     await request(item.req, defer(err, res, body))
     @inFlight -= 1
-    if err? then item.cb(err)
+    if err? then return item.cb(err)
     switch res.statusCode
       when 200, 201
         try body = JSON.parse(body)
