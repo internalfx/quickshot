@@ -35,6 +35,4 @@ exports.run = (argv, done) ->
       await fs.writeFile(key, page.body_html, defer(err))
       console.log colors.green("Downloaded #{key}")
 
-  return cb(null)
-
   done()
