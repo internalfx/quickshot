@@ -51,6 +51,7 @@
     "walk": "^2.3.9"
   },
   "devDependencies": {
-    "grunt-iced-coffee": "~0.7.0"
+    "grunt-iced-coffee": "~0.7.0",
+    "iced-coffee-script": "*"
   }
 }

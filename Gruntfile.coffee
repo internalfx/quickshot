@@ -6,9 +6,9 @@ module.exports = (grunt) ->
       compile: {
         expand: true
         flatten: true
-        cwd: './lib'
+        cwd: './src'
         src: ['*.iced']
-        dest: '.'
+        dest: './lib'
         ext: '.js'
       }
     }
