@@ -1,5 +1,5 @@
 
-helpers = require('./helpers')
+helpers = require('../helpers')
 
 inquirer = require("inquirer")
 colors = require('colors')
@@ -22,27 +22,6 @@ exports.run = (argv, done) ->
   if err? then return done(err)
 
   await
-
-    # PAGES
-    ((cb)->
-
-      await helpers.getShopPages(target, defer(err, pages))
-      if err? then return cb(err)
-
-      for page in pages
-        key = "pages/#{page.handle}.html"
-        # Ignore paths configured in ignore file
-        if ignore and ignore.denies(key)
-          continue
-
-        if not filter? or key.match(new RegExp("^#{filter}"))
-          await mkdirp(path.dirname(key), defer(err))
-          await fs.writeFile(key, page.body_html, defer(err))
-          console.log colors.green("Downloaded #{key}")
-
-      return cb(null)
-
-    )(defer(err))
 
     # ASSETS
     ((cb)->
@@ -82,8 +61,8 @@ exports.run = (argv, done) ->
               else if data.asset.value
                 rawData = new Buffer(data.asset.value, 'utf8')
 
-              await mkdirp(path.dirname(data.asset.key), defer(err))
-              await fs.writeFile(data.asset.key, rawData, defer(err))
+              await mkdirp(path.join(process.cwd(), 'theme', path.dirname(data.asset.key)), defer(err))
+              await fs.writeFile(path.join(process.cwd(), 'theme', data.asset.key), rawData, defer(err))
               if err?
                 console.log colors.red(err)
                 cb(err)
