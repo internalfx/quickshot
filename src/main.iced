@@ -8,8 +8,9 @@ HELPTEXT = """
 
           Commands:
             quickshot configure                     Creates/Updates the configuration file in current directory
-            quickshot theme                         Manage Shopify themes
             quickshot pages                         Manage Shopify pages
+            quickshot products                      Manage Shopify products
+            quickshot theme                         Manage Shopify themes
             quickshot                               Show this screen.
 
         """
@@ -20,10 +21,12 @@ exports.run = (argv) ->
   switch command
     when "configure"
       await require('./configure').run(argv, defer(err))
-    when "theme"
-      await require('./theme').run(argv, defer(err))
     when "pages"
       await require('./pages').run(argv, defer(err))
+    when "products"
+      await require('./products').run(argv, defer(err))
+    when "theme"
+      await require('./theme').run(argv, defer(err))
     else
       console.log HELPTEXT
 
