@@ -3,17 +3,21 @@ colors = require('colors')
 
 HELPTEXT = """
 
-              Quickshot #{VERSION}
-              ==============================
+          Quickshot #{VERSION}
+          ==============================
 
-              Commands:
-                quickshot configure              Creates/Updates the configuration file in current directory
-                quickshot download [filter]      Download theme files, optionally providing a filter
-                quickshot upload [filter]        Upload theme files, optionally providing a filter
-                quickshot watch                  Watch project folder and synchronize changes automatically
-                quickshot                        Show this screen.
+          Commands:
+            quickshot configure                     Creates/Updates the configuration file in current directory
+            quickshot download [options] [filter]   Download theme files, optionally providing a filter
+            quickshot upload [options] [filter]     Upload theme files, optionally providing a filter
+            quickshot watch [options]               Watch project folder and synchronize changes automatically
+            quickshot                               Show this screen.
 
-            """
+
+          Options:
+            --target=[targetname]                   Explicitly select target for upload/download/watch
+
+        """
 
 exports.run = (argv) ->
   command = _.first(argv['_'])
