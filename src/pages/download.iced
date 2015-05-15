@@ -21,27 +21,20 @@ exports.run = (argv, done) ->
   await helpers.getTarget(config, argv, defer(err, target))
   if err? then return done(err)
 
-  await
+  await helpers.getShopPages(target, defer(err, pages))
+  if err? then return cb(err)
 
-    # PAGES
-    ((cb)->
+  for page in pages
+    key = "pages/#{page.handle}.html"
+    # Ignore paths configured in ignore file
+    if ignore and ignore.denies(key)
+      continue
 
-      await helpers.getShopPages(target, defer(err, pages))
-      if err? then return cb(err)
+    if not filter? or key.match(new RegExp("^#{filter}"))
+      await mkdirp(path.dirname(key), defer(err))
+      await fs.writeFile(key, page.body_html, defer(err))
+      console.log colors.green("Downloaded #{key}")
 
-      for page in pages
-        key = "pages/#{page.handle}.html"
-        # Ignore paths configured in ignore file
-        if ignore and ignore.denies(key)
-          continue
-
-        if not filter? or key.match(new RegExp("^#{filter}"))
-          await mkdirp(path.dirname(key), defer(err))
-          await fs.writeFile(key, page.body_html, defer(err))
-          console.log colors.green("Downloaded #{key}")
-
-      return cb(null)
-
-    )(defer(err))
+  return cb(null)
 
   done()
