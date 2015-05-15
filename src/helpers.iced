@@ -90,26 +90,34 @@ module.exports = {
   shopifyRequest: (req, cb) ->
     shopifyQueue.add({req: req, cb: cb})
 
-  getTarget: (config, cb) ->
+  getTarget: (config, argv, cb) ->
+    if argv['target']
+      targetName = argv['target']
+
     target = null
     if _.isArray(config.targets)
-      targetChoices = _.map(config.targets, (target) -> "[#{target.target_name}] - '#{target.theme_name}' at #{target.domain}.myshopify.com")
-      if config.targets.length > 1
-        await inquirer.prompt([
-          {
-            type: 'list'
-            name: 'target'
-            message: "Select target"
-            default: null
-            choices: targetChoices
-          }
-        ], defer(choice))
-        target = config.targets[_.indexOf(targetChoices, choice.target)]
-      else if config.targets.length is 1
-        target = _.first(config.targets)
-
-    if target
-      return cb(null, target)
+      if targetName
+        target = _.find(config.targets, {target_name: targetName})
+        if target
+          return cb(null, target)
+        else
+          return cb(new Error("Could not find target '#{targetName}'"))
+      else
+        targetChoices = _.map(config.targets, (target) -> "[#{target.target_name}] - '#{target.theme_name}' at #{target.domain}.myshopify.com")
+        if config.targets.length > 1
+          await inquirer.prompt([
+            {
+              type: 'list'
+              name: 'target'
+              message: "Select target"
+              default: null
+              choices: targetChoices
+            }
+          ], defer(choice))
+          target = config.targets[_.indexOf(targetChoices, choice.target)]
+        else if config.targets.length is 1
+          target = _.first(config.targets)
+        return cb(null, target)
     else
       return cb(new Error("No targets configured! Run 'quickshot configure' and create a new target."))
 

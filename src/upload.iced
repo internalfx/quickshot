@@ -11,6 +11,7 @@ walk = require('walk')
 parser = require('gitignore-parser')
 
 exports.run = (argv, done) ->
+
   filter = _.first(argv['_'])
 
   await helpers.loadConfig(defer(err, config))
@@ -19,7 +20,7 @@ exports.run = (argv, done) ->
   if config.ignore_file
     ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
 
-  await helpers.getTarget(config, defer(err, target))
+  await helpers.getTarget(config, argv, defer(err, target))
   if err? then return done(err)
 
   await helpers.getShopPages(target, defer(err, pages))

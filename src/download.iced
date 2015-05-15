@@ -18,7 +18,7 @@ exports.run = (argv, done) ->
   if config.ignore_file
     ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
 
-  await helpers.getTarget(config, defer(err, target))
+  await helpers.getTarget(config, argv, defer(err, target))
   if err? then return done(err)
 
   await
