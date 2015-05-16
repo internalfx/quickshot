@@ -1,5 +1,5 @@
 
-helpers = require('../helpers')
+helpers = require('./helpers')
 
 inquirer = require("inquirer")
 colors = require('colors')

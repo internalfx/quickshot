@@ -141,27 +141,27 @@ module.exports = {
 
     return cb(null, pages)
 
-  getShopProducts: (target, cb) ->
-    chunkSize = 250
-    page = 1
-    products = []
-    productsBody = {
-      products: [0]
-    }
-
-    while productsBody.products.length isnt 0
-      await @shopifyRequest({
-        method: 'get'
-        url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/products.json?limit=#{chunkSize}&page=#{page}"
-      }, defer(err, res, productsBody))
-      if err? then return cb(err)
-
-      products = products.concat(productsBody.products)
-      page += 1
-
-      console.log "Products downloaded: #{products.length}"
-
-    return cb(null, products)
+  # getShopProducts: (target, cb) ->
+  #   chunkSize = 250
+  #   page = 1
+  #   products = []
+  #   productsBody = {
+  #     products: [0]
+  #   }
+  #
+  #   while productsBody.products.length isnt 0
+  #     await @shopifyRequest({
+  #       method: 'get'
+  #       url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/products.json?limit=#{chunkSize}&page=#{page}"
+  #     }, defer(err, res, productsBody))
+  #     if err? then return cb(err)
+  #
+  #     products = products.concat(productsBody.products)
+  #     page += 1
+  #
+  #     console.log "Products downloaded: #{products.length}"
+  #
+  #   return cb(null, products)
 
 
 }
