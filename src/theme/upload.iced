@@ -23,9 +23,6 @@ exports.run = (argv, done) ->
   await helpers.getTarget(config, argv, defer(err, target))
   if err? then return done(err)
 
-  # await helpers.getShopPages(target, defer(err, pages))
-  # if err? then return done(err)
-
   walker = walk.walk(path.join(process.cwd(), 'theme'), { followLinks: false })
 
   walker.on("file", (root, fileStat, next) ->
