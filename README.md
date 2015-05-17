@@ -14,6 +14,7 @@ A Shopify theme development tool.
 - Supports autocompiling scss locally before uploading to Shopify
 - Can use with `.gitignore` files or a custom `.quickshotignore` file.
 - Can `download/upload/watch` any Shopify Page. Allowing you to edit your pages locally in your favorite editor.
+- Can `download/upload` Shopify Products. Easily transfer products between stores! Even the images and metafields!
 
 http://quickshot.io/
 
