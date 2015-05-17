@@ -12,76 +12,79 @@ parser = require('gitignore-parser')
 
 exports.run = (argv, done) ->
 
-  console.log colors.red("product upload is not implemented yet.")
+  filter = _.first(argv['_'])
 
-  # filter = _.first(argv['_'])
-  #
-  # await helpers.loadConfig(defer(err, config))
-  # if err? then done(err)
-  #
-  # if config.ignore_file
-  #   ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
-  #
-  # await helpers.getTarget(config, argv, defer(err, target))
-  # if err? then return done(err)
-  #
-  # await helpers.getShopPages(target, defer(err, pages))
-  # if err? then return done(err)
-  #
-  # walker = walk.walk(path.join(process.cwd(), 'pages'), { followLinks: false })
-  #
-  # walker.on("file", (root, fileStat, next) ->
-  #   filepath = path.join(root, fileStat.name).replace(process.cwd()+"/", "")
-  #
-  #   # Ignore hidden files
-  #   if filepath.match(/^\..*$/) then return next()
-  #
-  #   # Ignore paths configured in ignore file
-  #   if config.ignore_file
-  #     if ignore.denies(filepath) then return next()
-  #
-  #   if filter? and not filepath.match(new RegExp("^#{filter}")) then return next()
-  #
-  #   extension = path.extname(filepath).substr(1)
-  #
-  #   next()
-  #
-  #   if filepath.match(/[\(\)]/)
-  #     return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
-  #
-  #   fileHandle = path.basename(filepath, '.html')
-  #
-  #   page = _.find(pages, {handle: fileHandle})
-  #
-  #   await fs.readFile(filepath, defer(err, fileContent))
-  #
-  #   if page
-  #     await helpers.shopifyRequest({
-  #       filepath: filepath
-  #       method: 'put'
-  #       url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/pages/#{page.id}.json"
-  #       json: {
-  #         page: {
-  #           id: page.id
-  #           body_html: fileContent.toString('utf8')
-  #         }
-  #       }
-  #     }, defer(err, res, assetsBody))
-  #   else
-  #     await helpers.shopifyRequest({
-  #       filepath: filepath
-  #       method: 'post'
-  #       url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/pages.json"
-  #       json: {
-  #         page: {
-  #           title: _.startCase(fileHandle)
-  #           body_html: fileContent.toString('utf8')
-  #           handle: fileHandle
-  #         }
-  #       }
-  #     }, defer(err, res, assetsBody))
-  #     console.log colors.yellow("Created new Page with handle #{fileHandle}...")
-  #
-  #   unless err? then console.log colors.green("Uploaded #{filepath}")
-  #
-  # )
+  await helpers.loadConfig(defer(err, config))
+  if err? then done(err)
+
+  if config.ignore_file
+    ignore = parser.compile(fs.readFileSync(config.ignore_file, 'utf8'))
+
+  await helpers.getTarget(config, argv, defer(err, target))
+  if err? then return done(err)
+
+  productDirs = fs.readdirSync(path.join(process.cwd(), 'products')).filter((file) ->
+    return fs.statSync(path.join(process.cwd(), 'products', file)).isDirectory()
+  )
+
+  for productDir in productDirs
+    prodPath = path.join(process.cwd(), 'products', productDir)
+
+    await fs.readFile(path.join(prodPath, 'product.json'), defer(err, prodJson))
+    prodData = JSON.parse(prodJson)
+
+    await helpers.shopifyRequest({
+      method: 'post'
+      url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/products.json"
+      json: { product: _.omit(prodData, 'images', 'image') }
+    }, defer(err, res, assetsBody))
+
+    newProdData = assetsBody.product
+
+    await
+      for prodImage in prodData.images
+        ((prodImage, cb)->
+          image = _.cloneDeep(prodImage)
+          newVariantIds = []
+
+          for variant_id in image.variant_ids
+            newVariant = newProdData.variants[_.findIndex(prodData.variants, {id: variant_id})]
+            newVariantIds.push(newVariant.id)
+
+          image.variant_ids = newVariantIds
+          delete image.src
+
+          await fs.readFile(path.join(prodPath, image.id.toString()), defer(err, imgData))
+          if err?
+            console.log colors.red("Image #{image.id} missing for product #{prodData.handle}")
+            return cb(err)
+
+          image.attachment = imgData.toString('base64')
+
+          await helpers.shopifyRequest({
+            method: 'post'
+            url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/products/#{newProdData.id}/images.json"
+            json: { image: image }
+          }, defer(err, res, requestBody))
+          if err? then return cb(err)
+
+          return cb()
+        )(prodImage, defer(err))
+
+    await fs.readFile(path.join(prodPath, 'metafields.json'), defer(err, metaJson))
+    metaData = JSON.parse(metaJson)
+
+    await
+      for metafield in metaData.metafields
+        ((metafield, cb)->
+          await helpers.shopifyRequest({
+            method: 'post'
+            url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/products/#{newProdData.id}/metafields.json"
+            json: { metafield: metafield }
+          }, defer(err, res, requestBody))
+          if err? then return cb(err)
+
+          return cb()
+        )(metafield, defer(err))
+
+    console.log colors.green("Created #{newProdData.handle}")
