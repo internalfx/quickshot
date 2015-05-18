@@ -57,9 +57,9 @@ exports.run = (argv, done) ->
           mainscss = config.primary_scss_file
           targetscss = mainscss.replace('.scss', '.css')
           console.log colors.yellow("Compiling Sass: \"#{mainscss}\" -> \"#{targetscss}\"")
-          await sass.render({file: mainscss, outFile: targetscss}, defer(err, result))
+          await sass.render({file: path.join('theme', mainscss), outFile: path.join('theme', targetscss)}, defer(err, result))
           if err? then done(err)
-          await fs.writeFile(targetscss, result.css, defer(err))
+          await fs.writeFile(path.join('theme', targetscss), result.css, defer(err))
           if err? then done(err)
 
         await fs.readFile(path.join('theme', filepath), defer(err, data))
