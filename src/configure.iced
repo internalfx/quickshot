@@ -22,6 +22,7 @@ exports.run = (argv, done) ->
         choices: [
           'Configure targets',
           'Configure scss',
+          'Configure CoffeeScript',
           'Configure ignore file',
           'Save configuration and exit'
         ]
@@ -33,6 +34,8 @@ exports.run = (argv, done) ->
         await configureTargets(config, defer(err, config))
       when 'Configure scss'
         await configureScss(config, defer(err, config))
+      when 'Configure CoffeeScript'
+        await configureCoffeeScript(config, defer(err, config))
       when 'Configure ignore file'
         await configureIgnoreFile(config, defer(err, config))
 
@@ -241,6 +244,19 @@ configureScss = (config, cb) ->
 
   return cb(null, config)
 
+configureCoffeeScript = (config, cb) ->
+  await inquirer.prompt([
+    {
+      type: 'confirm'
+      name: 'compile_coffeescript'
+      message: "Would you like to enable automatic compiling for CoffeeScript files?"
+      default: config?.compile_coffeescript || false
+    }
+  ], defer(choices))
+
+  config.compile_coffeescript = choices.compile_coffeescript
+
+  return cb(null, config)
 
 configureIgnoreFile = (config, cb) ->
   console.log colors.yellow("""
