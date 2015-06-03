@@ -10,6 +10,7 @@ request = require('request')
 mkdirp = require('mkdirp')
 sass = require('node-sass')
 parser = require('gitignore-parser')
+coffee = require('coffee-script')
 
 exports.run = (argv, done) ->
 
@@ -60,6 +61,15 @@ exports.run = (argv, done) ->
           await sass.render({file: path.join('theme', mainscss), outFile: path.join('theme', targetscss)}, defer(err, result))
           if err? then done(err)
           await fs.writeFile(path.join('theme', targetscss), result.css, defer(err))
+          if err? then done(err)
+
+        if config.compile_coffeescript and filepath.match(/\.coffee$/)
+          sourceCoffee = path.join('theme', filepath)
+          console.log colors.yellow("Compiling CoffeeScript: \"#{filepath}\"")
+          await fs.readFile(sourceCoffee, 'utf8', defer(err, source))
+          if err? then done(err)
+          compiledSource = coffee.compile(source)
+          await fs.writeFile(sourceCoffee.replace('.coffee', '.js'), compiledSource, defer(err))
           if err? then done(err)
 
         await fs.readFile(path.join('theme', filepath), defer(err, data))
