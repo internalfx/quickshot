@@ -12,6 +12,7 @@ A Shopify theme development tool.
 - Easy to use configuration wizard
 - Uploads/downloads in parallel greatly reducing transfer times
 - Supports autocompiling scss locally before uploading to Shopify
+- Supports autocompiling CoffeeScript locally before uploading to Shopify
 - Can use with `.gitignore` files or a custom `.quickshotignore` file.
 - Can `download/upload/watch` any Shopify Page. Allowing you to edit your pages locally in your favorite editor.
 - Can `download/upload` Shopify Products. Easily transfer products between stores! Even the images and metafields!
