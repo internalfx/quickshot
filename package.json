@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "chokidar": "^1.0.0-rc4",
+    "coffee-script": "^1.9.3",
     "colors": "~1.0.3",
     "gitignore-parser": "internalfx/gitignore-parser",
     "iced-runtime": "^1.0.2",
