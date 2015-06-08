@@ -1,7 +1,7 @@
 {
   "name": "quickshot",
   "description": "A shopify theme synchronizer",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "homepage": "https://github.com/internalfx/quickshot",
   "author": {
     "name": "InternalFX",
@@ -40,7 +40,7 @@
     "chokidar": "^1.0.0-rc4",
     "coffee-script": "^1.9.3",
     "colors": "~1.0.3",
-    "gitignore-parser": "internalfx/gitignore-parser",
+    "gitignore-parser": "0.0.2",
     "iced-runtime": "^1.0.2",
     "inquirer": "~0.8.0",
     "lodash": ">=3.0.0",
