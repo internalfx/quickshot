@@ -75,12 +75,12 @@ exports.run = (argv, done) ->
         await fs.readFile(path.join('theme', filepath), defer(err, data))
         if err? then console.log(err)
         await helpers.shopifyRequest({
-          filepath: filepath
+          filepath: filepath.split(path.sep).join('/')
           method: 'put'
           url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
           json: {
             asset: {
-              key: filepath
+              key: filepath.split(path.sep).join('/')
               attachment: data.toString('base64')
             }
           }
@@ -94,7 +94,7 @@ exports.run = (argv, done) ->
           method: 'delete'
           url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
           qs: {
-            asset: {key: filepath}
+            asset: {key: filepath.split(path.sep).join('/')}
           }
         }, defer(err, res, assetsBody))
         if err? then console.log colors.red(err)

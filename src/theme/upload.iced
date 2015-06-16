@@ -45,18 +45,12 @@ exports.run = (argv, done) ->
 
     next()
 
-    console.log "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    console.log "UPLOAD +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    console.log "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-
     if filepath.match(/[\(\)]/)
       return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
 
     await fs.readFile(path.join('theme', filepath), defer(err, data))
     if err? then console.log(err)
 
-    console.log "successfully loaded #{filepath} from disk."
-    console.log "sending data to: https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
     await helpers.shopifyRequest({
       filepath: filepath.split(path.sep).join('/')
       method: 'put'
@@ -68,9 +62,6 @@ exports.run = (argv, done) ->
         }
       }
     }, defer(err, res, assetsBody))
-
-    console.log assetsBody
-
     if err? then console.log(err)
 
     unless err? then console.log colors.green("Uploaded #{filepath}")
