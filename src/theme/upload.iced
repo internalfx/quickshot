@@ -26,7 +26,11 @@ exports.run = (argv, done) ->
   walker = walk.walk(path.join(process.cwd(), 'theme'), { followLinks: false })
 
   walker.on("file", (root, fileStat, next) ->
-    filepath = path.join(root, fileStat.name).replace(process.cwd()+"/theme/", "")
+    # filepath = path.join(root, fileStat.name).replace(process.cwd()+"/theme/", "")
+    filepath = path.join(root, fileStat.name)
+    pathParts = filepath.split(path.sep)
+    trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
+    filepath = trimmedParts.join(path.sep)
 
     # Ignore hidden files
     if filepath.match(/^\..*$/) then return next()
