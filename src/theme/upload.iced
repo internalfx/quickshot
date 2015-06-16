@@ -45,6 +45,7 @@ exports.run = (argv, done) ->
       return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
 
     await fs.readFile(path.join('theme', filepath), defer(err, data))
+    if err? then console.log(err)
     await helpers.shopifyRequest({
       filepath: filepath
       method: 'put'

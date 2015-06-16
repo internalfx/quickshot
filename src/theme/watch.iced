@@ -73,6 +73,7 @@ exports.run = (argv, done) ->
           if err? then done(err)
 
         await fs.readFile(path.join('theme', filepath), defer(err, data))
+        if err? then console.log(err)
         await helpers.shopifyRequest({
           filepath: filepath
           method: 'put'
