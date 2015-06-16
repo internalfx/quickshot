@@ -58,12 +58,12 @@ exports.run = (argv, done) ->
     console.log "successfully loaded #{filepath} from disk."
     console.log "sending data to: https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
     await helpers.shopifyRequest({
-      filepath: filepath
+      filepath: filepath.split(path.sep).join('/')
       method: 'put'
       url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/themes/#{target.theme_id}/assets.json"
       json: {
         asset: {
-          key: filepath
+          key: filepath.split(path.sep).join('/')
           attachment: data.toString('base64')
         }
       }
