@@ -15,6 +15,7 @@ HELPTEXT = """
 
           Options:
             --target=[targetname]                         Explicitly select target for upload/download/watch
+            --sync                                        Transfer files synchronously for download
 
         """
 
