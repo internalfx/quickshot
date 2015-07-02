@@ -11,6 +11,7 @@ mkdirp = require('mkdirp')
 sass = require('node-sass')
 parser = require('gitignore-parser')
 coffee = require('coffee-script')
+cjsx = require('coffee-react')
 
 exports.run = (argv, done) ->
 
@@ -70,6 +71,15 @@ exports.run = (argv, done) ->
           if err? then done(err)
           compiledSource = coffee.compile(source)
           await fs.writeFile(sourceCoffee.replace('.coffee', '.js'), compiledSource, defer(err))
+          if err? then done(err)
+
+        if config.compile_coffeescript and filepath.match(/\.cjsx$/)
+          sourceCjsx = path.join('theme', filepath)
+          console.log colors.yellow("Compiling CJSX: \"#{filepath}\"")
+          await fs.readFile(sourceCjsx, 'utf8', defer(err, source))
+          if err? then done(err)
+          compiledSource = cjsx.compile(source)
+          await fs.writeFile(sourceCjsx.replace('.cjsx', '.js'), compiledSource, defer(err))
           if err? then done(err)
 
         await fs.readFile(path.join('theme', filepath), defer(err, data))
