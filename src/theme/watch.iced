@@ -78,7 +78,10 @@ exports.run = (argv, done) ->
           console.log colors.yellow("Compiling CJSX: \"#{filepath}\"")
           await fs.readFile(sourceCjsx, 'utf8', defer(err, source))
           if err? then done(err)
-          compiledSource = cjsx.compile(source)
+          try
+            compiledSource = cjsx.compile(source)
+          catch err
+            console.log err
           await fs.writeFile(sourceCjsx.replace('.cjsx', '.js'), compiledSource, defer(err))
           if err? then done(err)
 
