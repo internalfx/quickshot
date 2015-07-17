@@ -37,7 +37,7 @@
     "test": "mocha -R test"
   },
   "dependencies": {
-    "chokidar": "^1.0.0",
+    "chokidar": "1.0.3",
     "coffee-react": "^4.0.0",
     "coffee-script": "^1.9.3",
     "colors": "^1.0.3",
