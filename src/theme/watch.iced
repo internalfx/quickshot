@@ -57,7 +57,7 @@ exports.run = (argv, done) ->
 
         if config.compile_scss and filepath.match(/\.scss$/)
           mainscss = config.primary_scss_file
-          targetscss = mainscss.replace('.scss', '.css')
+          targetscss = mainscss.replace('.scss', '.css.liquid')
           console.log colors.yellow("Compiling Sass: \"#{mainscss}\" -> \"#{targetscss}\"")
           await sass.render({file: path.join('theme', mainscss), outFile: path.join('theme', targetscss)}, defer(err, result))
           if err? then done(err)
