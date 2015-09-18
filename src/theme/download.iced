@@ -22,10 +22,11 @@ downloader = (ctx, cb) ->
     }
   }, defer(err, res, data))
   if err?
-    console.log colors.red(err)
+    helpers.log(err, 'red')
     cb(err)
 
-  console.log colors.green("Downloaded #{ctx.key}")
+  helpers.log("Downloaded #{ctx.key}", 'green')
+
   if data.asset.attachment
     rawData = new Buffer(data.asset.attachment, 'base64')
   else if data.asset.value
@@ -34,7 +35,7 @@ downloader = (ctx, cb) ->
   await mkdirp(path.join(process.cwd(), 'theme', path.dirname(data.asset.key)), defer(err))
   await fs.writeFile(path.join(process.cwd(), 'theme', data.asset.key), rawData, defer(err))
   if err?
-    console.log colors.red(err)
+    helpers.log(err, 'red')
     cb(err)
 
   cb()

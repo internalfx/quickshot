@@ -46,10 +46,10 @@ exports.run = (argv, done) ->
     next()
 
     if filepath.match(/[\(\)]/)
-      return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
+      return helpers.log("Filename may not contain parentheses, please rename - \"#{filepath}\"", 'red')
 
     await fs.readFile(path.join('theme', filepath), defer(err, data))
-    if err? then console.log(err)
+    if err? then helpers.log(err, 'red')
 
     await helpers.shopifyRequest({
       filepath: filepath.split(path.sep).join('/')
@@ -62,7 +62,7 @@ exports.run = (argv, done) ->
         }
       }
     }, defer(err, res, assetsBody))
-    if err? then console.log(err)
+    if err? then helpers.log(err, 'red')
 
-    unless err? then console.log colors.green("Uploaded #{filepath}")
+    unless err? then helpers.log("Uploaded #{filepath}", 'green')
   )

@@ -53,12 +53,12 @@ exports.run = (argv, done) ->
       when 'add', 'change'
 
         if filepath.match(/[\(\)]/)
-          return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
+          return helpers.log("Filename may not contain parentheses, please rename - \"#{filepath}\"", 'red')
 
         if config.compile_scss and filepath.match(/\.scss$/)
           mainscss = config.primary_scss_file
           targetscss = mainscss.replace('.scss', '.css.liquid')
-          console.log colors.yellow("Compiling Sass: \"#{mainscss}\" -> \"#{targetscss}\"")
+          helpers.log("Compiling Sass: \"#{mainscss}\" -> \"#{targetscss}\"", 'yellow')
           await sass.render({file: path.join('theme', mainscss), outFile: path.join('theme', targetscss)}, defer(err, result))
           if err? then done(err)
           await fs.writeFile(path.join('theme', targetscss), result.css, defer(err))
@@ -66,7 +66,7 @@ exports.run = (argv, done) ->
 
         if config.compile_coffeescript and filepath.match(/\.coffee$/)
           sourceCoffee = path.join('theme', filepath)
-          console.log colors.yellow("Compiling CoffeeScript: \"#{filepath}\"")
+          helpers.log("Compiling CoffeeScript: \"#{filepath}\"", 'yellow')
           await fs.readFile(sourceCoffee, 'utf8', defer(err, source))
           if err? then done(err)
           compiledSource = coffee.compile(source)
@@ -75,18 +75,18 @@ exports.run = (argv, done) ->
 
         if config.compile_babel and filepath.match(/\.(jsx|es6)$/)
           sourceBabel = path.join('theme', filepath)
-          console.log colors.yellow("Compiling Babel: \"#{filepath}\"")
+          helpers.log("Compiling Babel: \"#{filepath}\"", 'yellow')
           await fs.readFile(sourceBabel, 'utf8', defer(err, source))
           if err? then done(err)
           try
             compiledSource = babel.transform(source)
           catch err
-            console.log err
+            helpers.log(err, 'red')
           await fs.writeFile(sourceBabel.replace(/\.(jsx|es6)$/, '.js'), compiledSource.code, defer(err))
           if err? then done(err)
 
         await fs.readFile(path.join('theme', filepath), defer(err, data))
-        if err? then console.log(err)
+        if err? then helpers.log(err, 'red')
         await helpers.shopifyRequest({
           filepath: filepath.split(path.sep).join('/')
           method: 'put'
@@ -98,9 +98,9 @@ exports.run = (argv, done) ->
             }
           }
         }, defer(err, res, assetsBody))
-        if err? then console.log colors.red(err)
+        if err? then helpers.log(err, 'red')
 
-        unless err? then console.log colors.green("Added/Updated #{filepath}")
+        unless err? then helpers.log("Added/Updated #{filepath}", 'green')
 
       when 'unlink'
         await helpers.shopifyRequest({
@@ -110,9 +110,9 @@ exports.run = (argv, done) ->
             asset: {key: filepath.split(path.sep).join('/')}
           }
         }, defer(err, res, assetsBody))
-        if err? then console.log colors.red(err)
+        if err? then helpers.log(err, 'red')
 
-        console.log colors.green("Deleted #{filepath}")
+        helpers.log("Deleted #{filepath}", 'green')
   )
 
-  console.log "Watching Theme..."
+  helpers.log "Watching Theme..."

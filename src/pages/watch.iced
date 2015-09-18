@@ -51,13 +51,13 @@ exports.run = (argv, done) ->
       when 'add', 'change'
 
         if filepath.match(/[\(\)]/)
-          return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
+          return helpers.log("Filename may not contain parentheses, please rename - \"#{filepath}\"", 'red')
 
         fileHandle = path.basename(filepath, '.html')
 
         page = _.find(pages, {handle: fileHandle})
 
-        unless page then return console.log colors.red("Page with handle #{fileHandle} was not found in shop for #{filepath}")
+        unless page then return helpers.log("Page with handle #{fileHandle} was not found in shop for #{filepath}", 'red')
 
         await fs.readFile(filepath, defer(err, data))
         await helpers.shopifyRequest({
@@ -72,7 +72,7 @@ exports.run = (argv, done) ->
           }
         }, defer(err, res, assetsBody))
 
-        unless err? then console.log colors.green("Added/Updated #{filepath}")
+        unless err? then helpers.log("Added/Updated #{filepath}", 'green')
 
       when 'unlink'
         await helpers.shopifyRequest({
@@ -82,9 +82,9 @@ exports.run = (argv, done) ->
             asset: {key: filepath}
           }
         }, defer(err, res, assetsBody))
-        if err? then console.log colors.red(err)
+        if err? then helpers.log(err, 'red')
 
-        console.log colors.green("Deleted #{filepath}")
+        helpers.log("Deleted #{filepath}", 'green')
   )
 
-  console.log "Watching Pages..."
+  helpers.log "Watching Pages..."

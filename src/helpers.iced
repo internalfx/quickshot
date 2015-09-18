@@ -5,6 +5,7 @@ mfs = require('machinepack-fs')
 request = require('request')
 colors = require('colors')
 inquirer = require("inquirer")
+moment = require('moment')
 
 shopifyQueue = {
   isRunning: false
@@ -70,7 +71,7 @@ shopifyQueue = {
 
 }
 
-module.exports = {
+helpers = {
 
   loadConfig: (cb) ->
     mfs.readJson(
@@ -164,5 +165,12 @@ module.exports = {
   #
   #   return cb(null, products)
 
+  ts: ->
+    return moment().format('hh:mm:ss a')
+
+  log: (text, color='white') ->
+    console.log(colors[color]("#{helpers.ts()} - #{text}"))
 
 }
+
+module.exports = helpers

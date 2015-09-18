@@ -56,7 +56,7 @@ exports.run = (argv, done) ->
 
           await fs.readFile(path.join(prodPath, image.id.toString()), defer(err, imgData))
           if err?
-            console.log colors.red("Image #{image.id} missing for product #{prodData.handle}")
+            helpers.log("Image #{image.id} missing for product #{prodData.handle}", 'red')
             return cb(err)
 
           image.attachment = imgData.toString('base64')
@@ -87,4 +87,4 @@ exports.run = (argv, done) ->
           return cb()
         )(metafield, defer(err))
 
-    console.log colors.green("Created #{newProdData.handle}")
+    helpers.log("Created #{newProdData.handle}", 'green')

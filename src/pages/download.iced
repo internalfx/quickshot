@@ -33,6 +33,6 @@ exports.run = (argv, done) ->
     if not filter? or key.match(new RegExp("^#{filter}"))
       await mkdirp(path.dirname(key), defer(err))
       await fs.writeFile(key, page.body_html, defer(err))
-      console.log colors.green("Downloaded #{key}")
+      helpers.log("Downloaded #{key}", 'green')
 
   done()

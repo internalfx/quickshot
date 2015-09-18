@@ -38,7 +38,7 @@ exports.run = (argv, done) ->
 
     productsDownloaded += products.length
 
-    console.log "Products downloaded: #{productsDownloaded}"
+    helpers.log("Products downloaded: #{productsDownloaded}")
 
     await
       for product in products
@@ -59,7 +59,7 @@ exports.run = (argv, done) ->
           for image in product.images
             await request(image.src).pipe(fs.createWriteStream("products/#{product.handle}/#{image.id}")).on('close', defer(err));
 
-          console.log colors.green("Downloaded #{key}")
+          helpers.log("Downloaded #{key}", 'green')
 
           return cb()
         )(product, defer(err))

@@ -45,7 +45,7 @@ exports.run = (argv, done) ->
     next()
 
     if filepath.match(/[\(\)]/)
-      return console.log colors.red("Filename may not contain parentheses, please rename - \"#{filepath}\"")
+      return helpers.log("Filename may not contain parentheses, please rename - \"#{filepath}\"", 'red')
 
     fileHandle = path.basename(filepath, '.html')
 
@@ -78,8 +78,8 @@ exports.run = (argv, done) ->
           }
         }
       }, defer(err, res, assetsBody))
-      console.log colors.yellow("Created new Page with handle #{fileHandle}...")
+      helpers.log("Created new Page with handle #{fileHandle}...", 'yellow')
 
-    unless err? then console.log colors.green("Uploaded #{filepath}")
+    unless err? then helpers.log("Uploaded #{filepath}", 'green')
 
   )
