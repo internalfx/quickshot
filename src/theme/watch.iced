@@ -11,7 +11,7 @@ mkdirp = require('mkdirp')
 sass = require('node-sass')
 parser = require('gitignore-parser')
 coffee = require('coffee-script')
-cjsx = require('coffee-react')
+babel = require('babel-core')
 
 exports.run = (argv, done) ->
 
@@ -73,16 +73,16 @@ exports.run = (argv, done) ->
           await fs.writeFile(sourceCoffee.replace('.coffee', '.js'), compiledSource, defer(err))
           if err? then done(err)
 
-        if config.compile_coffeescript and filepath.match(/\.cjsx$/)
-          sourceCjsx = path.join('theme', filepath)
-          console.log colors.yellow("Compiling CJSX: \"#{filepath}\"")
-          await fs.readFile(sourceCjsx, 'utf8', defer(err, source))
+        if config.compile_babel and filepath.match(/\.(jsx|es6)$/)
+          sourceBabel = path.join('theme', filepath)
+          console.log colors.yellow("Compiling Babel: \"#{filepath}\"")
+          await fs.readFile(sourceBabel, 'utf8', defer(err, source))
           if err? then done(err)
           try
-            compiledSource = cjsx.compile(source)
+            compiledSource = babel.transform(source)
           catch err
             console.log err
-          await fs.writeFile(sourceCjsx.replace('.cjsx', '.js'), compiledSource, defer(err))
+          await fs.writeFile(sourceBabel.replace(/\.(jsx|es6)$/, '.js'), compiledSource.code, defer(err))
           if err? then done(err)
 
         await fs.readFile(path.join('theme', filepath), defer(err, data))

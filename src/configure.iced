@@ -23,6 +23,7 @@ exports.run = (argv, done) ->
           'Configure targets',
           'Configure scss',
           'Configure CoffeeScript',
+          'Configure Babel',
           'Configure ignore file',
           'Save configuration and exit'
         ]
@@ -36,6 +37,8 @@ exports.run = (argv, done) ->
         await configureScss(config, defer(err, config))
       when 'Configure CoffeeScript'
         await configureCoffeeScript(config, defer(err, config))
+      when 'Configure Babel'
+        await configureBabel(config, defer(err, config))
       when 'Configure ignore file'
         await configureIgnoreFile(config, defer(err, config))
 
@@ -255,6 +258,20 @@ configureCoffeeScript = (config, cb) ->
   ], defer(choices))
 
   config.compile_coffeescript = choices.compile_coffeescript
+
+  return cb(null, config)
+
+configureBabel = (config, cb) ->
+  await inquirer.prompt([
+    {
+      type: 'confirm'
+      name: 'compile_babel'
+      message: "Would you like to enable automatic compiling for babel (es6, jsx) files?"
+      default: config?.compile_babel || false
+    }
+  ], defer(choices))
+
+  config.compile_babel = choices.compile_babel
 
   return cb(null, config)
 

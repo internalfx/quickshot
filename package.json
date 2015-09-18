@@ -37,6 +37,7 @@
     "test": "mocha -R test"
   },
   "dependencies": {
+    "babel-core": "^5.8.24",
     "chokidar": "1.0.3",
     "coffee-react": "^4.0.0",
     "coffee-script": "^1.9.3",
