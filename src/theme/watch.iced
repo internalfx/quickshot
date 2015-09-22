@@ -77,13 +77,14 @@ exports.run = (argv, done) ->
           sourceBabel = path.join('theme', filepath)
           helpers.log("Compiling Babel: \"#{filepath}\"", 'yellow')
           await fs.readFile(sourceBabel, 'utf8', defer(err, source))
-          if err? then done(err)
+          if err? then return helpers.log(err, 'red')
           try
             compiledSource = babel.transform(source, {modules: 'umd'})
           catch err
             helpers.log(err, 'red')
-          await fs.writeFile(sourceBabel.replace(/\.(jsx|es6)$/, '.js'), compiledSource.code, defer(err))
-          if err? then done(err)
+          if (compiledSource)
+            await fs.writeFile(sourceBabel.replace(/\.(jsx|es6)$/, '.js'), compiledSource.code, defer(err))
+            if err? then return helpers.log(err, 'red')
 
         await fs.readFile(path.join('theme', filepath), defer(err, data))
         if err? then helpers.log(err, 'red')
