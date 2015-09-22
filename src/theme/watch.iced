@@ -79,7 +79,7 @@ exports.run = (argv, done) ->
           await fs.readFile(sourceBabel, 'utf8', defer(err, source))
           if err? then done(err)
           try
-            compiledSource = babel.transform(source)
+            compiledSource = babel.transform(source, {modules: 'umd'})
           catch err
             helpers.log(err, 'red')
           await fs.writeFile(sourceBabel.replace(/\.(jsx|es6)$/, '.js'), compiledSource.code, defer(err))
