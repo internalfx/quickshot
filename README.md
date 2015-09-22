@@ -13,11 +13,13 @@ A Shopify theme development tool.
 - Uploads/downloads in parallel greatly reducing transfer times
 - Supports autocompiling scss locally before uploading to Shopify
 - Supports autocompiling CoffeeScript locally before uploading to Shopify
+- Supports autocompiling Babel/ES6 into modules which are easily used by Requirejs
 - Can use with `.gitignore` files or a custom `.quickshotignore` file.
 - Can `download/upload/watch` any Shopify Page. Allowing you to edit your pages locally in your favorite editor.
 - Can `download/upload` Shopify Products. Easily transfer products between stores! Even the images and metafields!
 
-http://quickshot.io/
+[Read the Docs!](http://quickshot.io/) (http://quickshot.io/)
+
 
 ### Repos
 - Main Project: https://github.com/internalfx/quickshot
