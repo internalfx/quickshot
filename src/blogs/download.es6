@@ -30,7 +30,7 @@ var Download = function *(argv) {
     var pageNum = 1
     var page = []
 
-    let blogKey = `articles/${blog.handle}/blog.json`
+    let blogKey = `blogs/${blog.handle}/blog.json`
 
     yield mkdirp.mkdirpAsync(path.dirname(blogKey))
     yield fs.writeFileAsync(blogKey, JSON.stringify(blog))
@@ -41,7 +41,7 @@ var Download = function *(argv) {
     })
     metafields = metafields[1].metafields
 
-    yield fs.writeFileAsync(`articles/${blog.handle}/metafields.json`, JSON.stringify(metafields))
+    yield fs.writeFileAsync(`blogs/${blog.handle}/metafields.json`, JSON.stringify(metafields))
 
     do {
       page = yield helpers.shopifyRequestAsync({
@@ -54,10 +54,18 @@ var Download = function *(argv) {
     } while (page.length > 0)
 
     yield asyncEach(articles, function *(article, jdx) {
-      let key = `articles/${blog.handle}/${article.id}/article.json`
+      let key = `blogs/${blog.handle}/${article.id}/article.json`
 
       yield mkdirp.mkdirpAsync(path.dirname(key))
       yield fs.writeFileAsync(key, JSON.stringify(article))
+
+      var metafields = yield helpers.shopifyRequestAsync({
+        method: 'get',
+        url: `https://${target.api_key}:${target.password}@${target.domain}.myshopify.com/admin/articles/${article.id}/metafields.json`
+      })
+      metafields = metafields[1].metafields
+
+      yield fs.writeFileAsync(`blogs/${blog.handle}/${article.id}/metafields.json`, JSON.stringify(metafields))
     })
 
     totalArticles += articles.length
