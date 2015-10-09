@@ -6,6 +6,7 @@ request = require('request')
 colors = require('colors')
 inquirer = require("inquirer")
 moment = require('moment')
+Promise = require('bluebird')
 
 shopifyQueue = {
   isRunning: false
@@ -150,5 +151,7 @@ helpers = {
     console.log(colors[color]("#{helpers.ts()} - #{text}"))
 
 }
+
+Promise.promisifyAll(helpers)
 
 module.exports = helpers
