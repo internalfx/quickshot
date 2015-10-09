@@ -67,8 +67,9 @@ shopifyQueue = {
           for error in body.errors.asset
             console.log colors.red("Error in #{item.req.filepath} - #{error}")
       else
-        # console.log res
-        console.log colors.red("Failed to transfer [#{res.statusCode}] #{item.req.filepath}")
+        console.log colors.red("Failed to transfer [#{res.statusCode}] #{item.req.filepath} ===================")
+        console.log res.body
+        console.log colors.red("===============================================================================")
 
 }
 
