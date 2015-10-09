@@ -3,28 +3,44 @@
 // var _ = require('lodash')
 var gulp = require('gulp')
 var iced = require('gulp-iced-coffee')
-// var del = require('del')
-// var sass = require('gulp-sass')
-// var concat = require('gulp-concat-util')
-// var gutil = require('gulp-util')
-// var gulpif = require('gulp-if')
-// var watch = require('gulp-watch')
-//
-// var webpack = require('webpack')
-// var WebpackDevServer = require('webpack-dev-server')
-//
-// var wpConf = require('./webpack.config.js')
+var babel = require('gulp-babel')
+var watch = require('gulp-watch')
 
-var scripts = [
-  'src/**/*.iced'
-]
+var coffeeScripts = 'src/**/*.iced'
+var babelScripts = 'src/**/*.es6'
 
-gulp.task('default', ['iced-coffee'], function () {
+gulp.task('default', [
+  'coffee',
+  'babel'
+], function () {
   return true
 })
 
-gulp.task('iced-coffee', [], function () {
-  gulp.src(scripts)
+gulp.task('dev', [
+  'coffee',
+  'coffee-watch',
+  'babel',
+  'babel-watch'
+], function () {
+  return true
+})
+
+gulp.task('coffee', [], function () {
+  gulp.src(coffeeScripts)
   .pipe(iced({expand: true}))
   .pipe(gulp.dest('lib/'))
+})
+
+gulp.task('coffee-watch', [], function () {
+  gulp.watch(coffeeScripts, ['coffee'])
+})
+
+gulp.task('babel', [], function () {
+  gulp.src(babelScripts)
+  .pipe(babel({sourceMaps: 'inline'}))
+  .pipe(gulp.dest('lib/'))
+})
+
+gulp.task('babel-watch', [], function () {
+  gulp.watch(babelScripts, ['babel'])
 })
