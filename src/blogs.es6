@@ -5,37 +5,41 @@ import Download from './blogs/download'
 
 var HELPTEXT = `
 
-          Quickshot pages #{VERSION}
-          ==============================
+    Quickshot blogs ${VERSION}
+    ==============================
 
-          Commands:
-            quickshot pages upload [options] [filter]     Upload pages files, optionally providing a filter
-            quickshot pages download [options] [filter]   Download pages files, optionally providing a filter
-            quickshot pages watch [options]               Watch pages folder and synchronize changes automatically
-            quickshot pages                               Show this screen.
+    Commands:
+      quickshot blogs upload [options] [filter]     Upload blogs files, optionally providing a filter
+      quickshot blogs download [options] [filter]   Download blogs files, optionally providing a filter
+      quickshot blogs                               Show this screen.
 
 
-          Options:
-            --target=[targetname]                         Explicitly select target for upload/download/watch
+    Options:
+      --target=[targetname]                         Explicitly select target for upload/download
 
 `
 
 var run = function (argv) {
   var command = _.first(argv['_'])
   argv['_'] = argv['_'].slice(1)
+  var funcTarget = null
   if (command === 'download') {
-    Download(argv)
+    funcTarget = Download
   } else if (command === 'upload') {
-    // require('./pages/upload').run(argv)
+    // funcTarget = Upload
   } else {
     console.log(HELPTEXT)
   }
 
-  // if (err != null) {
-  //   console.log(colors.red(err))
-  // }
-
-  process.exit()
+  if (funcTarget != null) {
+    funcTarget(argv)
+    .then(function (result) {
+      console.log(colors.green(result))
+    })
+    .catch(function (err) {
+      console.log(colors.red(err))
+    })
+  }
 }
 
 export default run
