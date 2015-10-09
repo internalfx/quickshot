@@ -4,13 +4,10 @@ import fs from 'fs'
 import mkdirp from 'mkdirp'
 import Promise from 'bluebird'
 import path from 'path'
+import asyncEach from 'co-each'
 
 Promise.promisifyAll(fs)
 Promise.promisifyAll(mkdirp)
-
-var asyncEach = function *(array, fn) {
-  for (var i = 0; i < array.length; i++) yield fn(array[i], i)
-}
 
 var Download = function *(argv) {
   var config = yield helpers.loadConfigAsync()
