@@ -1,69 +1,73 @@
 
+import _ from 'lodash'
 import helpers from '../helpers'
 import fs from 'fs'
 import mkdirp from 'mkdirp'
 import Promise from 'bluebird'
 import path from 'path'
+import asyncEach from 'co-each'
 
 Promise.promisifyAll(fs)
 Promise.promisifyAll(mkdirp)
 
-var asyncEach = function *(array, fn) {
-  for (var i = 0; i < array.length; i++) yield fn(array[i], i)
-}
-
-var Download = function *(argv) {
+var Upload = function *(argv) {
   var config = yield helpers.loadConfigAsync()
   var totalArticles = 0
 
   var target = yield helpers.getTargetAsync(config, argv)
 
-  var blogs = yield helpers.shopifyRequestAsync({
-    method: 'get',
-    url: `https://${target.api_key}:${target.password}@${target.domain}.myshopify.com/admin/blogs.json`
+  var blogDirs = fs.readdirSync(path.join(process.cwd(), 'blogs')).filter(function (file) {
+    return fs.statSync(path.join(process.cwd(), 'blogs', file)).isDirectory()
   })
 
-  blogs = blogs[1].blogs
+  yield asyncEach(blogDirs, function *(blogDir) {
+    var blogPath = path.join(process.cwd(), 'blogs', blogDir)
 
-  yield asyncEach(blogs, function *(blog, idx) {
-    var articles = []
-    var pageNum = 1
-    var page = []
+    let blogJson = yield fs.readFileAsync(path.join(blogPath, 'blog.json'))
+    let blogData = JSON.parse(blogJson)
 
-    let blogKey = `articles/${blog.handle}/blog.json`
-
-    yield mkdirp.mkdirpAsync(path.dirname(blogKey))
-    yield fs.writeFileAsync(blogKey, JSON.stringify(blog))
-
-    var metafields = yield helpers.shopifyRequestAsync({
-      method: 'get',
-      url: `https://${target.api_key}:${target.password}@${target.domain}.myshopify.com/admin/blogs/${blog.id}/metafields.json`
+    var newBlog = yield helpers.shopifyRequestAsync({
+      method: 'post',
+      url: `https://${target.api_key}:${target.password}@${target.domain}.myshopify.com/admin/blogs.json`,
+      json: { blog: blogData }
     })
-    metafields = metafields[1].metafields
 
-    yield fs.writeFileAsync(`articles/${blog.handle}/metafields.json`, JSON.stringify(metafields))
+    newBlog = newBlog[1].blog
 
-    do {
-      page = yield helpers.shopifyRequestAsync({
-        method: 'get',
-        url: `https://${target.api_key}:${target.password}@${target.domain}.myshopify.com/admin/blogs/${blog.id}/articles.json?page=${pageNum}`
+    var articleDirs = fs.readdirSync(blogPath).filter(function (file) {
+      return fs.statSync(path.join(blogPath, file)).isDirectory()
+    })
+
+    yield asyncEach(articleDirs, function *(articleDir) {
+      var articlePath = path.join(blogPath, articleDir)
+
+      var articleJson = yield fs.readFileAsync(path.join(articlePath, 'article.json'))
+      var articleData = _.omit(JSON.parse(articleJson), 'id', 'blog_id')
+
+      var newArticle = yield helpers.shopifyRequestAsync({
+        method: 'post',
+        url: `https://${target.api_key}:${target.password}@${target.domain}.myshopify.com/admin/blogs/${newBlog.id}/articles.json`,
+        json: { article: articleData }
       })
-      page = page[1].articles
-      pageNum += 1
-      articles = articles.concat(page)
-    } while (page.length > 0)
 
-    yield asyncEach(articles, function *(article, jdx) {
-      let key = `articles/${blog.handle}/${article.id}/article.json`
+      newArticle = newArticle[1].article
 
-      yield mkdirp.mkdirpAsync(path.dirname(key))
-      yield fs.writeFileAsync(key, JSON.stringify(article))
+      var metaJson = yield fs.readFileAsync(path.join(articlePath, 'metafields.json'))
+      var metafields = JSON.parse(metaJson)
+
+      yield asyncEach(metafields, function *(metafield) {
+        yield helpers.shopifyRequestAsync({
+          method: 'post',
+          url: `https://${target.api_key}:${target.password}@${target.domain}.myshopify.com/admin/articles/${newArticle.id}/metafields.json`,
+          json: { metafield: metafield }
+        })
+      })
+
+      totalArticles += 1
     })
-
-    totalArticles += articles.length
   })
 
-  return `Downloaded ${blogs.length} blogs containing ${totalArticles} articles.`
+  return `Uploaded ${blogDirs.length} blogs containing ${totalArticles} articles.`
 }
 
-export default Download
+export default Upload
