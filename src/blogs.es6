@@ -4,6 +4,7 @@
 import colors from 'colors'
 import _ from 'lodash'
 import Download from './blogs/download'
+import Upload from './blogs/upload'
 import co from 'co'
 
 var HELPTEXT = `
@@ -26,10 +27,12 @@ var run = function (argv, done) {
     var command = _.first(argv['_'])
     argv['_'] = argv['_'].slice(1)
 
+    var result = null
+
     if (command === 'download') {
-      var result = yield Download(argv)
+      result = yield Download(argv)
     } else if (command === 'upload') {
-      // var result = yield Upload(argv)
+      result = yield Upload(argv)
     } else {
       console.log(HELPTEXT)
     }
