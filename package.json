@@ -35,6 +35,7 @@
     "babel-core": "^5.8.24",
     "bluebird": "^2.10.2",
     "chokidar": "1.0.3",
+    "co": "^4.6.0",
     "colors": "^1.0.3",
     "gitignore-parser": "^0.0.2",
     "iced-runtime": "^1.0.2",

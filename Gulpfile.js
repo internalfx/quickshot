@@ -37,7 +37,10 @@ gulp.task('coffee-watch', [], function () {
 
 gulp.task('babel', [], function () {
   gulp.src(babelScripts)
-  .pipe(babel({sourceMaps: 'inline'}))
+  .pipe(babel({
+    sourceMaps: 'inline',
+    blacklist: ['regenerator']
+  }))
   .pipe(gulp.dest('lib/'))
 })
 

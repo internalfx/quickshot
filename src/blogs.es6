@@ -1,7 +1,10 @@
 
+/* global VERSION */
+
 import colors from 'colors'
 import _ from 'lodash'
 import Download from './blogs/download'
+import co from 'co'
 
 var HELPTEXT = `
 
@@ -9,37 +12,31 @@ var HELPTEXT = `
     ==============================
 
     Commands:
-      quickshot blogs upload [options] [filter]     Upload blogs files, optionally providing a filter
-      quickshot blogs download [options] [filter]   Download blogs files, optionally providing a filter
+      quickshot blogs upload [options]              Upload blogs files
+      quickshot blogs download [options]            Download blogs files
       quickshot blogs                               Show this screen.
-
 
     Options:
       --target=[targetname]                         Explicitly select target for upload/download
 
 `
 
-var run = function (argv) {
-  var command = _.first(argv['_'])
-  argv['_'] = argv['_'].slice(1)
-  var funcTarget = null
-  if (command === 'download') {
-    funcTarget = Download
-  } else if (command === 'upload') {
-    // funcTarget = Upload
-  } else {
-    console.log(HELPTEXT)
-  }
+var run = function (argv, done) {
+  co(function *() {
+    var command = _.first(argv['_'])
+    argv['_'] = argv['_'].slice(1)
 
-  if (funcTarget != null) {
-    funcTarget(argv)
-    .then(function (result) {
-      console.log(colors.green(result))
-    })
-    .catch(function (err) {
-      console.log(colors.red(err))
-    })
-  }
+    if (command === 'download') {
+      var result = yield Download(argv)
+    } else if (command === 'upload') {
+      // var result = yield Upload(argv)
+    } else {
+      console.log(HELPTEXT)
+    }
+
+    console.log(colors.green(result))
+    done()
+  }).catch(done)
 }
 
 export default run
