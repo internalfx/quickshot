@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "babel-core": "^5.8.24",
+    "bluebird": "^2.10.2",
     "chokidar": "1.0.3",
     "colors": "^1.0.3",
     "gitignore-parser": "^0.0.2",
