@@ -23,7 +23,7 @@ exports.run = (argv) ->
     when "configure"
       await require('./configure').run(argv, defer(err))
     when "blogs"
-      await require('./blogs').run(argv, defer(err))
+      await require('./blogs')(argv, defer(err))
     when "pages"
       await require('./pages').run(argv, defer(err))
     when "products"
