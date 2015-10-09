@@ -85,7 +85,7 @@ helpers = {
         cb(new Error("Shop configuration is corrupt, you may need to delete 'quickshot.json', and run 'quickshot configure' again."))
       success: (data) ->
         if !data.configVersion? or data.configVersion < CONFIGVERSION
-          cb(new Error("Shop configuration is from an older incompatible version of quickshot. You need to run 'quickshot configure' again."))
+          cb(new Error("Shop configuration is from an older incompatible version of quickshot. You need to run 'quickshot configure' again."), data)
         cb(null, data)
     )
 
@@ -142,28 +142,6 @@ helpers = {
       page += 1
 
     return cb(null, pages)
-
-  # getShopProducts: (target, cb) ->
-  #   chunkSize = 250
-  #   page = 1
-  #   products = []
-  #   productsBody = {
-  #     products: [0]
-  #   }
-  #
-  #   while productsBody.products.length isnt 0
-  #     await @shopifyRequest({
-  #       method: 'get'
-  #       url: "https://#{target.api_key}:#{target.password}@#{target.domain}.myshopify.com/admin/products.json?limit=#{chunkSize}&page=#{page}"
-  #     }, defer(err, res, productsBody))
-  #     if err? then return cb(err)
-  #
-  #     products = products.concat(productsBody.products)
-  #     page += 1
-  #
-  #     console.log "Products downloaded: #{products.length}"
-  #
-  #   return cb(null, products)
 
   ts: ->
     return moment().format('hh:mm:ss a')
