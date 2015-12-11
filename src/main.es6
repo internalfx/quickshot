@@ -45,32 +45,10 @@ var run = function (argv) {
       console.log(HELPTEXT)
     }
 
-    log(result, 'green')
+    if (result) { log(result, 'green') }
   }).catch(function (err) {
-    log(err, 'red')
+    log(err.stack, 'red')
   })
 }
 
 export default run
-
-// var run = function (argv) {
-//   command = _.first(argv['_'])
-//   argv['_'] = argv['_'].slice(1)
-//   switch command
-//     when "configure"
-//       await require('./configure').run(argv, defer(err))
-//     when "blogs"
-//       await require('./blogs')(argv, defer(err))
-//     when "pages"
-//       await require('./pages').run(argv, defer(err))
-//     when "products"
-//       await require('./products').run(argv, defer(err))
-//     when "theme"
-//       await require('./theme').run(argv, defer(err))
-//     else
-//       console.log HELPTEXT
-//
-//   if err?
-//     console.log colors.red(err)
-//
-//   process.exit()

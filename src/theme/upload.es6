@@ -1,16 +1,4 @@
 
-// var helpers = require('../helpers')
-//
-// var _ = require('lodash')
-// var inquirer = require("inquirer")
-// var colors = require('colors')
-// var fs = require('fs')
-// var path = require('path')
-// var request = require('request')
-// var mkdirp = require('mkdirp')
-// var walk = require('walk')
-// var parser = require('gitignore-parser')
-
 import _ from 'lodash'
 import co from 'co'
 import * as helpers from '../helpers'
@@ -34,27 +22,42 @@ var run = function *(argv) {
 
   var files = yield helpers.listFiles('theme')
 
-  var fileProcesses = files.reduce(function (list, file) {
+  files = files.map((file) => {
     let pathParts = file.split(path.sep)
     let trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
     let filepath = trimmedParts.join(path.sep)
-    let filename = path.basename(filepath)
 
-    // Ignore hidden files
-    if (filename.match(/^\..*$/)) { return list }
+    return {
+      key: filepath,
+      name: path.basename(filepath),
+      fullpath: file
+    }
+  })
 
-    // Ignore paths configured in ignore file
-    if (ignore && ignore.denies(filepath)) { return list }
+  if (ignore) {
+    files = _.reject(files, function (file) {
+      return ignore.denies(file.key)
+    })
+  }
 
-    if (filter && !filepath.match(new RegExp(`^${filter}`))) { return list }
+  if (filter) {
+    files = _.filter(files, function (file) {
+      return new RegExp(`^${filter}`).test(file.key)
+    })
+  }
 
-    list.push(co(function *() {
-      var data = yield fs.readFileAsync(path.join('theme', filepath))
+  files = _.reject(files, function (file) {
+    return file.name.match(/^\..*$/)
+  })
 
-      var cleanPath = filepath.split(path.sep).join('/')
+  var uploader = function (file) {
+    return co(function *() {
+      var data = yield fs.readFileAsync(file.fullpath)
+
+      var cleanPath = file.key.split(path.sep).join('/')
 
       yield helpers.shopifyRequest({
-        name: cleanPath,
+        name: `upload: ${cleanPath}`,
         request: {
           method: 'put',
           url: `https://${target.domain}.myshopify.com/admin/themes/${target.theme_id}/assets.json`,
@@ -69,12 +72,22 @@ var run = function *(argv) {
       })
 
       helpers.log(`uploaded ${cleanPath}`, 'green')
-    }))
+    })
+  }
 
-    return list
-  }, [])
+  if (argv['sync']) {
+    for (let file of files) {
+      yield uploader(file)
+    }
+  } else {
+    var pending = []
 
-  yield Promise.all(fileProcesses)
+    for (let file of files) {
+      pending.push(uploader(file))
+    }
+
+    yield Promise.all(pending)
+  }
 
   return 'Done!'
 }

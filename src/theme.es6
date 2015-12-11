@@ -20,7 +20,7 @@ var HELPTEXT = `
 
     Options:
       --target=[targetname]                         Explicitly select target for upload/download/watch
-      --sync                                        Transfer files synchronously for download
+      --sync                                        Transfer files synchronously for upload/download
 
 `
 
