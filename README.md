@@ -10,6 +10,8 @@ However, there are a few:
 - Show timestamps on all log output
 
 [![Join the chat at https://gitter.im/internalfx/quickshot](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/internalfx/quickshot?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![license](https://img.shields.io/npm/l/quickshot.svg)](https://github.com/internalfx/quickshot/blob/master/LICENSE)
+[![npm version](https://img.shields.io/npm/v/quickshot.svg)](https://www.npmjs.com/package/quickshot)
 
 A Shopify theme development tool.
 
