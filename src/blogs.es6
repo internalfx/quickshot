@@ -1,11 +1,11 @@
 
 /* global VERSION */
 
+import co from 'co'
 import colors from 'colors'
 import _ from 'lodash'
 import Download from './blogs/download'
 import Upload from './blogs/upload'
-import co from 'co'
 
 var HELPTEXT = `
 

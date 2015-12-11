@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-_ = require('lodash');
-var pjson = require('../package.json');
-VERSION = pjson.version;
-CONFIGVERSION = 1
-var main = require("../lib/main");
-var argv = require('minimist')(process.argv.slice(2));
-main.run(argv);
+var pjson = require('../package.json')
+global.VERSION = pjson.version
+global.CONFIGVERSION = 1
+var main = require('../lib/main')
+var argv = require('minimist')(process.argv.slice(2))
+main.default(argv)
