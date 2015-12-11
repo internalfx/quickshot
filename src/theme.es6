@@ -1,11 +1,11 @@
 
-import co from 'co'
-import colors from 'colors'
 import _ from 'lodash'
 
 import Download from './theme/download'
 import Upload from './theme/upload'
 import Watch from './theme/watch'
+
+/* global VERSION */
 
 var HELPTEXT = `
 

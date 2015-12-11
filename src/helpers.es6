@@ -1,5 +1,4 @@
 
-// import fs from 'fs'
 import _ from 'lodash'
 import co from 'co'
 import path from 'path'

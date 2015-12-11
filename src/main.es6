@@ -1,5 +1,4 @@
 
-import colors from 'colors'
 import co from 'co'
 import _ from 'lodash'
 import { log } from './helpers'
@@ -8,6 +7,8 @@ import Blogs from './blogs'
 import Pages from './pages'
 import Products from './products'
 import Theme from './theme'
+
+/* global VERSION */
 
 var HELPTEXT = `
 
