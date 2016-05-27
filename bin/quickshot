@@ -4,4 +4,4 @@ global.VERSION = pjson.version
 global.CONFIGVERSION = 1
 var main = require('../lib/main')
 var argv = require('minimist')(process.argv.slice(2))
-main.default(argv)
+main(argv)
