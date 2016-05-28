@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 var pjson = require('../package.json')
+let Promise = require('bluebird')
+global.Promise = Promise
 global.VERSION = pjson.version
 global.CONFIGVERSION = 1
 var main = require('../lib/main')
