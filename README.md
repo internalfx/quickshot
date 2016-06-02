@@ -2,18 +2,18 @@
 
 A (nearly) full rewrite from Iced Coffee Script to ES2015 JavaScript. Runs on node.js v6+.
 
-The changes consist of mostly cleanup and cruft removal. Adding new features is not the primary goal.
+The changes consist of mostly cleanup and cruft removal. Adding new features has not been the primary goal.
+
+However, there are a few:
+
+- Allow configurable concurrency level (number of concurrent API requests)
+- Show timestamps on all log output
 
 ### Installation
 
 Quickshot 2.0 is currently in beta.
 
 `npm install -g quickshot@beta`
-
-However, there are a few:
-
-- Allow configurable concurrency level (number of concurrent API requests)
-- Show timestamps on all log output
 
 [![Join the chat at https://gitter.im/internalfx/quickshot](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/internalfx/quickshot?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![license](https://img.shields.io/npm/l/quickshot.svg)](https://github.com/internalfx/quickshot/blob/master/LICENSE)
