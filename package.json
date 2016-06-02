@@ -56,12 +56,5 @@
     "node-sass": "^3.7.0",
     "request": "^2.72.0",
     "walk": "^2.3.9"
-  },
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-iced-coffee": "^1.2.1",
-    "gulp-watch": "^4.3.6",
-    "iced-coffee-script": "^108.0.11"
   }
 }
