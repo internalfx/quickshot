@@ -33,9 +33,4 @@ A Shopify theme development tool.
 - Can use with `.gitignore` files or a custom `.quickshotignore` file.
 - Can `download/upload` Shopify Blogs, Pages and Products! Easily transfer them between stores! Even the metafields! And edit them locally in your favorite editor.
 
-[Read the Docs!](http://quickshot.io/) (http://quickshot.io/)
-
-
-### Repos
-- Main Project: https://github.com/internalfx/quickshot
-- Documentation: https://github.com/internalfx/quickshot-docs
+[Read the Docs!](https://quickshot.readme.io/) (https://quickshot.readme.io/)
