@@ -1,12 +1,12 @@
 # Quickshot 2.0
 
-A (nearly) full rewrite from Iced Coffee Script to ES2015 JavaScript. Runs on node.js v5.2.
+A (nearly) full rewrite from Iced Coffee Script to ES2015 JavaScript. Runs on node.js v6+.
 
 The changes consist of mostly cleanup and cruft removal. Adding new features is not the primary goal.
 
 However, there are a few:
 
-- Allow to upload synchronously with `--sync` flag
+- Allow configurable concurrency level (number of concurrent API requests)
 - Show timestamps on all log output
 
 [![Join the chat at https://gitter.im/internalfx/quickshot](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/internalfx/quickshot?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -23,12 +23,9 @@ A Shopify theme development tool.
 - Easy to use configuration wizard
 - Uploads/downloads in parallel greatly reducing transfer times
 - Supports autocompiling scss locally before uploading to Shopify
-- Supports autocompiling CoffeeScript locally before uploading to Shopify
-- Supports autocompiling Babel/ES6 into modules which are easily used by Requirejs
+- Supports autocompiling Babel/ES6 into modules which are easily used by Requirejs and others
 - Can use with `.gitignore` files or a custom `.quickshotignore` file.
-- Can `download/upload/watch` any Shopify Page. Allowing you to edit your pages locally in your favorite editor.
-- Can `download/upload` Shopify Products. Easily transfer products between stores! Even the images and metafields!
-- Can `download/upload` Shopify Blogs. Easily transfer blogs between stores! Even the metafields!
+- Can `download/upload` Shopify Blogs, Pages and Products! Easily transfer them between stores! Even the metafields! And edit them locally in your favorite editor.
 
 [Read the Docs!](http://quickshot.io/) (http://quickshot.io/)
 
