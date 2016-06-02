@@ -11,9 +11,7 @@ However, there are a few:
 
 ### Installation
 
-Quickshot 2.0 is currently in beta.
-
-`npm install -g quickshot@beta`
+`npm install -g quickshot`
 
 [![Join the chat at https://gitter.im/internalfx/quickshot](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/internalfx/quickshot?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![license](https://img.shields.io/npm/l/quickshot.svg)](https://github.com/internalfx/quickshot/blob/master/LICENSE)
