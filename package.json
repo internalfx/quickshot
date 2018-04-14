@@ -1,18 +1,18 @@
 {
   "name": "quickshot",
   "description": "A shopify theme synchronizer",
-  "version": "2.1.3",
-  "homepage": "https://github.com/internalfx/quickshot",
+  "version": "2.1.4",
+  "homepage": "https://github.com/crossfield/quickshot",
   "author": {
-    "name": "InternalFX",
-    "url": "https://github.com/internalfx"
+    "name": "Crossfield",
+    "url": "https://github.com/crossfield"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/internalfx/quickshot/quickshot.git"
+    "url": "git://github.com/crossfield/quickshot/quickshot.git"
   },
   "bugs": {
-    "url": "https://github.com/internalfx/quickshot/issues"
+    "url": "https://github.com/crossfield/quickshot/issues"
   },
   "license": "ISC",
   "keywords": [
