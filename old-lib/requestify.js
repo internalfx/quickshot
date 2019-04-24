@@ -11,7 +11,7 @@ let baseQueue = {
 
   add: function (target, request) {
     return new Promise((resolve, reject) => {
-      this.list.push({target, request, resolve, reject})
+      this.list.push({ target, request, resolve, reject })
       if (!this.isProcessing) {
         this.process()
       }
@@ -19,7 +19,7 @@ let baseQueue = {
   },
 
   process: function () {
-    co(function *() {
+    co(function * () {
       this.isProcessing = true
       while (this.list.length > 0) {
         let req = this.list.shift()
@@ -38,17 +38,17 @@ let baseQueue = {
     })
   },
 
-  request: function ({target, request, resolve, reject}) {
+  request: function ({ target, request, resolve, reject }) {
     // console.log(`Shopify Request: [${request.method}]${request.url}`)
-    co(function *() {
+    co(function * () {
       this.inFlight += 1
       let result
       try {
-        result = yield axios(Object.assign({}, request, {url: `${url(target)}${request.url}`}))
+        result = yield axios(Object.assign({}, request, { url: `${url(target)}${request.url}` }))
       } catch (err) {
         if (err.statusText === 'Too Many Requests') {
           log(`Exceeded Shopify API limit, will retry...`, 'yellow')
-          return this.list.unshift({target, request, resolve, reject})
+          return this.list.unshift({ target, request, resolve, reject })
         } else {
           let errorMsg
           if (err.data.errors) {
@@ -59,7 +59,7 @@ let baseQueue = {
           } else {
             errorMsg = `Request Failed!: [${err.status}] ${err.statusText}`
           }
-          return reject({message: errorMsg, data: request.data})
+          return reject({ message: errorMsg, data: request.data })
         }
       }
       this.inFlight -= 1

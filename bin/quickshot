@@ -1,9 +1,16 @@
 #!/usr/bin/env node
-var pjson = require('../package.json')
-let Promise = require('bluebird')
-global.Promise = Promise
+let pjson = require('../package.json')
 global.VERSION = pjson.version
 global.CONFIGVERSION = 1
-var main = require('../lib/main')
-var argv = require('minimist')(process.argv.slice(2))
+let main = require('../src/main.js')
+let { log } = require('../src/helpers.js')
+let argv = require('minimist')(process.argv.slice(2))
+let colors = require('colors')
+
 main(argv)
+.then(function (result) {
+  log(result, 'green')
+})
+.catch(function (err) {
+  log(err, 'red')
+})
