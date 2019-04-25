@@ -55,10 +55,6 @@ module.exports = async function (argv) {
         let data = await fs.readFileAsync(filePath)
         data = data.toString('base64')
 
-        if (data === 'null') {
-          data = ''
-        }
-
         await requestify(target, {
           method: 'put',
           url: `/themes/${target.theme_id}/assets.json`,
@@ -130,6 +126,11 @@ module.exports = async function (argv) {
           })
 
           data = data.asset
+
+          if (data.value === 'null') {
+            return
+          }
+
           let rawData = null
 
           if (data.attachment) {
