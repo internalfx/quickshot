@@ -7,17 +7,8 @@ let fs = require('fs')
 Promise.promisifyAll(fs)
 let context = require('../context.js')
 
-// let asyncEach = require('./asyncEach')
-// let requestify = require('./requestify')
 let inquirer = Promise.promisifyAll(require('inquirer'))
-
 let requireAll = require('require-all')
-
-// let configTargets = require('./configure/targets')
-// let configScss = require('./configure/scss')
-// let configBabel = require('./configure/babel')
-// let configIgnoreFile = require('./configure/ignoreFile')
-// let configConcurrency = require('./configure/concurrency')
 
 let quickshotignore = `
 # This your '.quickshotignore' file. Anything you put in here will be ignored by quickshot.
@@ -37,8 +28,6 @@ module.exports = async function () {
 
   config = Object.assign({
     concurrency: 20,
-    compile_scss: false,
-    primary_scss_file: null,
     targets: []
   }, config)
 
@@ -51,9 +40,6 @@ module.exports = async function () {
       message: 'Main Menu',
       choices: [
         'targets',
-        'scss',
-        // 'babel',
-        // 'concurrency',
         'Save configuration and exit'
       ]
     }])
