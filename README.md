@@ -7,7 +7,7 @@
 - Supports uploading to multiple Shopify stores and themes
 - Easy to use configuration wizard
 - Uploads/downloads in parallel greatly reducing transfer times
-- Can use with a custom `.quickshotignore` file.
+- Can use with a custom `.quickshot-ignore` file.
 
 Runs on node.js v10+.
 
