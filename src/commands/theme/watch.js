@@ -53,13 +53,19 @@ module.exports = async function (argv) {
 
       if (['add', 'change'].includes(event)) {
         let data = await fs.readFileAsync(filePath)
+        data = data.toString('base64')
+
+        if (data === 'null') {
+          data = ''
+        }
+
         await requestify(target, {
           method: 'put',
           url: `/themes/${target.theme_id}/assets.json`,
           body: {
             asset: {
               key: key.split(path.sep).join('/'),
-              attachment: data.toString('base64')
+              attachment: data
             }
           }
         })
