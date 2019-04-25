@@ -107,8 +107,18 @@ let log = function (content, color = 'white') {
   }
 }
 
+let to = function (promise) {
+  return promise.then(function (val) {
+    return val
+  }).catch(function (err) {
+    err.isError = true
+    return err
+  })
+}
+
 module.exports = {
   loadConfig,
   getTarget,
-  log
+  log,
+  to
 }

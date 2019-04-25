@@ -2,18 +2,20 @@
 let _ = require('lodash')
 let Promise = require('bluebird')
 let moment = require('moment')
-let { log, getTarget, loadConfig } = require('../../helpers')
+let { log, getTarget, loadConfig, to } = require('../../helpers')
 let ignoreParser = require('gitignore-parser')
 let path = require('path')
 let fs = require('fs')
 Promise.promisifyAll(fs)
 let requestify = require('../../requestify')
 let chokidar = require('chokidar')
+let AwaitLock = require('await-lock')
 
 module.exports = async function (argv) {
   let ignore = null
   let config = await loadConfig()
   let target = await getTarget(config, argv)
+  let lock = new AwaitLock()
 
   try {
     let ignoreFile = await fs.readFileAsync('.quickshot-ignore', 'utf8')
@@ -31,6 +33,7 @@ module.exports = async function (argv) {
   })
 
   watcher.on('all', async function (event, filePath) {
+    await lock.acquireAsync()
     try {
       let pathParts = filePath.split(path.sep)
       let trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
@@ -73,12 +76,14 @@ module.exports = async function (argv) {
     } catch (err) {
       log(err, 'red')
     }
+    await lock.release()
   })
 
   if (argv.sync === true) {
     log('Two-Way sync is enabled!', 'yellow')
 
     let checkShopify = async function () {
+      await lock.acquireAsync()
       try {
         let res = await requestify(target, {
           method: 'get',
@@ -86,19 +91,27 @@ module.exports = async function (argv) {
         })
 
         Promise.map(res.assets, async function (asset) {
-          let stat = await fs.statAsync(path.join('theme', asset.key))
+          let stat = await to(fs.statAsync(path.join('theme', asset.key)))
+          let fileExists = true
+
+          if (stat.isError && stat.code === 'ENOENT') {
+            fileExists = false
+          }
+
           let key = asset.key
           let localMtime = moment(stat.mtime).toDate()
           let remoteMtime = moment(asset.updated_at).toDate()
           let localSize = stat.size
           let remoteSize = asset.size
 
-          if (localSize === remoteSize) {
-            return
-          }
+          if (fileExists) {
+            if (localSize === remoteSize) {
+              return
+            }
 
-          if (localMtime > remoteMtime) {
-            return
+            if (localMtime > remoteMtime) {
+              return
+            }
           }
 
           let data = await requestify(target, {
@@ -127,10 +140,11 @@ module.exports = async function (argv) {
       } catch (err) {
         log(err, 'red')
       }
-      setTimeout(checkShopify, 5000)
+      await lock.release()
+      setTimeout(checkShopify, 3000)
     }
 
-    setTimeout(checkShopify, 1000)
+    setTimeout(checkShopify, 100)
   }
 
   log('watching theme...', 'green')
