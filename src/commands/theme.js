@@ -18,6 +18,7 @@ var HELPTEXT = `
 
     Options:
       --target=[targetname]                         Explicitly select target for upload/download/watch
+      --sync                                        Enable experimental two-way sync for watch
 
 `
 
