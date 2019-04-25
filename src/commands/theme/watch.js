@@ -1,6 +1,7 @@
 
 let _ = require('lodash')
 let Promise = require('bluebird')
+let moment = require('moment')
 let { log, getTarget, loadConfig } = require('../../helpers')
 let ignoreParser = require('gitignore-parser')
 let path = require('path')
@@ -8,7 +9,6 @@ let fs = require('fs')
 Promise.promisifyAll(fs)
 let requestify = require('../../requestify')
 let chokidar = require('chokidar')
-let sass = require('node-sass')
 
 module.exports = async function (argv) {
   let ignore = null
@@ -35,7 +35,6 @@ module.exports = async function (argv) {
       let pathParts = filePath.split(path.sep)
       let trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
       let key = trimmedParts.join(path.sep)
-      let skipTransfer = false
 
       if (!filePath.match(/^theme/)) { return }
       if (filePath.match(/^\..*$/)) { return }
@@ -45,36 +44,11 @@ module.exports = async function (argv) {
       }
 
       if (ignore && ignore.denies(filePath)) {
-        skipTransfer = true
         log(`IGNORING: ${filePath}`, 'yellow')
+        return
       }
 
       if (['add', 'change'].includes(event)) {
-        if (config.compile_scss && filePath.match(/\.scss$/)) {
-          let mainscss = config.primary_scss_file
-          let targetscss = mainscss.replace('.scss', '.css')
-          log(`Compiling Sass: "${mainscss}" -> "${targetscss}"`, 'yellow')
-          let result = sass.renderSync({ file: mainscss, outFile: targetscss })
-          await fs.writeFileAsync(targetscss, result.css)
-        }
-
-        // if (config.compile_babel && filePath.match(/\.(jsx|es6)$/)) {
-        //   let sourceBabel = filePath
-        //   let targetBabel = sourceBabel.replace(/\.(jsx|es6)$/, '.js')
-        //   log(`Compiling Babel: "${sourceBabel}" -> "${targetBabel}"`, 'yellow')
-        //   let sourceCode = yield fs.readFileAsync(sourceBabel, 'utf8')
-        //   let compiledSource
-        //   try {
-        //     compiledSource = babel.transform(sourceCode, { presets: [babel_es2015, babel_react], plugins: [babel_umd] })
-        //   } catch (err) {
-        //     log(err, 'red')
-        //   }
-        //   if (compiledSource) {
-        //     yield fs.writeFileAsync(targetBabel, compiledSource.code)
-        //   }
-        // }
-
-        if (skipTransfer) { return }
         let data = await fs.readFileAsync(filePath)
         await requestify(target, {
           method: 'put',
@@ -89,7 +63,6 @@ module.exports = async function (argv) {
 
         log(`Added/Updated ${filePath}`, 'green')
       } else if (event === 'unlink') {
-        if (skipTransfer) { return }
         await requestify(target, {
           method: 'delete',
           url: `/themes/${target.theme_id}/assets.json?asset[key]=${key.split(path.sep).join('/')}`
@@ -101,6 +74,64 @@ module.exports = async function (argv) {
       log(err, 'red')
     }
   })
+
+  if (argv.sync === true) {
+    log('Two-Way sync is enabled!', 'yellow')
+
+    let checkShopify = async function () {
+      try {
+        let res = await requestify(target, {
+          method: 'get',
+          url: `/themes/${target.theme_id}/assets.json`
+        })
+
+        Promise.map(res.assets, async function (asset) {
+          let stat = await fs.statAsync(path.join('theme', asset.key))
+          let key = asset.key
+          let localMtime = moment(stat.mtime).toDate()
+          let remoteMtime = moment(asset.updated_at).toDate()
+          let localSize = stat.size
+          let remoteSize = asset.size
+
+          if (localSize === remoteSize) {
+            return
+          }
+
+          if (localMtime > remoteMtime) {
+            return
+          }
+
+          let data = await requestify(target, {
+            method: 'get',
+            url: `/themes/${target.theme_id}/assets.json`,
+            qs: {
+              'asset[key]': key,
+              theme_id: target.theme_id
+            }
+          })
+
+          data = data.asset
+          let rawData = null
+
+          if (data.attachment) {
+            rawData = Buffer.from(data.attachment, 'base64')
+          } else if (data.value) {
+            rawData = Buffer.from(data.value, 'utf8')
+          }
+
+          await fs.mkdirAsync(path.join(process.cwd(), 'theme', path.dirname(data.key)), { recursive: true })
+          await fs.writeFileAsync(path.join(process.cwd(), 'theme', data.key), rawData)
+
+          log(`Downloaded ${key}`, 'green')
+        }, { concurrency: 1 })
+      } catch (err) {
+        log(err, 'red')
+      }
+      setTimeout(checkShopify, 5000)
+    }
+
+    setTimeout(checkShopify, 1000)
+  }
 
   log('watching theme...', 'green')
 }

@@ -40,7 +40,6 @@
     "lodash": "^4.17.11",
     "minimist": "^1.2.0",
     "moment": "^2.24.0",
-    "node-sass": "^4.11.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "require-all": "^3.0.0"

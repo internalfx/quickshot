@@ -26,7 +26,7 @@ let loadConfig = async function () {
     throw new Error('Shop configuration is corrupt, you may need to delete \'quickshot.json\', and run \'quickshot configure\' again.')
   }
 
-  if (!config.configVersion || config.configVersion < CONFIGVERSION) {
+  if (!config.configVersion || config.configVersion < context.configVersion) {
     throw new Error('Shop configuration is from an older incompatible version of quickshot. You need to run \'quickshot configure\' again.')
   }
 
@@ -83,17 +83,14 @@ let log = function (content, color = 'white') {
   if (_.isError(content)) {
     message = content
     data = content
-  } else if (_.isPlainObject(content)) {
+  } else if (_.isObject(content)) {
     if (content.message) {
       message = content.message
     }
     if (content.data) {
       data = content.data
-      // if (data.asset) {
-      //   out += _.omit(data.asset, 'attachment')
-      // } else {
-      //   out += data
-      // }
+    } else {
+      data = content
     }
   } else {
     message = content
