@@ -1,7 +1,7 @@
 
 let context = {
   initialized: false,
-  configVersion: 1,
+  configVersion: 2,
   apiVersion: '2019-04',
   config: {}
 }

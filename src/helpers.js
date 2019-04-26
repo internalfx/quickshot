@@ -23,11 +23,11 @@ let loadConfig = async function () {
   try {
     config = JSON.parse(config)
   } catch (err) {
-    throw new Error('Shop configuration is corrupt, you may need to delete \'quickshot.json\', and run \'quickshot configure\' again.')
+    throw new Error('Shop configuration is corrupt, you may need to delete \'quickshot.json\', and run \'quickshot config\' again.')
   }
 
   if (!config.configVersion || config.configVersion < context.configVersion) {
-    throw new Error('Shop configuration is from an older incompatible version of quickshot. You need to run \'quickshot configure\' again.')
+    throw new Error('Shop configuration is from an older incompatible version of quickshot. You need to backup/remove your existing \'quickshot.json\', and run \'quickshot config\' again.')
   }
 
   Object.assign(context.config, config)
