@@ -1,7 +1,7 @@
 
 let _ = require('lodash')
 let Promise = require('bluebird')
-let { log, getTarget, loadConfig } = require('../../helpers')
+let { log, getTarget, loadConfig, mkdir } = require('../../helpers')
 let ignoreParser = require('gitignore-parser')
 let path = require('path')
 let fs = require('fs')
@@ -57,11 +57,7 @@ module.exports = async function (argv) {
       rawData = Buffer.from(data.value, 'utf8')
     }
 
-    try {
-      await fs.mkdirAsync(path.join(process.cwd(), 'theme', path.dirname(data.key)), { recursive: true })
-    } catch (err) {
-      console.log(err, 'the folder is already there')
-    }
+    await mkdir(path.join(process.cwd(), 'theme', path.dirname(data.key)))
     await fs.writeFileAsync(path.join(process.cwd(), 'theme', data.key), rawData)
 
     total += 1

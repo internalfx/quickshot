@@ -116,9 +116,20 @@ let to = function (promise) {
   })
 }
 
+let mkdir = async function (path) {
+  try {
+    await fs.mkdirAsync(path, { recursive: true })
+  } catch (err) {
+    if (err.code !== 'EEXIST') {
+      throw err
+    }
+  }
+}
+
 module.exports = {
   loadConfig,
   getTarget,
+  mkdir,
   log,
   to
 }
