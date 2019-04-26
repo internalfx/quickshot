@@ -57,7 +57,11 @@ module.exports = async function (argv) {
       rawData = Buffer.from(data.value, 'utf8')
     }
 
-    await fs.mkdirAsync(path.join(process.cwd(), 'theme', path.dirname(data.key)), { recursive: true })
+    try {
+      await fs.mkdirAsync(path.join(process.cwd(), 'theme', path.dirname(data.key)), { recursive: true })
+    } catch (err) {
+      console.log(err, 'the folder is already there')
+    }
     await fs.writeFileAsync(path.join(process.cwd(), 'theme', data.key), rawData)
 
     total += 1

@@ -33,7 +33,7 @@ module.exports = async function (argv) {
   })
 
   watcher.on('all', async function (event, filePath) {
-    await lock.acquireAsync()
+    if (argv.sync === true) { await lock.acquireAsync() }
     try {
       let pathParts = filePath.split(path.sep)
       let trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
@@ -78,7 +78,7 @@ module.exports = async function (argv) {
     } catch (err) {
       log(err, 'red')
     }
-    await lock.release()
+    if (argv.sync === true) { await lock.release() }
   })
 
   if (argv.sync === true) {
