@@ -38,7 +38,7 @@ module.exports = async function (argv) {
   //   })
   // }
 
-  Promise.map(assets, async function (asset) {
+  await Promise.map(assets, async function (asset) {
     let data = await requestify(target, {
       method: 'get',
       url: `/themes/${target.theme_id}/assets.json`,
