@@ -143,3 +143,25 @@ Watches files for changes and uploads them to Shopify.
 | --- | --- |
 | target | Explicitly select target. Allows you to bypass "Select target" prompt. |
 | --sync | Enable two-way sync. Quickshot will also watch remote files on Shopify and download them when they change. |
+
+## Migrating from 2.x, breaking changes.
+
+The format of `quickshot.json` has changed.
+
+The API URL used to be constructed from three separate settings.
+
+```
+"api_key": "123abc",
+"password": "789xyz",
+"domain": "shop",
+```
+
+Now it only uses one.
+
+```
+url": "https://123abc:789xyz@shop.myshopify.com/admin/api",
+```
+
+`.quickshotignore` has been renamed to `.quickshot-ignore`
+
+Quickshot no longer reads your `.gitignore` file. Put files you need to ignore in your `.quickshot-ignore` file instead.
