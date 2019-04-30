@@ -2,7 +2,7 @@
 let Promise = require('bluebird')
 let rp = require('request-promise')
 let _ = require('lodash')
-let { log } = require('./helpers')
+let { log, to } = require('./helpers')
 let context = require('./context')
 
 let queues = {}
@@ -11,15 +11,13 @@ let createQueue = function () {
   let isProcessing = false
   let inFlight = 0
   let rate = 0
-  let max = 40
+  let max = 5
   let list = []
 
   let add = async function (target, request) {
     return new Promise((resolve, reject) => {
       list.push({ target, request, resolve, reject })
-      if (!isProcessing) {
-        process()
-      }
+      if (!isProcessing) { process() }
     })
   }
 
@@ -42,42 +40,44 @@ let createQueue = function () {
   let request = async function ({ target, request, resolve, reject }) {
     inFlight += 1
     let result
-    try {
-      result = await rp({
-        ...request,
-        url: `${url(target)}${request.url}`,
-        resolveWithFullResponse: true,
-        gzip: true,
-        json: true
-      })
-    } catch (err) {
-      if (err.statusText === 'Too Many Requests') {
+
+    result = await to(rp({
+      ...request,
+      url: `${url(target)}${request.url}`,
+      resolveWithFullResponse: true,
+      gzip: true,
+      json: true
+    }))
+
+    inFlight -= 1
+
+    if (result.isError) {
+      if (result.statusCode === 429) {
         log(`Exceeded Shopify API limit, will retry...`, 'yellow')
-        return list.unshift({ target, request, resolve, reject })
+        list.unshift({ target, request, resolve, reject })
+        if (!isProcessing) { process() }
+        return
       } else {
         let errorMsg
-        if (err.message) {
-          errorMsg = err.message
+        if (result.message) {
+          errorMsg = result.message
           if (_.isObject(errorMsg)) {
             errorMsg = JSON.stringify(errorMsg)
           }
         } else {
-          errorMsg = `Request Failed!: [${err.status}] ${err.statusText}`
+          errorMsg = `Request Failed!: [${result.status}] ${result.statusText}`
         }
-        return reject({ message: errorMsg, data: err.error })
+        return reject({ message: errorMsg, data: result.error })
       }
-    }
-    inFlight -= 1
-
-    // console.log(_.pick(result, 'body', 'headers'))
-
-    if (result.body.errors) {
-      return reject(result.body.errors)
     } else {
-      let limit = result.headers['x-shopify-shop-api-call-limit']
-      limit = limit.split('/')
-      rate = parseInt(limit[0], 10)
-      max = parseInt(limit[1], 10)
+      if (result.body.errors) {
+        return reject(result.body.errors)
+      } else {
+        let limit = result.headers['x-shopify-shop-api-call-limit']
+        limit = limit.split('/')
+        rate = parseInt(limit[0], 10)
+        max = parseInt(limit[1], 10)
+      }
     }
 
     return resolve(result.body)
@@ -89,7 +89,6 @@ let createQueue = function () {
 }
 
 let run = function (target, request) {
-  // console.log(target)
   let queue
   if (queues[target.domain]) {
     queue = queues[target.domain]
