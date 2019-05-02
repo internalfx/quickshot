@@ -15,7 +15,7 @@ module.exports = async function (argv) {
   let target = await getTarget(config, argv)
 
   let total = 0
-  // var filter = _.first(argv['_']) ? new RegExp(`^theme/${_.first(argv['_'])}`) : null
+  var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
 
   try {
     let ignoreFile = await fs.readFileAsync('.quickshot-ignore', 'utf8')
@@ -30,11 +30,14 @@ module.exports = async function (argv) {
     })
   }
 
-  // if (filter) {
-  //   files = _.filter(files, function (file) {
-  //     return filter.test(file)
-  //   })
-  // }
+  if (filter) {
+    files = _.filter(files, function (file) {
+      let pathParts = file.split(path.sep)
+      let trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
+      let key = trimmedParts.join('/')
+      return filter.test(key)
+    })
+  }
 
   files = files.map((file) => {
     let pathParts = file.split(path.sep)
@@ -62,7 +65,7 @@ module.exports = async function (argv) {
     })
 
     total += 1
-    log(`uploaded ${file.path}`, 'green')
+    log(`uploaded ${file.key}`, 'green')
   }, { concurrency: config.concurrency })
 
   return `Uploaded ${total} files.`

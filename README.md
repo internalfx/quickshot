@@ -118,8 +118,7 @@ Downloads theme files from the chosen target.
 | Option | Description |
 | --- | --- |
 | target | Explicitly select target. Allows you to bypass "Select target" prompt. |
-
-<!-- | filter | Only transfer files matching specified filter. | -->
+| filter | Only transfer files matching specified filter. |
 
 ## Theme Upload
 
@@ -130,8 +129,7 @@ Uploads theme files to the chosen target.
 | Option | Description |
 | --- | --- |
 | target | Explicitly select target. Allows you to bypass "Select target" prompt. |
-
-<!-- | filter | Only transfer files matching specified filter. | -->
+| filter | Only transfer files matching specified filter. |
 
 ## Theme Watch
 

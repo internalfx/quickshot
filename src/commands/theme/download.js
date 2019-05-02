@@ -14,7 +14,7 @@ module.exports = async function (argv) {
   let target = await getTarget(config, argv)
 
   let total = 0
-  // var filter = _.first(argv['_']) ? new RegExp(`^${_.first(argv['_'])}`) : null
+  var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
 
   try {
     let ignoreFile = await fs.readFileAsync('.quickshot-ignore', 'utf8')
@@ -32,11 +32,11 @@ module.exports = async function (argv) {
     })
   }
 
-  // if (filter) {
-  //   assets = _.filter(assets, function (asset) {
-  //     return filter.test(asset.key)
-  //   })
-  // }
+  if (filter) {
+    assets = _.filter(assets, function (asset) {
+      return filter.test(asset.key)
+    })
+  }
 
   await Promise.map(assets, async function (asset) {
     let data = await requestify(target, {
