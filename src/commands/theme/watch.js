@@ -9,12 +9,14 @@ let fs = require('fs')
 Promise.promisifyAll(fs)
 let requestify = require('../../requestify')
 let chokidar = require('chokidar')
-let AwaitLock = require('await-lock')
+
+import AwaitLock from 'await-lock'
 
 module.exports = async function (argv) {
   let ignore = null
   let config = await loadConfig()
   let target = await getTarget(config, argv)
+
   let lock = new AwaitLock()
 
   try {

@@ -1,7 +1,7 @@
 {
   "name": "quickshot",
   "description": "A shopify theme synchronizer",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "homepage": "https://github.com/internalfx/quickshot",
   "author": {
     "name": "InternalFX",
@@ -31,6 +31,9 @@
     "test": "mocha -R test"
   },
   "dependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.7.5",
+    "@babel/register": "^7.7.7",
     "await-lock": "^2.0.1",
     "bluebird": "^3.7.2",
     "chokidar": "^3.3.1",

@@ -1,3 +1,10 @@
+require('@babel/register')({
+  cwd: __dirname,
+  plugins: ['@babel/plugin-transform-modules-commonjs'],
+  only: [
+    './*'
+  ]
+})
 
 let path = require('path')
 let requireAll = require('require-all')
