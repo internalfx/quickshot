@@ -58,12 +58,17 @@ let createQueue = function () {
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
-      } else if (['ETIMEDOUT', 'ESOCKETTIMEDOUT'].includes(result.error.code)) {
+      } else if (result.statusCode === 404) {
+        return reject({
+          message: `404 Not Found - Are you sure "${_.get(spec, 'body.asset.key')}" is a valid Shopify theme path?`,
+          data: _.get(spec, 'body')
+        })
+      } else if (result.error && ['ETIMEDOUT', 'ESOCKETTIMEDOUT'].includes(result.error.code)) {
         log(`Connection timed out, will retry...`, 'yellow')
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
-      } else if (result.error.code === 'EAI_AGAIN') {
+      } else if (result.error && result.error.code === 'EAI_AGAIN') {
         log(`Failed to resolve host, will retry...`, 'yellow')
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }

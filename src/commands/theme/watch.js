@@ -1,30 +1,30 @@
 
-let _ = require('lodash')
-let Promise = require('bluebird')
-let moment = require('moment')
-let { log, getTarget, loadConfig, to, mkdir } = require('../../helpers')
-let ignoreParser = require('gitignore-parser')
-let path = require('path')
-let fs = require('fs')
-Promise.promisifyAll(fs)
-let requestify = require('../../requestify')
-let chokidar = require('chokidar')
-
 import AwaitLock from 'await-lock'
+
+const _ = require('lodash')
+const Promise = require('bluebird')
+const moment = require('moment')
+const { log, getTarget, loadConfig, to, mkdir } = require('../../helpers')
+const ignoreParser = require('gitignore-parser')
+const path = require('path')
+const fs = require('fs')
+Promise.promisifyAll(fs)
+const requestify = require('../../requestify')
+const chokidar = require('chokidar')
 
 module.exports = async function (argv) {
   let ignore = null
-  let config = await loadConfig()
-  let target = await getTarget(config, argv)
+  const config = await loadConfig()
+  const target = await getTarget(config, argv)
 
-  let lock = new AwaitLock()
+  const lock = new AwaitLock()
 
   try {
-    let ignoreFile = await fs.readFileAsync('.quickshot-ignore', 'utf8')
+    const ignoreFile = await fs.readFileAsync('.quickshot-ignore', 'utf8')
     ignore = ignoreParser.compile(ignoreFile)
   } catch (err) {}
 
-  let watcher = chokidar.watch('./theme/', {
+  const watcher = chokidar.watch('./theme/', {
     ignored: /[/\\]\./,
     persistent: true,
     ignoreInitial: true,
@@ -37,9 +37,9 @@ module.exports = async function (argv) {
   watcher.on('all', async function (event, filePath) {
     if (argv.sync === true) { await lock.acquireAsync() }
     try {
-      let pathParts = filePath.split(path.sep)
-      let trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
-      let key = trimmedParts.join(path.sep)
+      const pathParts = filePath.split(path.sep)
+      const trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
+      const key = trimmedParts.join(path.sep)
 
       if (!filePath.match(/^theme/)) { return }
       if (filePath.match(/^\..*$/)) { return }
@@ -86,27 +86,27 @@ module.exports = async function (argv) {
   if (argv.sync === true) {
     log('Two-Way sync is enabled!', 'yellow')
 
-    let checkShopify = async function () {
+    const checkShopify = async function () {
       await lock.acquireAsync()
       try {
-        let res = await requestify(target, {
+        const res = await requestify(target, {
           method: 'get',
           url: `/themes/${target.theme_id}/assets.json`
         })
 
         Promise.map(res.assets, async function (asset) {
-          let stat = await to(fs.statAsync(path.join('theme', asset.key)))
+          const stat = await to(fs.statAsync(path.join('theme', asset.key)))
           let fileExists = true
 
           if (stat.isError && stat.code === 'ENOENT') {
             fileExists = false
           }
 
-          let key = asset.key
-          let localMtime = moment(stat.mtime).toDate()
-          let remoteMtime = moment(asset.updated_at).toDate()
-          let localSize = stat.size
-          let remoteSize = asset.size
+          const key = asset.key
+          const localMtime = moment(stat.mtime).toDate()
+          const remoteMtime = moment(asset.updated_at).toDate()
+          const localSize = stat.size
+          const remoteSize = asset.size
 
           if (fileExists) {
             if (localSize === remoteSize) {
