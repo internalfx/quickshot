@@ -14,9 +14,9 @@ let createQueue = function () {
   let max = 5
   let list = []
 
-  let add = async function (target, request) {
+  let add = async function (target, spec) {
     return new Promise((resolve, reject) => {
-      list.push({ target, request, resolve, reject })
+      list.push({ target, spec, resolve, reject })
       if (!isProcessing) { process() }
     })
   }
@@ -37,16 +37,17 @@ let createQueue = function () {
     isProcessing = false
   }
 
-  let request = async function ({ target, request, resolve, reject }) {
+  let request = async function ({ target, spec, resolve, reject }) {
     inFlight += 1
     let result
 
     result = await to(rp({
-      ...request,
-      url: `${url(target)}${request.url}`,
+      ...spec,
+      url: `${url(target)}${spec.url}`,
       resolveWithFullResponse: true,
       gzip: true,
-      json: true
+      json: true,
+      timeout: 5000
     }))
 
     inFlight -= 1
@@ -54,7 +55,17 @@ let createQueue = function () {
     if (result.isError) {
       if (result.statusCode === 429) {
         log(`Exceeded Shopify API limit, will retry...`, 'yellow')
-        list.unshift({ target, request, resolve, reject })
+        list.unshift({ target, spec, resolve, reject })
+        if (!isProcessing) { process() }
+        return
+      } else if (['ETIMEDOUT', 'ESOCKETTIMEDOUT'].includes(result.error.code)) {
+        log(`Connection timed out, will retry...`, 'yellow')
+        list.unshift({ target, spec, resolve, reject })
+        if (!isProcessing) { process() }
+        return
+      } else if (result.error.code === 'EAI_AGAIN') {
+        log(`Failed to resolve host, will retry...`, 'yellow')
+        list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
       } else {
@@ -88,7 +99,7 @@ let createQueue = function () {
   }
 }
 
-let run = function (target, request) {
+let run = function (target, spec) {
   let queue
   if (queues[target.domain]) {
     queue = queues[target.domain]
@@ -97,7 +108,7 @@ let run = function (target, request) {
     queues[target.domain] = queue
   }
 
-  return queue.add(target, request)
+  return queue.add(target, spec)
 }
 
 let url = function (target) {
