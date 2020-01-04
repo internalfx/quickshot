@@ -1,17 +1,14 @@
 
-let _ = require('lodash')
-let Promise = require('bluebird')
-// let co = require('co')
-let path = require('path')
-let fs = Promise.promisifyAll(require('fs'))
-let url = require('url')
-// let axios = require('axios')
-let colors = require('colors')
-let inquirer = Promise.promisifyAll(require('inquirer'))
-let moment = require('moment')
-let context = require('./context.js')
+const _ = require('lodash')
+const Promise = require('bluebird')
+const path = require('path')
+const fs = Promise.promisifyAll(require('fs'))
+const colors = require('colors')
+const inquirer = Promise.promisifyAll(require('inquirer'))
+const moment = require('moment')
+const context = require('./context.js')
 
-let loadConfig = async function () {
+const loadConfig = async function () {
   let config
 
   try {
@@ -35,8 +32,8 @@ let loadConfig = async function () {
   return config
 }
 
-let getTarget = async function (config, argv) {
-  let targetName = argv['target'] || null
+const getTarget = async function (config, argv) {
+  const targetName = argv.target || null
 
   let target = null
   if (_.isArray(config.targets)) {
@@ -46,11 +43,12 @@ let getTarget = async function (config, argv) {
         throw new Error(`Could not find target '${targetName}'`)
       }
     } else {
-      let targetChoices = config.targets.map(function (target) {
-        return `[${target.name}] - '${target.theme_name}' @ ${url.parse(target.url).host}`
+      const targetChoices = config.targets.map(function (target) {
+        const urlObj = new URL(target.url)
+        return `[${target.name}] - '${target.theme_name}' @ ${urlObj.host}`
       })
       if (config.targets.length > 1) {
-        let choice = await inquirer.prompt([
+        const choice = await inquirer.prompt([
           {
             type: 'list',
             name: 'target',
@@ -65,18 +63,18 @@ let getTarget = async function (config, argv) {
       }
     }
   } else {
-    throw new Error(`No targets configured! Run 'quickshot configure' and create a new target.`)
+    throw new Error('No targets configured! Run \'quickshot configure\' and create a new target.')
   }
 
   // target.auth = 'Basic ' + new Buffer(`${target.api_key}:${target.password}`).toString('base64')
   return target
 }
 
-let ts = function () {
+const ts = function () {
   return moment().format('hh:mm:ss a')
 }
 
-let log = function (content, color = 'white') {
+const log = function (content, color = 'white') {
   let data = null
   let message = null
 
@@ -101,13 +99,13 @@ let log = function (content, color = 'white') {
   }
 
   if (data) {
-    console.log(colors[color](`=== START OF OUTPUT ===`))
+    console.log(colors[color]('=== START OF OUTPUT ==='))
     console.dir(data, { depth: null })
-    console.log(colors[color](`==== END OF OUTPUT ====`))
+    console.log(colors[color]('==== END OF OUTPUT ===='))
   }
 }
 
-let to = function (promise) {
+const to = function (promise) {
   return promise.then(function (val) {
     return val
   }).catch(function (err) {
@@ -116,7 +114,7 @@ let to = function (promise) {
   })
 }
 
-let mkdir = async function (path) {
+const mkdir = async function (path) {
   try {
     await fs.mkdirAsync(path, { recursive: true })
   } catch (err) {

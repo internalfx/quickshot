@@ -1,16 +1,16 @@
 
 // let _ = require('lodash')
-let Promise = require('bluebird')
-let { loadConfig } = require('../helpers')
-let path = require('path')
-let fs = require('fs')
+const Promise = require('bluebird')
+const { loadConfig } = require('../helpers')
+const path = require('path')
+const fs = require('fs')
 Promise.promisifyAll(fs)
-let context = require('../context.js')
+const context = require('../context.js')
 
-let inquirer = Promise.promisifyAll(require('inquirer'))
-let requireAll = require('require-all')
+const inquirer = Promise.promisifyAll(require('inquirer'))
+const requireAll = require('require-all')
 
-let quickshotignore = `
+const quickshotignore = `
 # This your '.quickshotignore' file. Anything you put in here will be ignored by quickshot.
 # This file uses the same format as a '.gitignore' file.
 `
@@ -18,7 +18,7 @@ let quickshotignore = `
 module.exports = async function () {
   let config
 
-  let actions = requireAll({
+  const actions = requireAll({
     dirname: path.join(__dirname, 'config')
   })
 

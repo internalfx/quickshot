@@ -1,5 +1,5 @@
 
-let context = {
+const context = {
   initialized: false,
   configVersion: 2,
   apiVersion: '2019-04',

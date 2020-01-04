@@ -1,35 +1,35 @@
 
-let Promise = require('bluebird')
-let rp = require('request-promise')
-let _ = require('lodash')
-let { log, to } = require('./helpers')
-let context = require('./context')
+const Promise = require('bluebird')
+const rp = require('request-promise')
+const _ = require('lodash')
+const { log, to } = require('./helpers')
+const context = require('./context')
 
-let queues = {}
+const queues = {}
 
-let createQueue = function () {
+const createQueue = function () {
   let isProcessing = false
   let inFlight = 0
   let rate = 0
   let max = 5
-  let list = []
+  const list = []
 
-  let add = async function (target, spec) {
+  const add = async function (target, spec) {
     return new Promise((resolve, reject) => {
       list.push({ target, spec, resolve, reject })
       if (!isProcessing) { process() }
     })
   }
 
-  let process = async function () {
+  const process = async function () {
     isProcessing = true
     while (list.length > 0) {
-      let req = list.shift()
+      const req = list.shift()
       let headroom = max - (rate + inFlight)
       if (headroom <= 0) { headroom = 0 }
       let exponent = (headroom * headroom)
       if (exponent <= 0.9) { exponent = 0.9 }
-      let throttle = 500 / exponent
+      const throttle = 500 / exponent
 
       await Promise.delay(throttle)
       request(req)
@@ -37,11 +37,10 @@ let createQueue = function () {
     isProcessing = false
   }
 
-  let request = async function ({ target, spec, resolve, reject }) {
+  const request = async function ({ target, spec, resolve, reject }) {
     inFlight += 1
-    let result
 
-    result = await to(rp({
+    const result = await to(rp({
       ...spec,
       url: `${url(target)}${spec.url}`,
       resolveWithFullResponse: true,
@@ -54,7 +53,7 @@ let createQueue = function () {
 
     if (result.isError) {
       if (result.statusCode === 429) {
-        log(`Exceeded Shopify API limit, will retry...`, 'yellow')
+        log('Exceeded Shopify API limit, will retry...', 'yellow')
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
@@ -64,12 +63,12 @@ let createQueue = function () {
           data: _.get(spec, 'body')
         })
       } else if (result.error && ['ETIMEDOUT', 'ESOCKETTIMEDOUT'].includes(result.error.code)) {
-        log(`Connection timed out, will retry...`, 'yellow')
+        log('Connection timed out, will retry...', 'yellow')
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
       } else if (result.error && result.error.code === 'EAI_AGAIN') {
-        log(`Failed to resolve host, will retry...`, 'yellow')
+        log('Failed to resolve host, will retry...', 'yellow')
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
@@ -104,7 +103,7 @@ let createQueue = function () {
   }
 }
 
-let run = function (target, spec) {
+const run = function (target, spec) {
   let queue
   if (queues[target.domain]) {
     queue = queues[target.domain]
@@ -116,7 +115,7 @@ let run = function (target, spec) {
   return queue.add(target, spec)
 }
 
-let url = function (target) {
+const url = function (target) {
   return `${target.url}/${context.apiVersion}`
 }
 

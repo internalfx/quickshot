@@ -1,7 +1,7 @@
 
 // let _ = require('lodash')
-let path = require('path')
-let requireAll = require('require-all')
+const path = require('path')
+const requireAll = require('require-all')
 
 /* global VERSION */
 
@@ -24,9 +24,9 @@ var HELPTEXT = `
 `
 
 module.exports = async function (argv) {
-  let command = argv['_'].shift()
+  const command = argv._.shift()
 
-  let commands = requireAll({
+  const commands = requireAll({
     dirname: path.join(__dirname, 'theme')
   })
 
