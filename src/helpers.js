@@ -124,10 +124,30 @@ const mkdir = async function (path) {
   }
 }
 
+const stringifyPage = function (page) {
+  const frontMatter = JSON.stringify(_.omit(page, 'body_html'), null, 2)
+  const res = []
+  res.push('<!--START-FRONT-MATTER')
+  res.push(frontMatter)
+  res.push('END-FRONT-MATTER-->')
+  res.push(page.body_html)
+  return res.join('\n')
+}
+
+const parsePage = function (source) {
+  let [frontMatter, body] = source.split('END-FRONT-MATTER-->')
+  frontMatter = frontMatter.replace('<!--START-FRONT-MATTER', '')
+  const data = JSON.parse(frontMatter)
+  data.body_html = body.trim()
+  return data
+}
+
 module.exports = {
   loadConfig,
   getTarget,
   mkdir,
   log,
-  to
+  to,
+  stringifyPage,
+  parsePage
 }

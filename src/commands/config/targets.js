@@ -71,10 +71,11 @@ module.exports = async function (config) {
 
       currTarget.url = urlObj.protocol + '//' + urlObj.username + ':' + urlObj.password + '@' + urlObj.host + '/' + pathParts
 
-      const { themes } = await requestify(currTarget, {
+      const res = await requestify(currTarget, {
         method: 'get',
         url: '/themes.json'
       })
+      const themes = _.get(res, 'body.themes')
 
       let defaultTheme = _.find(themes, { id: currTarget.theme_id })
       if (defaultTheme) { defaultTheme = `${defaultTheme.name} (${defaultTheme.role})` }

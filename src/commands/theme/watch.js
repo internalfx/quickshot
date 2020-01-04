@@ -93,8 +93,9 @@ module.exports = async function (argv) {
           method: 'get',
           url: `/themes/${target.theme_id}/assets.json`
         })
+        const assets = _.get(res, 'body.assets')
 
-        Promise.map(res.assets, async function (asset) {
+        Promise.map(assets, async function (asset) {
           const stat = await to(fs.statAsync(path.join('theme', asset.key)))
           let fileExists = true
 
@@ -118,7 +119,7 @@ module.exports = async function (argv) {
             }
           }
 
-          let data = await requestify(target, {
+          const res = await requestify(target, {
             method: 'get',
             url: `/themes/${target.theme_id}/assets.json`,
             qs: {
@@ -126,8 +127,7 @@ module.exports = async function (argv) {
               theme_id: target.theme_id
             }
           })
-
-          data = data.asset
+          const data = _.get(res, 'body.asset')
 
           if (data.value === 'null') {
             return

@@ -21,10 +21,11 @@ module.exports = async function (argv) {
     ignore = ignoreParser.compile(ignoreFile)
   } catch (err) {}
 
-  var { assets } = await requestify(target, {
+  const res = await requestify(target, {
     method: 'get',
     url: `/themes/${target.theme_id}/assets.json`
   })
+  const assets = _.get(res, 'body.assets')
 
   if (ignore) {
     assets = _.reject(assets, function (asset) {
@@ -51,7 +52,7 @@ module.exports = async function (argv) {
     if (res.isError) {
       log(res, 'red')
     } else {
-      const data = res.asset
+      const data = _.get(res, 'body.asset')
       let rawData = null
 
       if (data.attachment) {

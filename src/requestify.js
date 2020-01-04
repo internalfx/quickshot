@@ -95,7 +95,17 @@ const createQueue = function () {
       }
     }
 
-    return resolve(result.body)
+    const linkList = result.headers.link ? result.headers.link.split(',') : []
+
+    for (const link of linkList) {
+      if (link.match(/rel="next"/)) {
+        result.linkNext = new URL(link.replace(/<(.*)>.*/, '$1'))
+      } else if (link.match(/rel="previous"/)) {
+        result.linkPrev = new URL(link.replace(/<(.*)>.*/, '$1'))
+      }
+    }
+
+    return resolve(result)
   }
 
   return {
