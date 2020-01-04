@@ -1,4 +1,4 @@
-# Quickshot 3.0
+# Quickshot 3
 
 ### A Shopify theme development tool.
 
