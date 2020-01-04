@@ -13,6 +13,7 @@
 - Easily switch between Shopify stores and themes
 - Easy to use configuration wizard
 - Can be configured to ignore certain files when syncing
+- Uploads and downloads Shopify pages.
 
 Runs on node.js v10+.
 
@@ -141,6 +142,29 @@ Watches files for changes and uploads them to Shopify.
 | --- | --- |
 | target | Explicitly select target. Allows you to bypass "Select target" prompt. |
 | --sync | Enable two-way sync. Quickshot will also watch remote files on Shopify and download them when they change. |
+
+## Pages Download
+
+`qs pages download`
+
+Downloads pages from the chosen target.
+
+| Option | Description |
+| --- | --- |
+| target | Explicitly select target. Allows you to bypass "Select target" prompt. |
+| filter | Only transfer pages matching specified filter. |
+
+## Pages Upload
+
+`qs pages upload`
+
+Uploads pages to the chosen target.
+
+| Option | Description |
+| --- | --- |
+| target | Explicitly select target. Allows you to bypass "Select target" prompt. |
+| filter | Only transfer pages matching specified filter. |
+
 
 ## Migrating from 2.x, breaking changes.
 
