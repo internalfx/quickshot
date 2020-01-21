@@ -25,7 +25,7 @@ module.exports = async function (argv) {
     method: 'get',
     url: `/themes/${target.theme_id}/assets.json`
   })
-  const assets = _.get(res, 'body.assets')
+  let assets = _.get(res, 'body.assets')
 
   if (ignore) {
     assets = _.reject(assets, function (asset) {
