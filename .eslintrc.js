@@ -22,6 +22,7 @@ module.exports = {
     "standard"
   ],
   "rules": {
+    "quotes": [1, "backtick"]
   },
   "parserOptions": {
     "parser": "babel-eslint",

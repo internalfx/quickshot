@@ -1,9 +1,9 @@
 
-const Promise = require('bluebird')
-const rp = require('request-promise')
-const _ = require('lodash')
-const { log, to } = require('./helpers')
-const context = require('./context')
+const Promise = require(`bluebird`)
+const rp = require(`request-promise`)
+const _ = require(`lodash`)
+const { log, to } = require(`./helpers`)
+const context = require(`./context`)
 
 const queues = {}
 
@@ -53,22 +53,29 @@ const createQueue = function () {
 
     if (result.isError) {
       if (result.statusCode === 429) {
-        log('Exceeded Shopify API limit, will retry...', 'yellow')
+        log(`Exceeded Shopify API limit, will retry...`, `yellow`)
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
       } else if (result.statusCode === 404) {
-        return reject({
-          message: `404 Not Found - Are you sure "${_.get(spec, 'body.asset.key')}" is a valid Shopify theme path?`,
-          data: _.get(spec, 'body')
-        })
-      } else if (result.error && ['ETIMEDOUT', 'ESOCKETTIMEDOUT'].includes(result.error.code)) {
-        log('Connection timed out, will retry...', 'yellow')
+        if (_.get(spec, `body.asset.key`)) {
+          return reject({
+            message: `404 Not Found - Are you sure "${_.get(spec, `body.asset.key`)}" is a valid Shopify theme path?`,
+            data: _.get(spec, `body`)
+          })
+        } else {
+          return reject({
+            message: `404 Not Found - Are you sure "${result.options.url}" is a valid resource?`,
+            data: { body: _.get(spec, `body`), url: result.options.url }
+          })
+        }
+      } else if (result.error && [`ETIMEDOUT`, `ESOCKETTIMEDOUT`].includes(result.error.code)) {
+        log(`Connection timed out, will retry...`, `yellow`)
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
-      } else if (result.error && result.error.code === 'EAI_AGAIN') {
-        log('Failed to resolve host, will retry...', 'yellow')
+      } else if (result.error && result.error.code === `EAI_AGAIN`) {
+        log(`Failed to resolve host, will retry...`, `yellow`)
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
@@ -88,20 +95,20 @@ const createQueue = function () {
       if (result.body.errors) {
         return reject(result.body.errors)
       } else {
-        let limit = result.headers['x-shopify-shop-api-call-limit']
-        limit = limit.split('/')
+        let limit = result.headers[`x-shopify-shop-api-call-limit`]
+        limit = limit.split(`/`)
         rate = parseInt(limit[0], 10)
         max = parseInt(limit[1], 10)
       }
     }
 
-    const linkList = result.headers.link ? result.headers.link.split(',') : []
+    const linkList = result.headers.link ? result.headers.link.split(`,`) : []
 
     for (const link of linkList) {
       if (link.match(/rel="next"/)) {
-        result.linkNext = new URL(link.replace(/<(.*)>.*/, '$1'))
+        result.linkNext = new URL(link.replace(/<(.*)>.*/, `$1`))
       } else if (link.match(/rel="previous"/)) {
-        result.linkPrev = new URL(link.replace(/<(.*)>.*/, '$1'))
+        result.linkPrev = new URL(link.replace(/<(.*)>.*/, `$1`))
       }
     }
 
