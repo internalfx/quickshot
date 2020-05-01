@@ -1,13 +1,13 @@
-require('@babel/register')({
+require(`@babel/register`)({
   cwd: __dirname,
-  plugins: ['@babel/plugin-transform-modules-commonjs'],
+  plugins: [`@babel/plugin-transform-modules-commonjs`],
   only: [
-    './*'
+    `./*`
   ]
 })
 
-const path = require('path')
-const requireAll = require('require-all')
+const path = require(`path`)
+const requireAll = require(`require-all`)
 
 /* global VERSION */
 
@@ -28,7 +28,7 @@ module.exports = async function (argv) {
   const command = argv._.shift()
 
   const commands = requireAll({
-    dirname: path.join(__dirname, 'commands')
+    dirname: path.join(__dirname, `commands`)
   })
 
   if (commands[command] == null) {

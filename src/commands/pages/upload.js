@@ -55,8 +55,6 @@ module.exports = async function (argv) {
     const source = await fs.readFileAsync(file.path, `utf8`)
     const page = parsePage(source)
 
-    console.log(page)
-
     let res = await to(requestify(target, {
       method: `get`,
       url: `/pages.json`,
@@ -72,8 +70,6 @@ module.exports = async function (argv) {
     } else {
       remotePage = _.get(res, `body.pages[0]`)
     }
-
-    console.log(remotePage)
 
     if (remotePage) {
       page.id = remotePage.id

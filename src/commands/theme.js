@@ -1,7 +1,7 @@
 
 // let _ = require('lodash')
-const path = require('path')
-const requireAll = require('require-all')
+const path = require(`path`)
+const requireAll = require(`require-all`)
 
 /* global VERSION */
 
@@ -27,7 +27,7 @@ module.exports = async function (argv) {
   const command = argv._.shift()
 
   const commands = requireAll({
-    dirname: path.join(__dirname, 'theme')
+    dirname: path.join(__dirname, `theme`)
   })
 
   if (commands[command] == null) {

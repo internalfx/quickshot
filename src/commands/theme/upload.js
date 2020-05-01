@@ -1,13 +1,13 @@
 
-const _ = require('lodash')
-const Promise = require('bluebird')
-const { log, getTarget, loadConfig, to } = require('../../helpers')
-const ignoreParser = require('gitignore-parser')
-const path = require('path')
-const fs = require('fs')
+const _ = require(`lodash`)
+const Promise = require(`bluebird`)
+const { log, getTarget, loadConfig, to } = require(`../../helpers`)
+const ignoreParser = require(`gitignore-parser`)
+const path = require(`path`)
+const fs = require(`fs`)
 Promise.promisifyAll(fs)
-const requestify = require('../../requestify')
-const glob = require('glob')
+const requestify = require(`../../requestify`)
+const glob = require(`glob`)
 
 module.exports = async function (argv) {
   let ignore = null
@@ -18,11 +18,11 @@ module.exports = async function (argv) {
   var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
 
   try {
-    const ignoreFile = await fs.readFileAsync('.quickshot-ignore', 'utf8')
+    const ignoreFile = await fs.readFileAsync(`.quickshot-ignore`, `utf8`)
     ignore = ignoreParser.compile(ignoreFile)
   } catch (err) {}
 
-  let files = glob.sync('theme/**/*', { nodir: true })
+  let files = glob.sync(`theme/**/*`, { nodir: true })
 
   if (ignore) {
     files = _.reject(files, function (file) {
@@ -33,15 +33,15 @@ module.exports = async function (argv) {
   if (filter) {
     files = _.filter(files, function (file) {
       const pathParts = file.split(path.sep)
-      const trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
-      const key = trimmedParts.join('/')
+      const trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, `theme`) + 1))
+      const key = trimmedParts.join(`/`)
       return filter.test(key)
     })
   }
 
   files = files.map((file) => {
     const pathParts = file.split(path.sep)
-    const trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, 'theme') + 1))
+    const trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, `theme`) + 1))
     const filepath = trimmedParts.join(path.sep)
 
     return {
@@ -54,21 +54,21 @@ module.exports = async function (argv) {
   await Promise.map(files, async function (file) {
     const body = await fs.readFileAsync(file.path)
     const res = await to(requestify(target, {
-      method: 'put',
+      method: `put`,
       url: `/themes/${target.theme_id}/assets.json`,
       body: {
         asset: {
           key: file.key,
-          attachment: body.toString('base64')
+          attachment: body.toString(`base64`)
         }
       }
     }))
 
     if (res.isError) {
-      log(res, 'red')
+      log(res, `red`)
     } else {
       total += 1
-      log(`uploaded ${file.key}`, 'green')
+      log(`uploaded ${file.key}`, `green`)
     }
   }, { concurrency: config.concurrency })
 
