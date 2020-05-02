@@ -1,7 +1,7 @@
 {
   "name": "quickshot",
   "description": "A shopify theme synchronizer",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "homepage": "https://github.com/internalfx/quickshot",
   "author": {
     "name": "InternalFX",
@@ -31,28 +31,28 @@
     "test": "mocha -R test"
   },
   "dependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/plugin-transform-modules-commonjs": "^7.7.5",
-    "@babel/register": "^7.7.7",
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-transform-modules-commonjs": "^7.9.6",
+    "@babel/register": "^7.9.0",
     "await-lock": "^2.0.1",
     "bluebird": "^3.7.2",
-    "chokidar": "^3.3.1",
+    "chokidar": "^3.4.0",
     "colors": "^1.4.0",
     "gitignore-parser": "^0.0.2",
     "glob": "^7.1.6",
-    "inquirer": "^7.0.1",
+    "inquirer": "^7.1.0",
     "lodash": "^4.17.15",
-    "minimist": "^1.2.0",
-    "moment": "^2.24.0",
-    "request": "^2.88.0",
+    "minimist": "^1.2.5",
+    "moment": "^2.25.1",
+    "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "require-all": "^3.0.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
+    "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.19.1",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1"
