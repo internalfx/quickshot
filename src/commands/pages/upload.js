@@ -55,40 +55,34 @@ module.exports = async function (argv) {
     const source = await fs.readFileAsync(file.path, `utf8`)
     const page = parsePage(source)
 
-    let res = await to(requestify(target, {
+    let res = await requestify(target, {
       method: `get`,
       url: `/pages.json`,
       qs: {
         handle: page.handle
       }
-    }))
+    })
 
-    let remotePage
+    const shopifyPage = _.get(res, `body.pages[0]`)
 
-    if (res.isError) {
-      console.error(res)
-    } else {
-      remotePage = _.get(res, `body.pages[0]`)
-    }
+    if (shopifyPage != null) {
+      page.id = shopifyPage.id
 
-    if (remotePage) {
-      page.id = remotePage.id
-
-      res = await to(requestify(target, {
+      res = await requestify(target, {
         method: `put`,
         url: `/pages/${page.id}.json`,
         body: {
           page: _.pick(page, `id`, `body_html`, `author`, `title`, `handle`)
         }
-      }))
+      })
     } else {
-      res = await to(requestify(target, {
+      res = await requestify(target, {
         method: `post`,
         url: `/pages.json`,
         body: {
           page: _.pick(page, `body_html`, `author`, `title`, `handle`)
         }
-      }))
+      })
     }
 
     if (res.isError) {
