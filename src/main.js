@@ -18,6 +18,7 @@ var HELPTEXT = `
 
     Commands:
       quickshot config                        Creates/Updates the configuration file in current directory
+      quickshot blogs                         Manage Shopify blogs
       quickshot pages                         Manage Shopify pages
       quickshot theme                         Manage Shopify themes
       quickshot                               Show this screen.

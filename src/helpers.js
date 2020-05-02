@@ -127,6 +127,39 @@ const mkdir = async function (path) {
 const FRONT_MATTER_START = `<!--START-FRONT-MATTER`
 const FRONT_MATTER_END = `END-FRONT-MATTER-->`
 
+const stringifyArticle = function (article) {
+  const frontMatter = JSON.stringify(_.omit(article, `body_html`, `id`), null, 2)
+  const res = []
+  res.push(FRONT_MATTER_START)
+  res.push(frontMatter)
+  res.push(FRONT_MATTER_END)
+  res.push(article.body_html)
+  return res.join(`\n`)
+}
+
+const parseArticle = function (source) {
+  let [frontMatter, body] = source.split(FRONT_MATTER_END)
+  frontMatter = frontMatter.replace(FRONT_MATTER_START, ``)
+  const data = JSON.parse(frontMatter)
+  data.body_html = body.trim()
+  return data
+}
+
+// const stringifyBlog = function (blog) {
+//   const frontMatter = JSON.stringify(_.omit(blog, `body_html`, `id`), null, 2)
+//   const res = []
+//   res.push(FRONT_MATTER_START)
+//   res.push(frontMatter)
+//   res.push(FRONT_MATTER_END)
+//   res.push(blog.body_html)
+//   return res.join(`\n`)
+// }
+
+const parseBlog = function (source) {
+  const data = JSON.parse(source)
+  return data
+}
+
 const stringifyPage = function (page) {
   const frontMatter = JSON.stringify(_.omit(page, `body_html`, `id`), null, 2)
   const res = []
@@ -151,6 +184,10 @@ module.exports = {
   mkdir,
   log,
   to,
+  stringifyArticle,
+  parseArticle,
+  // stringifyBlog,
+  parseBlog,
   stringifyPage,
   parsePage
 }
