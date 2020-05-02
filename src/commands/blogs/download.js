@@ -99,7 +99,7 @@ module.exports = async function (argv) {
 
     res = await requestify(target, {
       method: `get`,
-      url: `/pages.json`,
+      url: `/blogs.json`,
       qs: {
         limit: 100,
         page_info: res.linkNext.searchParams.get(`page_info`)
