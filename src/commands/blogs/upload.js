@@ -95,8 +95,8 @@ module.exports = async function (argv) {
 
       log(`    ${article.handle}`)
       total += 1
-    }, { concurrency: 1 })
-  })
+    }, { concurrency: 5 })
+  }, { concurrency: 1 })
 
   return `Uploaded ${total} blog articles.`
 }
