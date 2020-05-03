@@ -178,6 +178,39 @@ const parsePage = function (source) {
   return data
 }
 
+const stringifyProduct = function (product) {
+  delete product.image
+  delete product.options
+
+  if (_.get(product, `images`)) {
+    product.images = product.images.map(function (image) {
+      return _.pick(image, `src`)
+    })
+  }
+
+  if (_.get(product, `variants`)) {
+    product.variants = product.variants.map(function (variant) {
+      return _.omit(variant, `id`, `product_id`, `inventory_item_id`, `admin_graphql_api_id`, `image_id`)
+    })
+  }
+
+  const frontMatter = JSON.stringify(_.omit(product, `body_html`, `id`, `admin_graphql_api_id`), null, 2)
+  const res = []
+  res.push(FRONT_MATTER_START)
+  res.push(frontMatter)
+  res.push(FRONT_MATTER_END)
+  res.push(product.body_html)
+  return res.join(`\n`)
+}
+
+const parseProduct = function (source) {
+  let [frontMatter, body] = source.split(FRONT_MATTER_END)
+  frontMatter = frontMatter.replace(FRONT_MATTER_START, ``)
+  const data = JSON.parse(frontMatter)
+  data.body_html = body.trim()
+  return data
+}
+
 module.exports = {
   loadConfig,
   getTarget,
@@ -189,5 +222,7 @@ module.exports = {
   // stringifyBlog,
   parseBlog,
   stringifyPage,
-  parsePage
+  parsePage,
+  stringifyProduct,
+  parseProduct
 }

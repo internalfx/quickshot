@@ -9,17 +9,10 @@ Promise.promisifyAll(fs)
 const requestify = require(`../../requestify`)
 
 module.exports = async function (argv) {
-  // let ignore = null
   const config = await loadConfig()
   const target = await getTarget(config, argv)
 
   let total = 0
-  // var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
-
-  // try {
-  //   const ignoreFile = await fs.readFileAsync(`.quickshot-ignore`, `utf8`)
-  //   ignore = ignoreParser.compile(ignoreFile)
-  // } catch (err) {}
 
   const processBlogs = async function (blogs) {
     await Promise.map(blogs, async function (blog) {

@@ -46,7 +46,7 @@ const createQueue = function () {
       resolveWithFullResponse: true,
       gzip: true,
       json: true,
-      timeout: 5000
+      timeout: 30000
     }))
 
     inFlight -= 1
