@@ -13,7 +13,7 @@
 - Easily switch between Shopify stores and themes
 - Easy to use configuration wizard
 - Can be configured to ignore certain files when syncing
-- Uploads and downloads Shopify pages.
+- Uploads and downloads Shopify blogs, pages and products. You can now easily transfer product information between shops.
 
 Runs on node.js v10+.
 
@@ -39,11 +39,14 @@ Quickshot is run from the command line (terminal). You can start quickshot with 
 Run `qs` by itself to see all the possible commands.
 
 ```
-    Quickshot 3.0.1
+    Quickshot 3.5.0
     ==============================
 
     Commands:
       quickshot config                        Creates/Updates the configuration file in current directory
+      quickshot blogs                         Manage Shopify blogs
+      quickshot pages                         Manage Shopify pages
+      quickshot products                      Manage Shopify products
       quickshot theme                         Manage Shopify themes
       quickshot                               Show this screen.
 ```
