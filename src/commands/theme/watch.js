@@ -17,6 +17,8 @@ module.exports = async function (argv) {
   const config = await loadConfig()
   const target = await getTarget(config, argv)
 
+  const { update } = argv
+
   const lock = new AwaitLock()
 
   try {
@@ -69,6 +71,16 @@ module.exports = async function (argv) {
         })
 
         log(`Added/Updated ${filePath}`, `green`)
+
+        /**
+         * If update is defined, update a file with a random string to help 
+         * tools like browser-sync watch for changes
+         */
+        if (update) {
+          const randomString = Math.random().toString(36).substring(2, 15)
+          fs.writeFileSync(update, randomString, `utf8`)
+          log(`${update} updated`, `green`)
+        }
       } else if (event === `unlink`) {
         await requestify(target, {
           method: `delete`,
