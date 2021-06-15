@@ -72,7 +72,7 @@ module.exports = async function (argv) {
         method: `put`,
         url: `/pages/${page.id}.json`,
         body: {
-          page: _.pick(page, `id`, `body_html`, `author`, `title`, `handle`)
+          page: _.pick(page, `id`, `body_html`, `author`, `title`, `handle`, `template_suffix`)
         }
       })
     } else {
@@ -80,7 +80,7 @@ module.exports = async function (argv) {
         method: `post`,
         url: `/pages.json`,
         body: {
-          page: _.pick(page, `body_html`, `author`, `title`, `handle`)
+          page: _.pick(page, `body_html`, `author`, `title`, `handle`, `template_suffix`)
         }
       })
     }
