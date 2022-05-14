@@ -1,7 +1,8 @@
 {
   "name": "quickshot",
   "description": "A shopify theme synchronizer",
-  "version": "3.5.0",
+  "version": "3.6.0",
+  "type": "module",
   "homepage": "https://github.com/internalfx/quickshot",
   "author": {
     "name": "InternalFX",
@@ -20,8 +21,8 @@
     "command line"
   ],
   "bin": {
-    "quickshot": "./bin/quickshot",
-    "qs": "./bin/quickshot"
+    "qs": "./bin/quickshot.js",
+    "quickshot": "./bin/quickshot.js"
   },
   "main": "index.js",
   "engines": {
@@ -31,30 +32,31 @@
     "test": "mocha -R test"
   },
   "dependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/plugin-transform-modules-commonjs": "^7.9.6",
-    "@babel/register": "^7.9.0",
-    "await-lock": "^2.0.1",
+    "@babel/core": "^7.17.10",
+    "@babel/plugin-transform-modules-commonjs": "^7.17.9",
+    "@babel/register": "^7.17.7",
+    "await-lock": "^2.2.2",
     "bluebird": "^3.7.2",
-    "chokidar": "^3.4.0",
+    "chokidar": "^3.5.3",
     "colors": "^1.4.0",
     "gitignore-parser": "^0.0.2",
-    "glob": "^7.1.6",
-    "inquirer": "^7.1.0",
-    "lodash": "^4.17.15",
-    "minimist": "^1.2.5",
-    "moment": "^2.25.1",
+    "glob": "^7.2.2",
+    "inquirer": "^7.3.3",
+    "lodash": "^4.17.21",
+    "minimist": "^1.2.6",
+    "moment": "^2.29.3",
     "request": "^2.88.2",
-    "request-promise": "^4.2.5",
+    "request-promise": "^4.2.6",
     "require-all": "^3.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
-  }
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-standard": "^4.1.0"
+  },
+  "packageManager": "yarn@3.2.1"
 }

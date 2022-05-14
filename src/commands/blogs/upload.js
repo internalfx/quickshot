@@ -1,15 +1,14 @@
 
-const _ = require(`lodash`)
-const Promise = require(`bluebird`)
-const { log, getTarget, loadConfig, parseArticle, parseBlog } = require(`../../helpers`)
-// const path = require(`path`)
-const fs = require(`fs`)
-Promise.promisifyAll(fs)
-const requestify = require(`../../requestify`)
-const glob = require(`glob`)
+import _ from 'lodash'
+import Promise from 'bluebird'
+import { log, getTarget, parseArticle, parseBlog } from '../../helpers.js'
+import fsp from 'fs/promises'
+import requestify from '../../requestify.js'
+import glob from 'glob'
+import context from '../../context.js'
 
-module.exports = async function (argv) {
-  const config = await loadConfig()
+export default async function (argv) {
+  const config = context.config
   const target = await getTarget(config, argv)
 
   let total = 0
@@ -17,7 +16,7 @@ module.exports = async function (argv) {
   const blogFilePaths = glob.sync(`blogs/*.json`, { nodir: true })
 
   await Promise.map(blogFilePaths, async function (blogFilePath) {
-    const blogSource = await fs.readFileAsync(blogFilePath, `utf8`)
+    const blogSource = await fsp.readFile(blogFilePath, `utf8`)
     const blog = parseBlog(blogSource)
 
     // Get shopify blog
@@ -53,12 +52,12 @@ module.exports = async function (argv) {
       shopifyBlog = _.get(res, `body.blog`)
     }
 
-    log(`Blog "${blog.handle}" uploading...`, `green`)
+    await log(`Blog "${blog.handle}" uploading...`, `green`)
 
     const articleFilePaths = glob.sync(`blogs/${blog.handle}/*.html`, { nodir: true })
 
     await Promise.map(articleFilePaths, async function (articleFilePath) {
-      const articleSource = await fs.readFileAsync(articleFilePath, `utf8`)
+      const articleSource = await fsp.readFile(articleFilePath, `utf8`)
       const article = parseArticle(articleSource)
 
       res = await requestify(target, {
@@ -93,7 +92,7 @@ module.exports = async function (argv) {
         shopifyArticle = _.get(res, `body.article`)
       }
 
-      log(`    ${article.handle}`)
+      await log(`    ${article.handle}`)
       total += 1
     }, { concurrency: 5 })
   }, { concurrency: 1 })

@@ -1,13 +1,10 @@
 
-const _ = require(`lodash`)
-const Promise = require(`bluebird`)
-const { log } = require(`../../helpers.js`)
-const fs = require(`fs`)
-Promise.promisifyAll(fs)
-const requestify = require(`../../requestify.js`)
-const inquirer = Promise.promisifyAll(require(`inquirer`))
+import _ from 'lodash'
+import { log } from '../../helpers.js'
+import requestify from '../../requestify.js'
+import inquirer from 'inquirer'
 
-module.exports = async function (config) {
+export default async function (config) {
   let choice = {}
 
   while (choice.action !== `< Go Back`) {
@@ -95,10 +92,10 @@ module.exports = async function (config) {
 
       if (isFinite(editIndex) && editIndex !== -1) {
         config.targets[editIndex] = currTarget
-        log(`Target Modified!\n\n`, `yellow`)
+        await log(`Target Modified!\n\n`, `yellow`)
       } else {
         config.targets.push(currTarget)
-        log(`Target Created!\n\n`, `yellow`)
+        await log(`Target Created!\n\n`, `yellow`)
       }
     } else if (choice.action === `Delete target`) {
       const targetChoice = await inquirer.prompt([{
@@ -112,9 +109,9 @@ module.exports = async function (config) {
       config.targets.splice(editIndex, 1)
     } else if (choice.action === `List targets`) {
       console.log(``)
-      targetChoices.forEach(function (target) {
-        log(target, `cyan`)
-      })
+      for (let target of targetChoices) {
+        await log(target, `cyan`)
+      }
       console.log(``)
     }
   }

@@ -1,24 +1,24 @@
 
-const _ = require(`lodash`)
-const Promise = require(`bluebird`)
-const { log, getTarget, loadConfig, to, parsePage } = require(`../../helpers`)
-const ignoreParser = require(`gitignore-parser`)
-const path = require(`path`)
-const fs = require(`fs`)
-Promise.promisifyAll(fs)
-const requestify = require(`../../requestify`)
-const glob = require(`glob`)
+import _ from 'lodash'
+import Promise from 'bluebird'
+import { log, getTarget, to, parsePage } from '../../helpers.js'
+import ignoreParser from 'gitignore-parser'
+import path from 'path'
+import fsp from 'fs/promises'
+import requestify from '../../requestify.js'
+import glob from 'glob'
+import context from '../../context.js'
 
-module.exports = async function (argv) {
+export default async function (argv) {
   let ignore = null
-  const config = await loadConfig()
+  const config = context.config
   const target = await getTarget(config, argv)
 
   let total = 0
   var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
 
   try {
-    const ignoreFile = await fs.readFileAsync(`.quickshot-ignore`, `utf8`)
+    const ignoreFile = await fsp.readFile(`.quickshot-ignore`, `utf8`)
     ignore = ignoreParser.compile(ignoreFile)
   } catch (err) {}
 
@@ -52,7 +52,7 @@ module.exports = async function (argv) {
   })
 
   await Promise.map(files, async function (file) {
-    const source = await fs.readFileAsync(file.path, `utf8`)
+    const source = await fsp.readFile(file.path, `utf8`)
     const page = parsePage(source)
 
     let res = await requestify(target, {
@@ -86,10 +86,10 @@ module.exports = async function (argv) {
     }
 
     if (res.isError) {
-      log(res, `red`)
+      await log(res, `red`)
     } else {
       total += 1
-      log(`uploaded ${file.key}`, `green`)
+      await log(`uploaded ${file.key}`, `green`)
     }
   }, { concurrency: config.concurrency })
 

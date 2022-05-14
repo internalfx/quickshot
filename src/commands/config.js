@@ -1,35 +1,30 @@
 
-// let _ = require('lodash')
-const Promise = require(`bluebird`)
-const { loadConfig } = require(`../helpers`)
-const path = require(`path`)
-const fs = require(`fs`)
-Promise.promisifyAll(fs)
-const context = require(`../context.js`)
+import path from 'path'
+import context from '../context.js'
+import fsp from 'fs/promises'
+import inquirer from 'inquirer'
 
-const inquirer = Promise.promisifyAll(require(`inquirer`))
-const requireAll = require(`require-all`)
+import actionOptions from './config/options.js'
+import actionTargets from './config/targets.js'
 
-const quickshotignore = `
+const defaultQuickshotignore = `
 # This your '.quickshotignore' file. Anything you put in here will be ignored by quickshot.
 # This file uses the same format as a '.gitignore' file.
 `
 
-module.exports = async function () {
-  let config
+export default async function () {
+  const config = context.config
 
-  const actions = requireAll({
-    dirname: path.join(__dirname, `config`)
-  })
+  const actions = {
+    options: actionOptions,
+    targets: actionTargets,
+  }
 
-  try {
-    config = await loadConfig()
-  } catch (err) {}
-
-  config = Object.assign({
+  config = {
     concurrency: 20,
-    targets: []
-  }, config)
+    targets: [],
+    ...config,
+  }
 
   let choice = {}
 
@@ -39,7 +34,7 @@ module.exports = async function () {
       name: `action`,
       message: `Main Menu`,
       choices: [
-        `targets`,
+        ...Object.keys(actions),
         `Save configuration and exit`
       ]
     }])
@@ -50,13 +45,13 @@ module.exports = async function () {
   }
 
   try {
-    await fs.statAsync(path.join(process.cwd(), `.quickshot-ignore`))
+    await fsp.stat(path.join(process.cwd(), `.quickshot-ignore`))
   } catch (err) {
-    await fs.writeFileAsync(path.join(process.cwd(), `.quickshot-ignore`), quickshotignore)
+    await fsp.writeFile(path.join(process.cwd(), `.quickshot-ignore`), defaultQuickshotignore)
   }
 
   config.configVersion = context.configVersion
-  await fs.writeFileAsync(path.join(process.cwd(), `quickshot.json`), JSON.stringify(config, null, 2))
+  await fsp.writeFile(path.join(process.cwd(), `quickshot.json`), JSON.stringify(config, null, 2))
 
   return `Configuration saved!\n`
 }

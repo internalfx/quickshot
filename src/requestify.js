@@ -1,9 +1,9 @@
 
-const Promise = require(`bluebird`)
-const rp = require(`request-promise`)
-const _ = require(`lodash`)
-const { log, to } = require(`./helpers`)
-const context = require(`./context`)
+import _ from 'lodash'
+import Promise from 'bluebird'
+import rp from 'request-promise'
+import { log, to } from './helpers.js'
+import context from './context.js'
 
 const queues = {}
 
@@ -53,7 +53,7 @@ const createQueue = function () {
 
     if (result.isError) {
       if (result.statusCode === 429) {
-        log(`Exceeded Shopify API limit, will retry...`, `yellow`)
+        await log(`Exceeded Shopify API limit, will retry...`, `yellow`)
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
@@ -70,12 +70,12 @@ const createQueue = function () {
           })
         }
       } else if (result.error && [`ETIMEDOUT`, `ESOCKETTIMEDOUT`].includes(result.error.code)) {
-        log(`Connection timed out, will retry...`, `yellow`)
+        await log(`Connection timed out, will retry...`, `yellow`)
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
       } else if (result.error && result.error.code === `EAI_AGAIN`) {
-        log(`Failed to resolve host, will retry...`, `yellow`)
+        await log(`Failed to resolve host, will retry...`, `yellow`)
         list.unshift({ target, spec, resolve, reject })
         if (!isProcessing) { process() }
         return
@@ -136,4 +136,4 @@ const url = function (target) {
   return `${target.url}/${context.apiVersion}`
 }
 
-module.exports = run
+export default run

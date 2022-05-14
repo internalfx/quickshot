@@ -1,9 +1,18 @@
 
+import { fileURLToPath } from 'url'
+import path from 'path'
+import fsp from 'fs/promises'
+const filename = fileURLToPath(import.meta.url)
+const appDir = path.join(path.dirname(filename), '..')
+const pjson = JSON.parse(await fsp.readFile(path.join(appDir, './package.json'), 'utf8'))
+
 const context = {
   initialized: false,
-  configVersion: 2,
-  apiVersion: `2020-01`,
-  config: {}
+  configVersion: 3,
+  apiVersion: `2022-04`,
+  config: {},
+  appDir: appDir,
+  VERSION: pjson.version,
 }
 
-module.exports = context
+export default context

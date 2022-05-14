@@ -1,31 +1,28 @@
 module.exports = {
-  "env": {
+  env: {
     // "browser": true,
     // "es6": true,
     // "node": true
   },
-  "extends": [
-    "standard"
+  extends: [
+    `standard`,
   ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
+  globals: {
+    Atomics: `readonly`,
+    SharedArrayBuffer: `readonly`,
   },
-  "parserOptions": {
-    // "ecmaVersion": 2018,
-    // "sourceType": "module"
-  },
-  "plugins": [
-    "import",
-    "node",
-    "promise",
-    "standard"
+  plugins: [
+    `html`,
+    `import`,
+    `node`,
+    `promise`,
   ],
-  "rules": {
-    "quotes": [1, "backtick"]
+  rules: {
+    quotes: [1, `backtick`],
+    "comma-dangle": [`error`, `always-multiline`],
   },
-  "parserOptions": {
-    "parser": "babel-eslint",
-    "sourceType": "module"
-  }
-};
+  parserOptions: {
+    parser: `babel-eslint`,
+    sourceType: `module`,
+  },
+}

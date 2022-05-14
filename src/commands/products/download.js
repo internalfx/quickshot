@@ -1,17 +1,17 @@
 
-const _ = require(`lodash`)
-const Promise = require(`bluebird`)
-const { log, getTarget, loadConfig, mkdir, stringifyProduct } = require(`../../helpers`)
-const path = require(`path`)
-const fs = require(`fs`)
-Promise.promisifyAll(fs)
-const requestify = require(`../../requestify`)
+import _ from 'lodash'
+import Promise from 'bluebird'
+import { log, getTarget, mkdir, stringifyProduct } from '../../helpers.js'
+import path from 'path'
+import fsp from 'fs/promises'
+import requestify from '../../requestify.js'
+import context from '../../context.js'
 
-module.exports = async function (argv) {
-  const config = await loadConfig()
+export default async function (argv) {
+  const config = context.config
   const target = await getTarget(config, argv)
 
-  const total = 0
+  let total = 0
 
   const processProducts = async function (products) {
     await Promise.map(products, async function (product) {
@@ -26,9 +26,11 @@ module.exports = async function (argv) {
         return _.pick(metafield, `namespace`, `key`, `value`, `value_type`)
       })
 
-      await fs.writeFileAsync(path.join(process.cwd(), `products`, `${product.handle}.html`), stringifyProduct(product))
+      await fsp.writeFile(path.join(process.cwd(), `products`, `${product.handle}.html`), stringifyProduct(product))
 
-      log(`Product "${product.handle}" downloaded`, `green`)
+      total += 1
+
+      await log(`Product "${product.handle}" downloaded`, `green`)
     })
   }
 
@@ -69,5 +71,5 @@ module.exports = async function (argv) {
     })
   }
 
-  return `Downloaded ${total} articles.`
+  return `Downloaded ${total} products.`
 }

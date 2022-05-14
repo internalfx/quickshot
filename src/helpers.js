@@ -1,18 +1,19 @@
 
-const _ = require(`lodash`)
-const Promise = require(`bluebird`)
-const path = require(`path`)
-const fs = Promise.promisifyAll(require(`fs`))
-const colors = require(`colors`)
-const inquirer = Promise.promisifyAll(require(`inquirer`))
-const moment = require(`moment`)
-const context = require(`./context.js`)
+import _ from 'lodash'
+import Promise from 'bluebird'
+import path from 'path'
+import fsp from 'fs/promises'
+import colors from 'colors'
+import inquirer from 'inquirer'
+import moment from 'moment'
+import context from './context.js'
 
-const loadConfig = async function () {
+export const loadConfig = async function (spec = {}) {
   let config
+  const { ignoreVersion } = spec
 
   try {
-    config = await fs.readFileAsync(path.join(process.cwd(), `quickshot.json`), `utf8`)
+    config = await fsp.readFile(path.join(process.cwd(), `quickshot.json`), `utf8`)
   } catch (err) {
     throw new Error(`Shop configuration is missing, have you run 'quickshot configure'?`)
   }
@@ -23,8 +24,10 @@ const loadConfig = async function () {
     throw new Error(`Shop configuration is corrupt, you may need to delete 'quickshot.json', and run 'quickshot config' again.`)
   }
 
-  if (!config.configVersion || config.configVersion < context.configVersion) {
-    throw new Error(`Shop configuration is from an older incompatible version of quickshot. You need to backup/remove your existing 'quickshot.json', and run 'quickshot config' again.`)
+  if (ignoreVersion !== true) {
+    if (!config.configVersion || config.configVersion < context.configVersion) {
+      throw new Error(`Shop configuration is from an older version of quickshot. You need to run 'quickshot config' again.`)
+    }
   }
 
   Object.assign(context.config, config)
@@ -32,7 +35,7 @@ const loadConfig = async function () {
   return config
 }
 
-const getTarget = async function (config, argv) {
+export const getTarget = async function (config, argv) {
   const targetName = argv.target || null
 
   let target = null
@@ -70,13 +73,14 @@ const getTarget = async function (config, argv) {
   return target
 }
 
-const ts = function () {
+export const ts = function () {
   return moment().format(`hh:mm:ss a`)
 }
 
-const log = function (content, color = `white`) {
+export const log = async function (content, color = `white`) {
   let data = null
   let message = null
+  let logToFile = _.get(context, `config.enableLogfile`) || false
 
   if (_.isError(content)) {
     message = content
@@ -96,16 +100,32 @@ const log = function (content, color = `white`) {
 
   if (message) {
     console.log(colors[color](`${ts()} - ${message}`))
+    if (logToFile === true) {
+      try {
+        await fsp.appendFile(path.join(process.cwd(), `quickshot.log`), `${ts()} - ${message}\n`, `utf8`)
+      } catch (err) {
+        await log(err)
+      }
+    }
   }
 
   if (data) {
     console.log(colors[color](`=== START OF OUTPUT ===`))
     console.dir(data, { depth: null })
     console.log(colors[color](`==== END OF OUTPUT ====`))
+    if (logToFile === true) {
+      try {
+        await fsp.appendFile(path.join(process.cwd(), `quickshot.log`), `=== START OF OUTPUT ===\n`, `utf8`)
+        await fsp.appendFile(path.join(process.cwd(), `quickshot.log`), `${JSON.stringify(data, null, 2)}\n`, `utf8`)
+        await fsp.appendFile(path.join(process.cwd(), `quickshot.log`), `=== END OF OUTPUT ===\n`, `utf8`)
+      } catch (err) {
+        await log(err)
+      }
+    }
   }
 }
 
-const to = function (promise) {
+export const to = function (promise) {
   return promise.then(function (val) {
     return val
   }).catch(function (err) {
@@ -114,9 +134,9 @@ const to = function (promise) {
   })
 }
 
-const mkdir = async function (path) {
+export const mkdir = async function (path) {
   try {
-    await fs.mkdirAsync(path, { recursive: true })
+    await fsp.mkdir(path, { recursive: true })
   } catch (err) {
     if (err.code !== `EEXIST`) {
       throw err
@@ -124,10 +144,10 @@ const mkdir = async function (path) {
   }
 }
 
-const FRONT_MATTER_START = `<!--START-FRONT-MATTER`
-const FRONT_MATTER_END = `END-FRONT-MATTER-->`
+export const FRONT_MATTER_START = `<!--START-FRONT-MATTER`
+export const FRONT_MATTER_END = `END-FRONT-MATTER-->`
 
-const stringifyArticle = function (article) {
+export const stringifyArticle = function (article) {
   const frontMatter = JSON.stringify(_.omit(article, `body_html`, `id`), null, 2)
   const res = []
   res.push(FRONT_MATTER_START)
@@ -137,7 +157,7 @@ const stringifyArticle = function (article) {
   return res.join(`\n`)
 }
 
-const parseArticle = function (source) {
+export const parseArticle = function (source) {
   let [frontMatter, body] = source.split(FRONT_MATTER_END)
   frontMatter = frontMatter.replace(FRONT_MATTER_START, ``)
   const data = JSON.parse(frontMatter)
@@ -155,12 +175,12 @@ const parseArticle = function (source) {
 //   return res.join(`\n`)
 // }
 
-const parseBlog = function (source) {
+export const parseBlog = function (source) {
   const data = JSON.parse(source)
   return data
 }
 
-const stringifyPage = function (page) {
+export const stringifyPage = function (page) {
   const frontMatter = JSON.stringify(_.omit(page, `body_html`, `id`), null, 2)
   const res = []
   res.push(FRONT_MATTER_START)
@@ -170,7 +190,7 @@ const stringifyPage = function (page) {
   return res.join(`\n`)
 }
 
-const parsePage = function (source) {
+export const parsePage = function (source) {
   let [frontMatter, body] = source.split(FRONT_MATTER_END)
   frontMatter = frontMatter.replace(FRONT_MATTER_START, ``)
   const data = JSON.parse(frontMatter)
@@ -178,7 +198,7 @@ const parsePage = function (source) {
   return data
 }
 
-const stringifyProduct = function (product) {
+export const stringifyProduct = function (product) {
   delete product.image
   delete product.options
 
@@ -203,26 +223,10 @@ const stringifyProduct = function (product) {
   return res.join(`\n`)
 }
 
-const parseProduct = function (source) {
+export const parseProduct = function (source) {
   let [frontMatter, body] = source.split(FRONT_MATTER_END)
   frontMatter = frontMatter.replace(FRONT_MATTER_START, ``)
   const data = JSON.parse(frontMatter)
   data.body_html = body.trim()
   return data
-}
-
-module.exports = {
-  loadConfig,
-  getTarget,
-  mkdir,
-  log,
-  to,
-  stringifyArticle,
-  parseArticle,
-  // stringifyBlog,
-  parseBlog,
-  stringifyPage,
-  parsePage,
-  stringifyProduct,
-  parseProduct
 }

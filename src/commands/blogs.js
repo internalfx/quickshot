@@ -1,13 +1,12 @@
 
-// let _ = require('lodash')
-const path = require(`path`)
-const requireAll = require(`require-all`)
+import context from '../context.js'
 
-/* global VERSION */
+import actionUpload from './blogs/upload.js'
+import actionDownload from './blogs/download.js'
 
 var HELPTEXT = `
 
-    Quickshot blogs ${VERSION}
+    Quickshot blogs ${context.VERSION}
     ==============================
 
     Commands:
@@ -20,12 +19,13 @@ var HELPTEXT = `
 
 `
 
-module.exports = async function (argv) {
+export default async function (argv) {
   const command = argv._.shift()
 
-  const commands = requireAll({
-    dirname: path.join(__dirname, `blogs`)
-  })
+  const commands = {
+    upload: actionUpload,
+    download: actionDownload,
+  }
 
   if (commands[command] == null) {
     console.log(HELPTEXT)

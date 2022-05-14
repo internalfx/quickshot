@@ -1,15 +1,14 @@
 
-const _ = require(`lodash`)
-const Promise = require(`bluebird`)
-const { log, getTarget, loadConfig, mkdir, stringifyArticle } = require(`../../helpers`)
-// const ignoreParser = require(`gitignore-parser`)
-const path = require(`path`)
-const fs = require(`fs`)
-Promise.promisifyAll(fs)
-const requestify = require(`../../requestify`)
+import _ from 'lodash'
+import Promise from 'bluebird'
+import { log, getTarget, mkdir, stringifyArticle } from '../../helpers.js'
+import path from 'path'
+import fsp from 'fs/promises'
+import requestify from '../../requestify.js'
+import context from '../../context.js'
 
-module.exports = async function (argv) {
-  const config = await loadConfig()
+export default async function (argv) {
+  const config = context.config
   const target = await getTarget(config, argv)
 
   let total = 0
@@ -31,18 +30,18 @@ module.exports = async function (argv) {
       }
 
       await mkdir(path.join(process.cwd(), `blogs`, blog.handle))
-      await fs.writeFileAsync(path.join(process.cwd(), `blogs`, `${blog.handle}.json`), JSON.stringify(_.omit(blog, `id`), null, 2))
+      await fsp.writeFile(path.join(process.cwd(), `blogs`, `${blog.handle}.json`), JSON.stringify(_.omit(blog, `id`), null, 2))
 
-      log(`Blog "${blog.handle}"`, `green`)
+      await log(`Blog "${blog.handle}"`, `green`)
 
       // Process Articles
       while (articlesDone === false) {
         const articles = _.get(res, `body.articles`)
 
         await Promise.map(articles, async function (article) {
-          await fs.writeFileAsync(path.join(process.cwd(), `blogs`, blog.handle, `${article.handle}.html`), stringifyArticle(article))
+          await fsp.writeFile(path.join(process.cwd(), `blogs`, blog.handle, `${article.handle}.html`), stringifyArticle(article))
 
-          log(`    ${article.handle}`)
+          await log(`    ${article.handle}`)
           total += 1
         })
 

@@ -1,26 +1,23 @@
 
-import AwaitLock from 'await-lock'
+import { awaitLock } from '../../ifxLock.js'
+import _ from 'lodash'
+import Promise from 'bluebird'
+import moment from 'moment'
+import { log, getTarget, to, mkdir } from '../../helpers.js'
+import ignoreParser from 'gitignore-parser'
+import path from 'path'
+import fsp from 'fs/promises'
+import requestify from '../../requestify.js'
+import chokidar from 'chokidar'
+import context from '../../context.js'
 
-const _ = require(`lodash`)
-const Promise = require(`bluebird`)
-const moment = require(`moment`)
-const { log, getTarget, loadConfig, to, mkdir } = require(`../../helpers`)
-const ignoreParser = require(`gitignore-parser`)
-const path = require(`path`)
-const fs = require(`fs`)
-Promise.promisifyAll(fs)
-const requestify = require(`../../requestify`)
-const chokidar = require(`chokidar`)
-
-module.exports = async function (argv) {
+export default async function (argv) {
   let ignore = null
-  const config = await loadConfig()
+  const config = context.config
   const target = await getTarget(config, argv)
 
-  const lock = new AwaitLock()
-
   try {
-    const ignoreFile = await fs.readFileAsync(`.quickshot-ignore`, `utf8`)
+    const ignoreFile = await fsp.readFile(`.quickshot-ignore`, `utf8`)
     ignore = ignoreParser.compile(ignoreFile)
   } catch (err) {}
 
@@ -35,7 +32,8 @@ module.exports = async function (argv) {
   })
 
   watcher.on(`all`, async function (event, filePath) {
-    if (argv.sync === true) { await lock.acquireAsync() }
+    let lock
+    if (argv.sync === true) { lock = await awaitLock('watch') }
     try {
       const pathParts = filePath.split(path.sep)
       const trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, `theme`) + 1))
@@ -44,17 +42,17 @@ module.exports = async function (argv) {
       if (!filePath.match(/^theme/)) { return }
       if (filePath.match(/^\..*$/)) { return }
       if (filePath.match(/[()]/)) {
-        log(`Filename may not contain parentheses, please rename - "${filePath}"`, `red`)
+        await log(`Filename may not contain parentheses, please rename - "${filePath}"`, `red`)
         return
       }
 
       if (ignore && ignore.denies(filePath)) {
-        log(`IGNORING: ${filePath}`, `yellow`)
+        await log(`IGNORING: ${filePath}`, `yellow`)
         return
       }
 
       if ([`add`, `change`].includes(event)) {
-        let data = await fs.readFileAsync(filePath)
+        let data = await fsp.readFile(filePath)
         data = data.toString(`base64`)
 
         await requestify(target, {
@@ -68,26 +66,26 @@ module.exports = async function (argv) {
           }
         })
 
-        log(`Added/Updated ${filePath}`, `green`)
+        await log(`Added/Updated ${filePath}`, `green`)
       } else if (event === `unlink`) {
         await requestify(target, {
           method: `delete`,
           url: `/themes/${target.theme_id}/assets.json?asset[key]=${key.split(path.sep).join(`/`)}`
         })
 
-        log(`Deleted ${filePath}`, `green`)
+        await log(`Deleted ${filePath}`, `green`)
       }
     } catch (err) {
-      log(err, `red`)
+      await log(err, `red`)
     }
-    if (argv.sync === true) { await lock.release() }
+    if (argv.sync === true) { lock.release() }
   })
 
   if (argv.sync === true) {
-    log(`Two-Way sync is enabled!`, `yellow`)
+    await log(`Two-Way sync is enabled!`, `yellow`)
 
     const checkShopify = async function () {
-      await lock.acquireAsync()
+      let lock = await awaitLock('watch')
       try {
         const res = await requestify(target, {
           method: `get`,
@@ -96,7 +94,7 @@ module.exports = async function (argv) {
         const assets = _.get(res, `body.assets`)
 
         Promise.map(assets, async function (asset) {
-          const stat = await to(fs.statAsync(path.join(`theme`, asset.key)))
+          const stat = await to(fsp.stat(path.join(`theme`, asset.key)))
           let fileExists = true
 
           if (stat.isError && stat.code === `ENOENT`) {
@@ -142,19 +140,19 @@ module.exports = async function (argv) {
           }
 
           await mkdir(path.join(process.cwd(), `theme`, path.dirname(data.key)))
-          await fs.writeFileAsync(path.join(process.cwd(), `theme`, data.key), rawData)
+          await fsp.writeFile(path.join(process.cwd(), `theme`, data.key), rawData)
 
-          log(`Downloaded ${key}`, `green`)
+          await log(`Downloaded ${key}`, `green`)
         }, { concurrency: 1 })
       } catch (err) {
-        log(err, `red`)
+        await log(err, `red`)
       }
-      await lock.release()
+      lock.release()
       setTimeout(checkShopify, 3000)
     }
 
     setTimeout(checkShopify, 100)
   }
 
-  log(`watching theme...`, `green`)
+  await log(`watching theme...`, `green`)
 }

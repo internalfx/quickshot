@@ -1,23 +1,22 @@
 
-const _ = require(`lodash`)
-const Promise = require(`bluebird`)
-const { log, getTarget, loadConfig, parseArticle, parseProduct } = require(`../../helpers`)
-// const path = require(`path`)
-const fs = require(`fs`)
-Promise.promisifyAll(fs)
-const requestify = require(`../../requestify`)
-const glob = require(`glob`)
+import _ from 'lodash'
+import Promise from 'bluebird'
+import { log, getTarget, parseArticle, parseProduct } from '../../helpers.js'
+import fsp from 'fs/promises'
+import requestify from '../../requestify.js'
+import glob from 'glob'
+import context from '../../context.js'
 
-module.exports = async function (argv) {
-  const config = await loadConfig()
+export default async function (argv) {
+  const config = context.config
   const target = await getTarget(config, argv)
 
-  const total = 0
+  let total = 0
 
   const productFilePaths = glob.sync(`products/*.html`, { nodir: true })
 
   await Promise.map(productFilePaths, async function (productFilePath) {
-    const productSource = await fs.readFileAsync(productFilePath, `utf8`)
+    const productSource = await fsp.readFile(productFilePath, `utf8`)
     const product = parseProduct(productSource)
     const metafields = product.metafields
     delete product.metafields
@@ -88,8 +87,10 @@ module.exports = async function (argv) {
       }
     })
 
-    log(`Product "${product.handle}" uploaded`, `green`)
+    total += 1
+
+    await log(`Product "${product.handle}" uploaded`, `green`)
   }, { concurrency: 8 })
 
-  return `Uploaded ${total} product articles.`
+  return `Uploaded ${total} products.`
 }

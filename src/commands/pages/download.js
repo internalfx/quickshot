@@ -1,23 +1,23 @@
 
-const _ = require(`lodash`)
-const Promise = require(`bluebird`)
-const { log, getTarget, loadConfig, mkdir, stringifyPage } = require(`../../helpers`)
-const ignoreParser = require(`gitignore-parser`)
-const path = require(`path`)
-const fs = require(`fs`)
-Promise.promisifyAll(fs)
-const requestify = require(`../../requestify`)
+import _ from 'lodash'
+import Promise from 'bluebird'
+import { log, getTarget, mkdir, stringifyPage } from '../../helpers.js'
+import ignoreParser from 'gitignore-parser'
+import path from 'path'
+import fsp from 'fs/promises'
+import requestify from '../../requestify.js'
+import context from '../../context.js'
 
-module.exports = async function (argv) {
+export default async function (argv) {
   let ignore = null
-  const config = await loadConfig()
+  const config = context.config
   const target = await getTarget(config, argv)
 
   let total = 0
   var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
 
   try {
-    const ignoreFile = await fs.readFileAsync(`.quickshot-ignore`, `utf8`)
+    const ignoreFile = await fsp.readFile(`.quickshot-ignore`, `utf8`)
     ignore = ignoreParser.compile(ignoreFile)
   } catch (err) {}
 
@@ -52,10 +52,10 @@ module.exports = async function (argv) {
 
     await Promise.map(pages, async function (page) {
       await mkdir(path.join(process.cwd(), `pages`))
-      await fs.writeFileAsync(path.join(process.cwd(), `pages`, `${page.handle}.html`), stringifyPage(page))
+      await fsp.writeFile(path.join(process.cwd(), `pages`, `${page.handle}.html`), stringifyPage(page))
 
       total += 1
-      log(`Downloaded ${page.handle}`, `green`)
+      await log(`Downloaded ${page.handle}`, `green`)
     })
 
     if (res.linkNext == null) {

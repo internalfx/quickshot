@@ -1,19 +1,20 @@
-require(`@babel/register`)({
-  cwd: __dirname,
-  plugins: [`@babel/plugin-transform-modules-commonjs`],
-  only: [
-    `./*`
-  ]
-})
 
-const path = require(`path`)
-const requireAll = require(`require-all`)
+import _ from 'lodash'
+import path from 'path'
+import context from './context.js'
+
+import blogs from './commands/blogs.js'
+import config from './commands/config.js'
+import pages from './commands/pages.js'
+import products from './commands/products.js'
+import theme from './commands/theme.js'
+import { log, loadConfig } from './helpers.js'
 
 /* global VERSION */
 
 var HELPTEXT = `
 
-    Quickshot ${VERSION}
+    Quickshot ${context.VERSION}
     ==============================
 
     Commands:
@@ -26,12 +27,21 @@ var HELPTEXT = `
 
 `
 
-module.exports = async function (argv) {
+export default async function (argv) {
+  await loadConfig()
+  
   const command = argv._.shift()
+  const fullCommand = _.compact([command, argv._[0]]).join(` `)
 
-  const commands = requireAll({
-    dirname: path.join(__dirname, `commands`)
-  })
+  const commands = {
+    blogs,
+    config,
+    pages,
+    products,
+    theme,
+  }
+
+  await log(`RUN COMMAND [${fullCommand}] ================================`)
 
   if (commands[command] == null) {
     console.log(HELPTEXT)
