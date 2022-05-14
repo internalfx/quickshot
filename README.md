@@ -15,7 +15,7 @@
 - Can be configured to ignore certain files when syncing
 - Uploads and downloads Shopify blogs, pages and products. You can now easily transfer product information between shops.
 
-Runs on node.js v10+.
+Runs on node.js v16+.
 
 ## TLDR, Installation
 
@@ -39,7 +39,7 @@ Quickshot is run from the command line (terminal). You can start quickshot with 
 Run `qs` by itself to see all the possible commands.
 
 ```
-    Quickshot 3.5.0
+    Quickshot 3.6.0
     ==============================
 
     Commands:
@@ -55,6 +55,10 @@ Run `qs` by itself to see all the possible commands.
 
 Run `qs config` to run the configuration wizard, which will guide you through creating your Configuration file.
 You do not need to make or edit this file by hand.
+
+#### Logging Configuration
+
+You can enable logging to a file by choosing `options > logging` from the `qs config` menu.
 
 #### Targets Configuration
 
