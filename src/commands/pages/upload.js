@@ -1,7 +1,7 @@
 
 import _ from 'lodash'
 import Promise from 'bluebird'
-import { log, getTarget, to, parsePage } from '../../helpers.js'
+import { log, getTarget, parsePage } from '../../helpers.js'
 import ignoreParser from 'gitignore-parser'
 import path from 'path'
 import fsp from 'fs/promises'
@@ -15,7 +15,7 @@ export default async function (argv) {
   const target = await getTarget(config, argv)
 
   let total = 0
-  var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
+  const filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
 
   try {
     const ignoreFile = await fsp.readFile(`.quickshot-ignore`, `utf8`)
@@ -54,16 +54,18 @@ export default async function (argv) {
   await Promise.map(files, async function (file) {
     const source = await fsp.readFile(file.path, `utf8`)
     const page = parsePage(source)
+    const metafields = page.metafields
+    delete page.metafields
 
     let res = await requestify(target, {
       method: `get`,
       url: `/pages.json`,
       qs: {
-        handle: page.handle
-      }
+        handle: page.handle,
+      },
     })
 
-    const shopifyPage = _.get(res, `body.pages[0]`)
+    let shopifyPage = _.get(res, `body.pages[0]`)
 
     if (shopifyPage != null) {
       page.id = shopifyPage.id
@@ -72,25 +74,58 @@ export default async function (argv) {
         method: `put`,
         url: `/pages/${page.id}.json`,
         body: {
-          page: _.pick(page, `id`, `body_html`, `author`, `title`, `handle`, `template_suffix`)
-        }
+          page,
+        },
       })
     } else {
       res = await requestify(target, {
         method: `post`,
         url: `/pages.json`,
         body: {
-          page: _.pick(page, `body_html`, `author`, `title`, `handle`, `template_suffix`)
-        }
+          page,
+        },
       })
+
+      shopifyPage = _.get(res, `body.page`)
     }
 
-    if (res.isError) {
-      await log(res, `red`)
-    } else {
-      total += 1
-      await log(`uploaded ${file.key}`, `green`)
-    }
+    res = await requestify(target, {
+      method: `get`,
+      url: `/pages/${shopifyPage.id}/metafields.json`,
+    })
+
+    const shopifyMetafields = _.get(res, `body.metafields`)
+
+    await Promise.map(metafields, async function (metafield) {
+      const shopifyMetafield = shopifyMetafields.find(function (shopifyMetafield) {
+        return shopifyMetafield.namespace === metafield.namespace &&
+        shopifyMetafield.key === metafield.key
+      })
+
+      if (shopifyMetafield != null) {
+        metafield.id = shopifyMetafield.id
+
+        res = await requestify(target, {
+          method: `put`,
+          url: `/pages/${shopifyPage.id}/metafields/${metafield.id}.json`,
+          body: {
+            metafield: metafield,
+          },
+        })
+      } else {
+        res = await requestify(target, {
+          method: `post`,
+          url: `/pages/${shopifyPage.id}/metafields.json`,
+          body: {
+            metafield: metafield,
+          },
+        })
+      }
+    })
+
+    total += 1
+
+    await log(`Page "${page.handle}" uploaded`, `green`)
   }, { concurrency: config.concurrency })
 
   return `Uploaded ${total} pages.`

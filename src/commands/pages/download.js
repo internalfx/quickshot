@@ -14,7 +14,7 @@ export default async function (argv) {
   const target = await getTarget(config, argv)
 
   let total = 0
-  var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
+  const filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
 
   try {
     const ignoreFile = await fsp.readFile(`.quickshot-ignore`, `utf8`)
@@ -25,8 +25,8 @@ export default async function (argv) {
     method: `get`,
     url: `/pages.json`,
     qs: {
-      limit: 100
-    }
+      limit: 100,
+    },
   })
 
   let done = false
@@ -34,6 +34,8 @@ export default async function (argv) {
   if (_.get(res, `body.pages.length`) === 0) {
     done = true
   }
+
+  await mkdir(path.join(process.cwd(), `pages`))
 
   while (done === false) {
     let pages = _.get(res, `body.pages`)
@@ -51,11 +53,22 @@ export default async function (argv) {
     }
 
     await Promise.map(pages, async function (page) {
-      await mkdir(path.join(process.cwd(), `pages`))
+      const res = await requestify(target, {
+        method: `get`,
+        url: `/pages/${page.id}/metafields.json`,
+      })
+
+      const metafields = _.get(res, `body.metafields`)
+
+      page.metafields = metafields.map(function (metafield) {
+        return _.pick(metafield, `key`, `namespace`, `value`, `type`, `description`)
+      })
+
       await fsp.writeFile(path.join(process.cwd(), `pages`, `${page.handle}.html`), stringifyPage(page))
 
       total += 1
-      await log(`Downloaded ${page.handle}`, `green`)
+
+      await log(`Page "${page.handle}" downloaded`, `green`)
     })
 
     if (res.linkNext == null) {
@@ -69,7 +82,7 @@ export default async function (argv) {
       qs: {
         limit: 100,
         page_info: res.linkNext.searchParams.get(`page_info`)
-      }
+      },
     })
   }
 
