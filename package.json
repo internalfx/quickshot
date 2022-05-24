@@ -32,9 +32,6 @@
     "test": "mocha -R test"
   },
   "dependencies": {
-    "@babel/core": "^7.17.10",
-    "@babel/plugin-transform-modules-commonjs": "^7.17.9",
-    "@babel/register": "^7.17.7",
     "await-lock": "^2.2.2",
     "bluebird": "^3.7.2",
     "chokidar": "^3.5.3",
@@ -50,13 +47,13 @@
     "require-all": "^3.0.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.3.1",
-    "eslint-plugin-standard": "^4.1.0"
+    "eslint": "8.0.1",
+    "eslint-config-standard": "17.0.0",
+    "eslint-plugin-html": "6.2.0",
+    "eslint-plugin-import": "2.25.2",
+    "eslint-plugin-n": "15.0.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "6.0.0"
   },
   "packageManager": "yarn@3.2.1"
 }
