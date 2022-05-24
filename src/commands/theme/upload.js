@@ -15,7 +15,7 @@ export default async function (argv) {
   const target = await getTarget(config, argv)
 
   let total = 0
-  var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
+  const filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
 
   try {
     const ignoreFile = await fsp.readFile(`.quickshot-ignore`, `utf8`)
@@ -47,7 +47,7 @@ export default async function (argv) {
     return {
       key: filepath,
       name: path.basename(filepath),
-      path: file
+      path: file,
     }
   })
 
@@ -59,9 +59,9 @@ export default async function (argv) {
       body: {
         asset: {
           key: file.key,
-          attachment: body.toString(`base64`)
-        }
-      }
+          attachment: body.toString(`base64`),
+        },
+      },
     }))
 
     if (res.isError) {

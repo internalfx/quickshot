@@ -28,12 +28,12 @@ export default async function (argv) {
     usePolling: true,
     interval: 300,
     binaryInterval: 300,
-    cwd: process.cwd()
+    cwd: process.cwd(),
   })
 
   watcher.on(`all`, async function (event, filePath) {
     let lock
-    if (argv.sync === true) { lock = await awaitLock('watch') }
+    if (argv.sync === true) { lock = await awaitLock(`watch`) }
     try {
       const pathParts = filePath.split(path.sep)
       const trimmedParts = _.drop(pathParts, (_.lastIndexOf(pathParts, `theme`) + 1))
@@ -61,16 +61,16 @@ export default async function (argv) {
           body: {
             asset: {
               key: key.split(path.sep).join(`/`),
-              attachment: data
-            }
-          }
+              attachment: data,
+            },
+          },
         })
 
         await log(`Added/Updated ${filePath}`, `green`)
       } else if (event === `unlink`) {
         await requestify(target, {
           method: `delete`,
-          url: `/themes/${target.theme_id}/assets.json?asset[key]=${key.split(path.sep).join(`/`)}`
+          url: `/themes/${target.theme_id}/assets.json?asset[key]=${key.split(path.sep).join(`/`)}`,
         })
 
         await log(`Deleted ${filePath}`, `green`)
@@ -85,11 +85,11 @@ export default async function (argv) {
     await log(`Two-Way sync is enabled!`, `yellow`)
 
     const checkShopify = async function () {
-      let lock = await awaitLock('watch')
+      const lock = await awaitLock(`watch`)
       try {
         const res = await requestify(target, {
           method: `get`,
-          url: `/themes/${target.theme_id}/assets.json`
+          url: `/themes/${target.theme_id}/assets.json`,
         })
         const assets = _.get(res, `body.assets`)
 
@@ -122,8 +122,8 @@ export default async function (argv) {
             url: `/themes/${target.theme_id}/assets.json`,
             qs: {
               'asset[key]': key,
-              theme_id: target.theme_id
-            }
+              theme_id: target.theme_id,
+            },
           })
           const data = _.get(res, `body.asset`)
 
@@ -148,7 +148,7 @@ export default async function (argv) {
         await log(err, `red`)
       }
       lock.release()
-      setTimeout(checkShopify, 3000)
+      setTimeout(checkShopify, 4000)
     }
 
     setTimeout(checkShopify, 100)

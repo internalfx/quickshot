@@ -19,8 +19,8 @@ export default async function (argv) {
         method: `get`,
         url: `/blogs/${blog.id}/articles.json`,
         qs: {
-          limit: 100
-        }
+          limit: 100,
+        },
       })
 
       let articlesDone = false
@@ -55,8 +55,8 @@ export default async function (argv) {
           url: `/blogs/${blog.id}/articles.json`,
           qs: {
             limit: 100,
-            page_info: res.linkNext.searchParams.get(`page_info`)
-          }
+            page_info: res.linkNext.searchParams.get(`page_info`),
+          },
         })
       }
     })
@@ -66,8 +66,8 @@ export default async function (argv) {
     method: `get`,
     url: `/blogs.json`,
     qs: {
-      limit: 100
-    }
+      limit: 100,
+    },
   })
 
   let blogsDone = false
@@ -94,8 +94,8 @@ export default async function (argv) {
       url: `/blogs.json`,
       qs: {
         limit: 100,
-        page_info: res.linkNext.searchParams.get(`page_info`)
-      }
+        page_info: res.linkNext.searchParams.get(`page_info`),
+      },
     })
   }
 

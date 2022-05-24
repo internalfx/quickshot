@@ -5,7 +5,7 @@ import actionUpload from './theme/upload.js'
 import actionDownload from './theme/download.js'
 import actionWatch from './theme/watch.js'
 
-var HELPTEXT = `
+const HELPTEXT = `
 
     Quickshot theme ${context.VERSION}
     ==============================

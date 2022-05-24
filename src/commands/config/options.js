@@ -1,6 +1,4 @@
 
-import _ from 'lodash'
-import Promise from 'bluebird'
 import inquirer from 'inquirer'
 
 export default async function (config) {
@@ -15,7 +13,7 @@ export default async function (config) {
       type: `list`,
       name: `action`,
       message: `Configure Options`,
-      choices: actionOpts
+      choices: actionOpts,
     }])
 
     if (choice.action === `Logging`) {
@@ -24,8 +22,8 @@ export default async function (config) {
           type: `confirm`,
           name: `enabled`,
           message: `Enable log file?`,
-          default: config.enableLogfile
-        }
+          default: config.enableLogfile,
+        },
       ])
 
       config.enableLogfile = logSettings.enabled

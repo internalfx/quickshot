@@ -22,7 +22,7 @@ export default async function (config) {
       type: `list`,
       name: `action`,
       message: `Manage targets`,
-      choices: actionOpts
+      choices: actionOpts,
     }])
 
     const targetChoices = config.targets.map(function (target) {
@@ -40,7 +40,7 @@ export default async function (config) {
           name: `target`,
           message: `Select target to edit`,
           default: null,
-          choices: targetChoices
+          choices: targetChoices,
         }])
         editIndex = _.indexOf(targetChoices, targetChoice.target)
         currTarget = config.targets[editIndex]
@@ -51,14 +51,14 @@ export default async function (config) {
           type: `input`,
           name: `name`,
           message: `Enter a name for this target`,
-          default: (currTarget.name || null)
+          default: (currTarget.name || null),
         },
         {
           type: `input`,
           name: `url`,
           message: `Store URL? (Copy and paste the full "example URL" from the private app settings).`,
-          default: (currTarget.url || null)
-        }
+          default: (currTarget.url || null),
+        },
       ])
 
       currTarget = Object.assign(currTarget, targetSettings)
@@ -70,7 +70,7 @@ export default async function (config) {
 
       const res = await requestify(currTarget, {
         method: `get`,
-        url: `/themes.json`
+        url: `/themes.json`,
       })
       const themes = _.get(res, `body.themes`)
 
@@ -83,7 +83,7 @@ export default async function (config) {
         name: `theme`,
         message: `Select theme`,
         default: defaultTheme || null,
-        choices: themeChoices
+        choices: themeChoices,
       }])
 
       const theme = themes[_.indexOf(themeChoices, themeChoice.theme)]
@@ -103,13 +103,13 @@ export default async function (config) {
         name: `target`,
         message: `Select target to edit`,
         default: null,
-        choices: targetChoices
+        choices: targetChoices,
       }])
       const editIndex = _.indexOf(targetChoices, targetChoice.target)
       config.targets.splice(editIndex, 1)
     } else if (choice.action === `List targets`) {
       console.log(``)
-      for (let target of targetChoices) {
+      for (const target of targetChoices) {
         await log(target, `cyan`)
       }
       console.log(``)

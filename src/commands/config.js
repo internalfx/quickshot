@@ -13,7 +13,7 @@ const defaultQuickshotignore = `
 `
 
 export default async function () {
-  const config = context.config
+  let config = context.config
 
   const actions = {
     options: actionOptions,
@@ -35,8 +35,8 @@ export default async function () {
       message: `Main Menu`,
       choices: [
         ...Object.keys(actions),
-        `Save configuration and exit`
-      ]
+        `Save configuration and exit`,
+      ],
     }])
 
     if (actions[choice.action] != null) {

@@ -14,7 +14,7 @@ export default async function (argv) {
   const target = await getTarget(config, argv)
 
   let total = 0
-  var filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
+  const filter = argv.filter ? new RegExp(`^${argv.filter}`) : null
 
   try {
     const ignoreFile = await fsp.readFile(`.quickshot-ignore`, `utf8`)
@@ -23,7 +23,7 @@ export default async function (argv) {
 
   const res = await requestify(target, {
     method: `get`,
-    url: `/themes/${target.theme_id}/assets.json`
+    url: `/themes/${target.theme_id}/assets.json`,
   })
   let assets = _.get(res, `body.assets`)
 
@@ -45,8 +45,8 @@ export default async function (argv) {
       url: `/themes/${target.theme_id}/assets.json`,
       qs: {
         'asset[key]': asset.key,
-        theme_id: target.theme_id
-      }
+        theme_id: target.theme_id,
+      },
     }))
 
     if (res.isError) {

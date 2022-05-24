@@ -4,7 +4,7 @@ import context from '../context.js'
 import actionUpload from './blogs/upload.js'
 import actionDownload from './blogs/download.js'
 
-var HELPTEXT = `
+const HELPTEXT = `
 
     Quickshot blogs ${context.VERSION}
     ==============================

@@ -24,8 +24,8 @@ export default async function (argv) {
       method: `get`,
       url: `/blogs.json`,
       qs: {
-        handle: blog.handle
-      }
+        handle: blog.handle,
+      },
     })
 
     let shopifyBlog = _.get(res, `body.blogs[0]`)
@@ -37,16 +37,16 @@ export default async function (argv) {
         method: `put`,
         url: `/blogs/${blog.id}.json`,
         body: {
-          blog: _.pick(blog, `id`, `title`, `handle`, `commentable`, `tags`)
-        }
+          blog: _.pick(blog, `id`, `title`, `handle`, `commentable`, `tags`),
+        },
       })
     } else {
       res = await requestify(target, {
         method: `post`,
         url: `/blogs.json`,
         body: {
-          blog: _.pick(blog, `title`, `handle`, `commentable`, `tags`)
-        }
+          blog: _.pick(blog, `title`, `handle`, `commentable`, `tags`),
+        },
       })
 
       shopifyBlog = _.get(res, `body.blog`)
@@ -64,8 +64,8 @@ export default async function (argv) {
         method: `get`,
         url: `/blogs/${shopifyBlog.id}/articles.json`,
         qs: {
-          handle: article.handle
-        }
+          handle: article.handle,
+        },
       })
 
       let shopifyArticle = _.get(res, `body.articles[0]`)
@@ -77,16 +77,16 @@ export default async function (argv) {
           method: `put`,
           url: `/blogs/${shopifyBlog.id}/articles/${article.id}.json`,
           body: {
-            article: _.pick(article, `id`, `body_html`, `summary_html`, `title`, `handle`, `author`, `tags`, `image`, `template_suffix`)
-          }
+            article: _.pick(article, `id`, `body_html`, `summary_html`, `title`, `handle`, `author`, `tags`, `image`, `template_suffix`),
+          },
         })
       } else {
         res = await requestify(target, {
           method: `post`,
           url: `/blogs/${shopifyBlog.id}/articles.json`,
           body: {
-            article: _.pick(article, `body_html`, `summary_html`, `title`, `handle`, `author`, `tags`, `image`, `template_suffix`)
-          }
+            article: _.pick(article, `body_html`, `summary_html`, `title`, `handle`, `author`, `tags`, `image`, `template_suffix`),
+          },
         })
 
         shopifyArticle = _.get(res, `body.article`)
