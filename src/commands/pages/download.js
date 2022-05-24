@@ -81,7 +81,7 @@ export default async function (argv) {
       url: `/pages.json`,
       qs: {
         limit: 100,
-        page_info: res.linkNext.searchParams.get(`page_info`)
+        page_info: res.linkNext.searchParams.get(`page_info`),
       },
     })
   }

@@ -47,7 +47,7 @@ export default async function (argv) {
     return {
       key: filepath,
       name: path.basename(filepath),
-      path: file
+      path: file,
     }
   })
 
