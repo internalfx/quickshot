@@ -1,4 +1,4 @@
-# Quickshot 3
+# Quickshot 4
 
 ### A Shopify theme development tool.
 
@@ -39,7 +39,7 @@ Quickshot is run from the command line (terminal). You can start quickshot with 
 Run `qs` by itself to see all the possible commands.
 
 ```
-    Quickshot 3.6.0
+    Quickshot 4.0.0
     ==============================
 
     Commands:
