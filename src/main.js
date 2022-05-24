@@ -1,6 +1,5 @@
 
 import _ from 'lodash'
-import path from 'path'
 import context from './context.js'
 
 import blogs from './commands/blogs.js'
@@ -10,9 +9,7 @@ import products from './commands/products.js'
 import theme from './commands/theme.js'
 import { log, loadConfig } from './helpers.js'
 
-/* global VERSION */
-
-var HELPTEXT = `
+const HELPTEXT = `
 
     Quickshot ${context.VERSION}
     ==============================
@@ -29,7 +26,7 @@ var HELPTEXT = `
 
 export default async function (argv) {
   await loadConfig()
-  
+
   const command = argv._.shift()
   const fullCommand = _.compact([command, argv._[0]]).join(` `)
 

@@ -1,6 +1,5 @@
 
 import _ from 'lodash'
-import Promise from 'bluebird'
 import path from 'path'
 import fsp from 'fs/promises'
 import colors from 'colors'
@@ -61,8 +60,8 @@ export const getTarget = async function (config, argv) {
             name: `target`,
             message: `Select target`,
             default: null,
-            choices: targetChoices
-          }
+            choices: targetChoices,
+          },
         ])
         target = config.targets[_.indexOf(targetChoices, choice.target)]
       } else if (config.targets.length === 1) {
@@ -84,7 +83,7 @@ export const ts = function () {
 export const log = async function (content, color = `white`) {
   let data = null
   let message = null
-  let logToFile = _.get(context, `config.enableLogfile`) || false
+  const logToFile = _.get(context, `config.enableLogfile`) || false
 
   if (_.isError(content)) {
     message = content

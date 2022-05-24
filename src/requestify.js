@@ -46,7 +46,7 @@ const createQueue = function () {
       resolveWithFullResponse: true,
       gzip: true,
       json: true,
-      timeout: 30000
+      timeout: 30000,
     }))
 
     inFlight -= 1
@@ -61,12 +61,12 @@ const createQueue = function () {
         if (_.get(spec, `body.asset.key`)) {
           return reject({
             message: `404 Not Found - Are you sure "${_.get(spec, `body.asset.key`)}" is a valid Shopify theme path?`,
-            data: _.get(spec, `body`)
+            data: _.get(spec, `body`),
           })
         } else {
           return reject({
             message: `404 Not Found - Are you sure "${result.options.url}" is a valid resource?`,
-            data: { body: _.get(spec, `body`), url: result.options.url }
+            data: { body: _.get(spec, `body`), url: result.options.url },
           })
         }
       } else if (result.error && [`ETIMEDOUT`, `ESOCKETTIMEDOUT`].includes(result.error.code)) {
@@ -116,7 +116,7 @@ const createQueue = function () {
   }
 
   return {
-    add
+    add,
   }
 }
 
