@@ -4,18 +4,19 @@ import context from '../context.js'
 import actionUpload from './products/upload.js'
 import actionDownload from './products/download.js'
 
-var HELPTEXT = `
+const HELPTEXT = `
 
     Quickshot products ${context.VERSION}
     ==============================
 
     Commands:
-      quickshot products upload [options]              Upload products
-      quickshot products download [options]            Download products
-      quickshot products                               Show this screen.
+      quickshot products upload [options]           Upload products
+      quickshot products download [options]         Download products
+      quickshot products                            Show this screen.
 
     Options:
       --target=[targetname]                         Explicitly select target for upload/download
+      --filter=[filter]                             Filter files for upload
 
 `
 

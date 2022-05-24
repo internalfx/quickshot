@@ -4,7 +4,7 @@ import context from '../context.js'
 import actionUpload from './pages/upload.js'
 import actionDownload from './pages/download.js'
 
-var HELPTEXT = `
+const HELPTEXT = `
 
     Quickshot pages ${context.VERSION}
     ==============================
@@ -16,7 +16,7 @@ var HELPTEXT = `
 
     Options:
       --target=[targetname]                         Explicitly select target for upload/download
-      --filter=[filter]                             Filter files for upload/download
+      --filter=[filter]                             Filter files for upload
 
 `
 
