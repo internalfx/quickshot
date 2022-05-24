@@ -25,10 +25,16 @@ const HELPTEXT = `
 `
 
 export default async function (argv) {
-  await loadConfig()
-
   const command = argv._.shift()
   const fullCommand = _.compact([command, argv._[0]]).join(` `)
+
+  try {
+    await loadConfig()
+  } catch (err) {
+    if (command !== `config`) {
+      throw err
+    }
+  }
 
   const commands = {
     blogs,
