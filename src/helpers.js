@@ -8,6 +8,10 @@ import inquirer from 'inquirer'
 import moment from 'moment'
 import context from './context.js'
 
+export const stringify = function (data) {
+  return JSON.stringify(data, null, 2)
+}
+
 export const loadConfig = async function (spec = {}) {
   let config
   const { ignoreVersion } = spec
@@ -116,7 +120,7 @@ export const log = async function (content, color = `white`) {
     if (logToFile === true) {
       try {
         await fsp.appendFile(path.join(process.cwd(), `quickshot.log`), `=== START OF OUTPUT ===\n`, `utf8`)
-        await fsp.appendFile(path.join(process.cwd(), `quickshot.log`), `${JSON.stringify(data, null, 2)}\n`, `utf8`)
+        await fsp.appendFile(path.join(process.cwd(), `quickshot.log`), `${stringify(data)}\n`, `utf8`)
         await fsp.appendFile(path.join(process.cwd(), `quickshot.log`), `=== END OF OUTPUT ===\n`, `utf8`)
       } catch (err) {
         await log(err)
@@ -148,7 +152,7 @@ export const FRONT_MATTER_START = `<!--START-FRONT-MATTER`
 export const FRONT_MATTER_END = `END-FRONT-MATTER-->`
 
 export const stringifyArticle = function (article) {
-  const frontMatter = JSON.stringify(_.omit(article, `body_html`, `id`), null, 2)
+  const frontMatter = stringify(_.omit(article, `body_html`, `id`))
   const res = []
   res.push(FRONT_MATTER_START)
   res.push(frontMatter)
@@ -165,23 +169,13 @@ export const parseArticle = function (source) {
   return data
 }
 
-// const stringifyBlog = function (blog) {
-//   const frontMatter = JSON.stringify(_.omit(blog, `body_html`, `id`), null, 2)
-//   const res = []
-//   res.push(FRONT_MATTER_START)
-//   res.push(frontMatter)
-//   res.push(FRONT_MATTER_END)
-//   res.push(blog.body_html)
-//   return res.join(`\n`)
-// }
-
 export const parseBlog = function (source) {
   const data = JSON.parse(source)
   return data
 }
 
 export const stringifyPage = function (page) {
-  const frontMatter = JSON.stringify(_.omit(page, `body_html`, `id`), null, 2)
+  const frontMatter = stringify(_.omit(page, `body_html`, `id`))
   const res = []
   res.push(FRONT_MATTER_START)
   res.push(frontMatter)
@@ -214,7 +208,7 @@ export const stringifyProduct = function (product) {
     })
   }
 
-  const frontMatter = JSON.stringify(_.omit(product, `body_html`, `id`, `admin_graphql_api_id`), null, 2)
+  const frontMatter = stringify(_.omit(product, `body_html`, `id`, `admin_graphql_api_id`))
   const res = []
   res.push(FRONT_MATTER_START)
   res.push(frontMatter)
