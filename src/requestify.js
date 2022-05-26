@@ -89,12 +89,12 @@ const createQueue = function () {
         } else {
           errorMsg = `Request Failed!: [${result.status}] ${result.statusText}`
         }
-        await log(`Request Error [${result.request.method}:${result.request.path}]`, `red`)
+        await log(`Request Error [${spec.url}]`, `red`)
         return reject({ message: errorMsg, data: result.error })
       }
     } else {
       if (result.body.errors) {
-        await log(`Request Error [${result.request.method}:${result.request.path}]`, `red`)
+        await log(`Request Error [${spec.url}]`, `red`)
         return reject(result.body.errors)
       } else {
         let limit = result.headers[`x-shopify-shop-api-call-limit`]
