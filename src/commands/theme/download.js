@@ -53,7 +53,7 @@ export default async function (argv) {
       await log(res, `red`)
     } else {
       const data = _.get(res, `body.asset`)
-      let rawData = null
+      let rawData = Buffer.from(``, `utf8`)
 
       if (data.attachment) {
         rawData = Buffer.from(data.attachment, `base64`)
