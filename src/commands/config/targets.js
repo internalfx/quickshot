@@ -56,17 +56,21 @@ export default async function (config) {
         {
           type: `input`,
           name: `url`,
-          message: `Store URL? (Copy and paste the full "example URL" from the private app settings).`,
+          message: `Store URL?`,
           default: (currTarget.url || null),
+        },
+        {
+          type: `input`,
+          name: `accessToken`,
+          message: `Access Token?`,
+          default: (currTarget.accessToken || null),
         },
       ])
 
       currTarget = Object.assign(currTarget, targetSettings)
 
       const urlObj = new URL(currTarget.url)
-      const pathParts = _.take(_.compact(urlObj.pathname.split(`/`)), 2).join(`/`)
-
-      currTarget.url = urlObj.protocol + `//` + urlObj.username + `:` + urlObj.password + `@` + urlObj.host + `/` + pathParts
+      currTarget.url = urlObj.protocol + `//` + urlObj.host + `/admin/api`
 
       const res = await requestify(currTarget, {
         method: `get`,

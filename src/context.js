@@ -9,7 +9,7 @@ const pjson = JSON.parse(await fsp.readFile(path.join(appDir, `./package.json`),
 const context = {
   initialized: false,
   configVersion: 3,
-  apiVersion: `2022-04`,
+  apiVersion: `2023-01`,
   config: {},
   appDir: appDir,
   VERSION: pjson.version,

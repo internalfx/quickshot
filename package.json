@@ -55,5 +55,5 @@
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "6.0.0"
   },
-  "packageManager": "yarn@3.2.1"
+  "packageManager": "yarn@3.4.1"
 }

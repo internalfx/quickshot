@@ -46,6 +46,9 @@ const createQueue = function () {
       resolveWithFullResponse: true,
       gzip: true,
       json: true,
+      headers: {
+        'X-Shopify-Access-Token': target.accessToken,
+      },
       timeout: 30000,
     }))
 
